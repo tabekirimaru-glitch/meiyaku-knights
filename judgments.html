@@ -1,0 +1,469 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="判決・事例データベース - 片翼の盟約騎士団。類似の判例を検索し、戦うための知識を得る。">
+    <title>判決・事例データベース | 片翼の盟約騎士団</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        /* 判決データベース固有のスタイル */
+        .db-header {
+            background: var(--gradient-castle);
+            padding: 3rem 0;
+            color: white;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .db-header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url('images/hero-swords.jpg') center/cover no-repeat;
+            opacity: 0.2;
+        }
+
+        .db-container {
+            display: flex;
+            gap: 2rem;
+            padding: 3rem 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+            align-items: flex-start;
+        }
+
+        /* 検索サイドバー */
+        .search-sidebar {
+            flex: 0 0 300px;
+            background: white;
+            padding: 1.5rem;
+            border-radius: 16px;
+            box-shadow: var(--shadow);
+            border-top: 5px solid var(--secondary-color);
+            position: sticky;
+            top: 100px;
+        }
+
+        .filter-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .filter-title {
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--primary-color);
+        }
+
+        .filter-options {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .checkbox-label {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            cursor: pointer;
+            font-size: 0.95rem;
+        }
+
+        .search-btn {
+            width: 100%;
+            padding: 0.8rem;
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .search-btn:hover {
+            background: var(--primary-dark);
+        }
+
+        /* 結果一覧エリア */
+        .results-area {
+            flex: 1;
+        }
+
+        .results-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .results-count {
+            font-weight: 700;
+            color: var(--text-light);
+        }
+
+        .judgment-card {
+            background: white;
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            box-shadow: var(--shadow);
+            border-left: 4px solid var(--secondary-color);
+            transition: all 0.3s;
+        }
+
+        .judgment-card:hover {
+            transform: translateY(-3px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .judgment-meta {
+            display: flex;
+            gap: 1rem;
+            font-size: 0.85rem;
+            color: var(--text-light);
+            margin-bottom: 0.5rem;
+        }
+
+        .judgment-title {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: var(--primary-color);
+            margin-bottom: 1rem;
+            line-height: 1.4;
+        }
+
+        .judgment-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .tag {
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            background: var(--bg-light);
+            color: var(--text-dark);
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .tag:hover {
+            transform: scale(1.05);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .tag-result-win {
+            background: #dcfce7;
+            color: #166534;
+        }
+
+        .tag-result-lose {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        .tag-court {
+            background: #e0f2fe;
+            color: #075985;
+        }
+
+        .judgment-summary {
+            background: var(--bg-light);
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+            font-size: 0.95rem;
+        }
+
+        .judgment-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--primary-color);
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 0.95rem;
+        }
+
+        .judgment-link:hover {
+            text-decoration: underline;
+        }
+
+        /* レスポンシブ */
+        @media (max-width: 768px) {
+            .db-container {
+                flex-direction: column;
+            }
+
+            .search-sidebar {
+                width: 100%;
+                position: static;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- ヘッダー -->
+    <header class="header">
+        <div class="container">
+            <div class="logo">
+                <img src="images/shield-emblem.png" alt="片翼の盟約騎士団" class="logo-emblem">
+                <div class="logo-text">
+                    <h1>片翼の盟約騎士団</h1>
+                    <p class="tagline">One-Winged Knights Covenant</p>
+                </div>
+            </div>
+            <nav class="header-nav">
+                <a href="index.html">ホーム</a>
+                <a href="judgments.html" class="active">判決DB</a>
+                <a href="index.html#action">行動する</a>
+                <a href="https://www.meiyaku-knights.jp/" target="_blank">ブログ</a>
+            </nav>
+        </div>
+    </header>
+
+    <!-- DBヘッダー -->
+    <div class="db-header">
+        <div class="container" style="position: relative; z-index: 1;">
+            <h2 class="section-title" style="color: white; text-shadow: 2px 2px 4px rgba(0,0,0,0.5);">判決・事例データベース</h2>
+            <p>過去の判例を知り、未来を切り拓く武器にする</p>
+        </div>
+    </div>
+
+    <!-- メインコンテンツ -->
+    <div class="db-container">
+        <!-- 検索サイドバー -->
+        <aside class="search-sidebar">
+            <h3 style="margin-bottom: 1.5rem; color: var(--primary-dark);">🔍 条件で絞り込む</h3>
+
+            <!-- フィルターはJSでここに動的に生成されます -->
+            <div id="dynamic-filters">
+                <p style="color: #666; font-size: 0.9rem;">読み込み中...</p>
+            </div>
+
+            <button class="search-btn" onclick="filterJudgments()">検索する</button>
+        </aside>
+
+        <!-- 結果一覧 -->
+        <main class="results-area">
+            <div class="results-header">
+                <div class="results-count"><span id="count">0</span> 件の判例が見つかりました</div>
+                <select style="padding: 0.5rem; border-radius: 4px;">
+                    <option>新しい順</option>
+                    <option>古い順</option>
+                </select>
+            </div>
+
+            <div id="judgment-list">
+                <!-- ここにJSでカードが生成されます -->
+            </div>
+        </main>
+    </div>
+
+    <!-- フッター -->
+    <footer class="footer">
+        <div class="castle-footer-bg"></div>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <img src="images/shield-emblem.png" alt="emblem" class="footer-emblem">
+                    <h4>片翼の盟約騎士団</h4>
+                    <p>子供を真ん中に取り戻すための戦い</p>
+                </div>
+                <div class="footer-section">
+                    <h4>リンク</h4>
+                    <ul>
+                        <li><a href="index.html">ホーム</a></li>
+                        <li><a href="https://www.meiyaku-knights.jp/">ブログ</a></li>
+                        <li><a href="https://lit.link/meiyaku_knights">SNS一覧</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2025 片翼の盟約騎士団. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        let judgments = [];
+
+        const tagCategories = {
+            "📍 都道府県": ["東京", "大阪", "愛知", "福岡", "北海道", "神奈川", "埼玉", "千葉", "兵庫", "京都", "広島", "宮城", "沖縄"],
+            "📅 経過期間": ["3ヶ月以内", "半年以内", "1年以上"],
+            "⚖️ 法的手続き": ["調停前", "調停中", "審判", "訴訟"],
+            "👨‍⚖️ 弁護士": ["自分弁護士あり", "本人訴訟", "相手弁護士あり"],
+            "🏷️ キーワード": ["連れ去り", "監護者指定", "引き渡し", "面会交流", "親権"],
+            "👶 子供の年齢": ["乳幼児", "小学生", "中学生以上"],
+            "🏆 結果": ["認容", "却下", "和解"],
+            "⚠️ 事件種別": ["虐待", "ネグレクト", "児童買春", "殺人"],
+            "😢 子供の被害": ["子の虐待", "子の犠牲", "重症"],
+            "👤 加害者": ["片親が原因", "別居親", "同居親", "内縁・交際相手"],
+            "🏠 家庭背景": ["不倫", "DV", "離婚係争中"],
+            "📜 法改正・制度": ["共同親権", "民法改正", "養育費制度"]
+        };
+
+        const dateRangeOptions = [
+            { label: "直近6ヶ月", value: "6months" },
+            { label: "直近1年", value: "1year" },
+            { label: "2024年", value: "2024" },
+            { label: "2023年", value: "2023" },
+            { label: "2022年以前", value: "before2022" }
+        ];
+
+        async function fetchJudgments() {
+            try {
+                const response = await fetch('data/judgments.json');
+                if (!response.ok) throw new Error('データの取得に失敗しました');
+                judgments = await response.json();
+                generateFilters(judgments);
+                filterJudgments();
+            } catch (error) {
+                console.error('Error:', error);
+                document.getElementById('judgment-list').innerHTML = '<p style="text-align:center; padding: 2rem; color: #ef4444;">データの読み込みに失敗しました。</p>';
+            }
+        }
+
+        function generateFilters(data) {
+            const container = document.getElementById('dynamic-filters');
+            container.innerHTML = '';
+            container.innerHTML += createDateRangeFilter();
+
+            const allTags = new Set();
+            data.forEach(item => item.tags.forEach(tag => allTags.add(tag)));
+
+            for (const [categoryName, definedTags] of Object.entries(tagCategories)) {
+                const existingTags = definedTags.filter(tag => allTags.has(tag));
+                if (existingTags.length > 0) {
+                    container.innerHTML += createFilterGroupHtml(categoryName, existingTags);
+                    existingTags.forEach(tag => allTags.delete(tag));
+                }
+            }
+
+            if (allTags.size > 0) {
+                container.innerHTML += createFilterGroupHtml("✨ その他・新着タグ", Array.from(allTags));
+            }
+        }
+
+        function createDateRangeFilter() {
+            const optionsHtml = dateRangeOptions.map(option => `
+                <label class="checkbox-label">
+                    <input type="checkbox" value="${option.value}" data-type="daterange" onchange="filterJudgments()"> ${option.label}
+                </label>
+            `).join('');
+            return `<div class="filter-group"><div class="filter-title">📆 判決・事件の期間</div><div class="filter-options">${optionsHtml}</div></div>`;
+        }
+
+        function createFilterGroupHtml(title, tags) {
+            const optionsHtml = tags.map(tag => `
+                <label class="checkbox-label">
+                    <input type="checkbox" value="${tag}" onchange="filterJudgments()"> ${tag}
+                </label>
+            `).join('');
+            return `<div class="filter-group"><div class="filter-title">${title}</div><div class="filter-options">${optionsHtml}</div></div>`;
+        }
+
+        function isDateInRange(dateStr, rangeValue) {
+            const itemDate = new Date(dateStr);
+            const now = new Date();
+
+            switch (rangeValue) {
+                case '6months':
+                    const sixMonthsAgo = new Date();
+                    sixMonthsAgo.setMonth(now.getMonth() - 6);
+                    return itemDate >= sixMonthsAgo;
+                case '1year':
+                    const oneYearAgo = new Date();
+                    oneYearAgo.setFullYear(now.getFullYear() - 1);
+                    return itemDate >= oneYearAgo;
+                case '2024':
+                    return itemDate.getFullYear() === 2024;
+                case '2023':
+                    return itemDate.getFullYear() === 2023;
+                case 'before2022':
+                    return itemDate.getFullYear() <= 2022;
+                default:
+                    return true;
+            }
+        }
+
+        function renderJudgments(data) {
+            const list = document.getElementById('judgment-list');
+            const count = document.getElementById('count');
+            list.innerHTML = '';
+            count.textContent = data.length;
+
+            if (data.length === 0) {
+                list.innerHTML = '<p style="text-align:center; padding: 2rem; color: #666;">該当する判例は見つかりませんでした。</p>';
+                return;
+            }
+
+            data.forEach(item => {
+                const tagsHtml = item.tags.map(tag => {
+                    let className = 'tag';
+                    if (tag === '認容') className += ' tag-result-win';
+                    else if (tag === '却下') className += ' tag-result-lose';
+                    else if (tag.includes('裁')) className += ' tag-court';
+                    return `<span class="${className}" onclick="searchByTag('${tag}')" title="このタグで検索">${tag}</span>`;
+                }).join('');
+
+                list.innerHTML += `
+                    <div class="judgment-card">
+                        <div class="judgment-meta">
+                            <span>📅 ${item.date}</span>
+                            <span>🏛️ ${item.court}</span>
+                        </div>
+                        <h3 class="judgment-title">${item.title}</h3>
+                        <div class="judgment-tags">${tagsHtml}</div>
+                        <div class="judgment-summary"><p>${item.summary}</p></div>
+                        <a href="${item.url}" target="_blank" class="judgment-link">判決文・詳細を見る ↗</a>
+                    </div>
+                `;
+            });
+        }
+
+        function searchByTag(tag) {
+            const checkboxes = document.querySelectorAll('.checkbox-label input');
+            checkboxes.forEach(cb => {
+                if (cb.value === tag) cb.checked = true;
+            });
+            filterJudgments();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function filterJudgments() {
+            const tagCheckboxes = document.querySelectorAll('.checkbox-label input:not([data-type="daterange"]):checked');
+            const selectedTags = Array.from(tagCheckboxes).map(cb => cb.value);
+
+            const dateCheckboxes = document.querySelectorAll('.checkbox-label input[data-type="daterange"]:checked');
+            const selectedDateRanges = Array.from(dateCheckboxes).map(cb => cb.value);
+
+            const filteredData = judgments.filter(item => {
+                const tagMatch = selectedTags.length === 0 || selectedTags.some(tag => item.tags.includes(tag) || item.tags.some(t => t.includes(tag)));
+                const dateMatch = selectedDateRanges.length === 0 || selectedDateRanges.some(range => isDateInRange(item.date, range));
+                return tagMatch && dateMatch;
+            });
+
+            renderJudgments(filteredData);
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            fetchJudgments();
+        });
+    </script>
+</body>
+
+</html>

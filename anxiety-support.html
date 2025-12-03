@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="共同親権に不安を感じる方へ - 片翼の盟約騎士団。不安は当然の感情です。正しい知識と対話で、子供の未来を考えましょう。">
+    <title>共同親権に不安を感じる方へ | 片翼の盟約騎士団</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        /* 不安解消ページ固有のスタイル */
+        .support-header {
+            background: linear-gradient(135deg, #4b5563 0%, #1f2937 100%);
+            /* 落ち着いたグレー・ダークトーン */
+            padding: 4rem 0;
+            color: white;
+            text-align: center;
+            position: relative;
+        }
+
+        .support-header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url('images/hero-swords.jpg') center/cover no-repeat;
+            opacity: 0.1;
+            filter: grayscale(100%);
+        }
+
+        .support-intro {
+            background: white;
+            padding: 3rem;
+            border-radius: 16px;
+            box-shadow: var(--shadow-lg);
+            margin-top: -3rem;
+            position: relative;
+            z-index: 10;
+            border-top: 5px solid var(--secondary-color);
+        }
+
+        .qa-section {
+            padding: 4rem 0;
+        }
+
+        .qa-card {
+            background: white;
+            border-radius: 12px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: var(--shadow);
+            border-left: 4px solid #9ca3af;
+            /* ニュートラルなグレー */
+            transition: all 0.3s;
+        }
+
+        .qa-card:hover {
+            transform: translateY(-3px);
+            box-shadow: var(--shadow-lg);
+            border-left-color: var(--secondary-color);
+        }
+
+        .question {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: var(--primary-dark);
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: flex-start;
+            gap: 0.75rem;
+        }
+
+        .question::before {
+            content: 'Q.';
+            color: var(--secondary-color);
+            font-size: 1.5rem;
+        }
+
+        .answer {
+            font-size: 1rem;
+            line-height: 1.8;
+            color: var(--text-dark);
+            padding-left: 2.25rem;
+        }
+
+        .highlight-box {
+            background: #fef3c7;
+            /* 薄い黄色 */
+            border: 1px solid #fcd34d;
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin-top: 1rem;
+            font-size: 0.95rem;
+        }
+
+        .message-section {
+            background: var(--bg-light);
+            padding: 4rem 0;
+            text-align: center;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- ヘッダー -->
+    <header class="header">
+        <div class="container">
+            <div class="logo">
+                <img src="images/shield-emblem.png" alt="片翼の盟約騎士団" class="logo-emblem">
+                <div class="logo-text">
+                    <h1>片翼の盟約騎士団</h1>
+                    <p class="tagline">One-Winged Knights Covenant</p>
+                </div>
+            </div>
+            <nav class="header-nav">
+                <a href="index.html">ホーム</a>
+                <a href="judgments.html">判決DB</a>
+                <a href="index.html#action">行動する</a>
+                <a href="https://www.meiyaku-knights.jp/" target="_blank">ブログ</a>
+            </nav>
+        </div>
+    </header>
+
+    <!-- ページヘッダー -->
+    <div class="support-header">
+        <div class="container" style="position: relative; z-index: 1;">
+            <h2 class="section-title" style="color: white; text-shadow: 2px 2px 4px rgba(0,0,0,0.5);">共同親権に不安を感じる方へ</h2>
+            <p>その不安は、子供を愛しているからこそ。</p>
+        </div>
+    </div>
+
+    <div class="container">
+        <!-- イントロダクション -->
+        <div class="support-intro">
+            <h3 style="font-size: 1.5rem; color: var(--primary-dark); margin-bottom: 1.5rem; text-align: center;">
+                対立ではなく、対話を。</h3>
+            <p style="margin-bottom: 1rem;">「DVから逃げられなくなるのではないか」「子供の進路を勝手に決められるのではないか」</p>
+            <p style="margin-bottom: 1rem;">
+                共同親権という言葉を聞いて、このような不安を感じるのは当然のことです。私たちは、すべての親が手を取り合うべきだとは考えていません。しかし、<strong>「子供にとって何が最善か」</strong>を考える点では、立場が違っても共通しているはずです。
+            </p>
+            <p>このページでは、よくある不安に対して、法律の専門家や経験者の視点から、冷静な事実と対策をお伝えします。</p>
+        </div>
+
+        <!-- Q&Aセクション -->
+        <div class="qa-section">
+            <!-- Q1 -->
+            <div class="qa-card">
+                <div class="question">DV（ドメスティック・バイオレンス）がある場合でも、強制的に共同親権になりますか？</div>
+                <div class="answer">
+                    <p>いいえ、なりません。改正法案でも、<strong>DVや虐待のおそれがある場合は、家庭裁判所が「単独親権」と定める</strong>ことになっています。</p>
+                    <div class="highlight-box">
+                        <strong>🛡️ 対策ポイント</strong><br>
+                        重要なのは「DVの証拠」です。診断書、警察への相談記録、録音データなどを確保しておくことが、あなたと子供を守る盾になります。
+                    </div>
+                </div>
+            </div>
+
+            <!-- Q2 -->
+            <div class="qa-card">
+                <div class="question">別居親に、子供の進学や手術などを勝手に決められてしまいませんか？</div>
+                <div class="answer">
+                    <p>日常的な世話（監護）や、緊急の手術などは、同居している親（監護親）が単独で決定できます。</p>
+                    <p>進学や転居などの「重要事項」については協議が必要ですが、合意できない場合は家庭裁判所が判断します。「拒否権を発動して嫌がらせをする」ような行為は、親権者として不適格と判断される理由になります。
+                    </p>
+                </div>
+            </div>
+
+            <!-- Q3 -->
+            <div class="qa-card">
+                <div class="question">高葛藤（仲が悪い）状態で、話し合いなんてできません。</div>
+                <div class="answer">
+                    <p>無理に直接会って話す必要はありません。弁護士を通じた交渉や、家庭裁判所の調停を利用することも「共同行使」の一つの形です。</p>
+                    <p>また、支援アプリ（Parenting App）を使って、事務的な連絡のみを行う方法も普及してきています。</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- メッセージセクション -->
+    <section class="message-section">
+        <div class="container">
+            <h3 style="font-size: 1.8rem; color: var(--primary-color); margin-bottom: 1.5rem;">子供の笑顔を守るために</h3>
+            <p style="max-width: 700px; margin: 0 auto 2rem; line-height: 1.8;">
+                私たちは「連れ去り」には断固反対しますが、それは「子供から親を奪うこと」に反対しているからです。<br>
+                同様に、暴力や支配によって子供が傷つくことも許容しません。<br>
+                <br>
+                もしあなたが不安を感じているなら、まずは正しい情報を知ってください。<br>
+                そして、もしよければ、私たちのコミュニティを覗いてみてください。<br>
+                そこには、あなたと同じように「子供を愛する親」がいるだけです。
+            </p>
+            <a href="index.html#community" class="btn btn-primary">コミュニティについて知る</a>
+        </div>
+    </section>
+
+    <!-- フッター -->
+    <footer class="footer">
+        <div class="castle-footer-bg"></div>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <img src="images/shield-emblem.png" alt="emblem" class="footer-emblem">
+                    <h4>片翼の盟約騎士団</h4>
+                    <p>子供を真ん中に取り戻すための戦い</p>
+                </div>
+                <div class="footer-section">
+                    <h4>リンク</h4>
+                    <ul>
+                        <li><a href="index.html">ホーム</a></li>
+                        <li><a href="judgments.html">判決DB</a></li>
+                        <li><a href="https://www.meiyaku-knights.jp/">ブログ</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2025 片翼の盟約騎士団. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+</body>
+
+</html>
