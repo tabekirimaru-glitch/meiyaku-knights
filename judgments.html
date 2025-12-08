@@ -429,7 +429,10 @@
                         <h3 class="judgment-title">${item.title}</h3>
                         <div class="judgment-tags">${tagsHtml}</div>
                         <div class="judgment-summary"><p>${item.summary}</p></div>
-                        <a href="${item.url}" target="_blank" class="judgment-link">判決文・詳細を見る ↗</a>
+                        ${item.url && item.url !== 'https://www.courts.go.jp/' && item.url !== '#'
+                        ? `<a href="${item.url}" target="_blank" class="judgment-link">判決文・詳細を見る ↗</a>`
+                        : `<span class="judgment-link" style="color: #999; cursor: default;">🔍 URL準備中（Opalで検索予定）</span>`
+                    }
                     </div>
                 `;
             });
