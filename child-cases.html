@@ -369,6 +369,9 @@
                 return tagMatch && locationMatch;
             });
 
+            // 新しい順にソート（日付降順）
+            filteredCases.sort((a, b) => new Date(b.date) - new Date(a.date));
+
             renderCases(filteredCases);
         }
 
