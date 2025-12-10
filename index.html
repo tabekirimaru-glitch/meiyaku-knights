@@ -1001,48 +1001,16 @@
         </div>
     </section>
 
-    <!-- (B) 判例データベース -->
-    <section class="section-block" id="judgments"
-        style="background: linear-gradient(135deg, #1e3a5f 0%, #2d5a87 100%); color: white;">
-        <div class="container">
-            <div class="section-header" style="color: white;">
-                <h2 style="color: white;">⚖️ 判決データベース</h2>
-                <p style="color: rgba(255,255,255,0.9);">
-                    類似の判例を検索して、戦略を立てよう
-                    <span
-                        style="display: inline-block; margin-left: 0.5rem; padding: 0.2rem 0.75rem; background: rgba(255,255,255,0.2); border-radius: 12px; font-size: 0.8rem;">
-                        🤖 週2回更新
-                    </span>
-                </p>
+    <!-- (B) 判例データベース - バナー -->
+    <section class="section-block" id="judgments" style="padding: 0;">
+        <a href="judgments.html" style="display: block; position: relative; overflow: hidden;">
+            <img src="images/judgments-banner.jpg" alt="判決データベース"
+                style="width: 100%; height: auto; display: block; transition: transform 0.3s;">
+            <div
+                style="position: absolute; bottom: 20px; left: 50%; transform: translateX(-50%); background: rgba(255,255,255,0.95); padding: 12px 30px; border-radius: 30px; font-size: 1.1rem; font-weight: 700; color: #b91c1c; box-shadow: 0 4px 15px rgba(0,0,0,0.2);">
+                👆 タップしてコンテンツを見る
             </div>
-
-            <div id="latest-judgments" class="two-column" style="margin-bottom: 1.5rem;">
-                <!-- JSで動的に表示 -->
-            </div>
-
-            <div style="text-align: center; margin-top: 2rem;">
-                <a href="judgments.html" class="btn"
-                    style="background: linear-gradient(135deg, #fbbf24, #f59e0b); color: #1e3a5f; font-weight: 700; font-size: 1.2rem; padding: 1rem 2.5rem; border-radius: 50px; box-shadow: 0 4px 20px rgba(251, 191, 36, 0.5); display: inline-flex; align-items: center; gap: 0.5rem; transition: all 0.3s; animation: pulse-glow 2s ease-in-out infinite;">
-                    ⚖️ すべての判例を見る
-                    <span style="font-size: 1.5rem;">→</span>
-                </a>
-                <style>
-                    @keyframes pulse-glow {
-
-                        0%,
-                        100% {
-                            box-shadow: 0 4px 20px rgba(251, 191, 36, 0.5);
-                            transform: scale(1);
-                        }
-
-                        50% {
-                            box-shadow: 0 6px 30px rgba(251, 191, 36, 0.8);
-                            transform: scale(1.02);
-                        }
-                    }
-                </style>
-            </div>
-        </div>
+        </a>
     </section>
 
     <!-- (C) ヒロ・アクティビティハブ -->
@@ -1202,37 +1170,16 @@
         </div>
     </section>
 
-    <!-- (E) ニュースアーカイブ（アコーディオン） -->
-    <section class="section-block" id="news" style="background: #fff5f5;">
-        <div class="container">
-            <div class="section-header">
-                <h2>📰 子供関連ニュース・事件アーカイブ</h2>
-                <p>閲覧注意：センシティブな内容を含みます</p>
+    <!-- (E) 子供関連ニュース - バナー -->
+    <section class="section-block" id="news" style="padding: 0;">
+        <a href="child-cases.html" style="display: block; position: relative; overflow: hidden;">
+            <img src="images/child-cases-banner.jpg" alt="子供関連ニュース 事件アーカイブ"
+                style="width: 100%; height: auto; display: block; transition: transform 0.3s;">
+            <div
+                style="position: absolute; bottom: 20px; left: 50%; transform: translateX(-50%); background: rgba(255,255,255,0.95); padding: 12px 30px; border-radius: 30px; font-size: 1.1rem; font-weight: 700; color: #7c3aed; box-shadow: 0 4px 15px rgba(0,0,0,0.2);">
+                👆 タップしてコンテンツを見る
             </div>
-
-            <div class="accordion" id="newsAccordion">
-                <div class="accordion-header" onclick="toggleAccordion('newsAccordion')">
-                    <span>⚠️ ニュース・事件アーカイブを開く</span>
-                    <span class="icon">▼</span>
-                </div>
-                <div class="accordion-content">
-                    <div class="accordion-content-inner">
-                        <div class="coming-soon-box" style="background: white; border-color: #fca5a5;">
-                            <h3 style="color: #991b1b;">🗺️ 事件マップ（準備中）</h3>
-                            <p style="color: #b91c1c;">Googleマップと連携した事件発生マップを準備しています</p>
-                            <div style="margin-top: 1rem; font-size: 0.9rem; color: #991b1b;">
-                                <p>予定している機能:</p>
-                                <ul style="list-style: none; padding: 0; margin-top: 0.5rem;">
-                                    <li>📍 都道府県別の事件検索</li>
-                                    <li>📅 年表での時系列表示</li>
-                                    <li>🏷️ 事件種別でフィルター</li>
-                                </ul>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
+        </a>
     </section>
 
     <!-- (F) 相談先・フッター -->
