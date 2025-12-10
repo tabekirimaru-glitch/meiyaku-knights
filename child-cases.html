@@ -9,10 +9,51 @@
     <link rel="stylesheet" href="style.css">
     <style>
         .db-header {
-            background: linear-gradient(135deg, #7c3aed 0%, #a855f7 100%);
-            padding: 3rem 0;
-            color: white;
-            text-align: center;
+            position: relative;
+            width: 100%;
+            cursor: pointer;
+            overflow: hidden;
+        }
+
+        .db-header img {
+            width: 100%;
+            height: auto;
+            display: block;
+            transition: transform 0.3s ease;
+        }
+
+        .db-header:hover img {
+            transform: scale(1.02);
+        }
+
+        .tap-hint {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(255, 255, 255, 0.95);
+            padding: 12px 30px;
+            border-radius: 30px;
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: #7c3aed;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+
+            0%,
+            100% {
+                transform: translateX(-50%) scale(1);
+            }
+
+            50% {
+                transform: translateX(-50%) scale(1.05);
+            }
         }
 
         .db-container {
@@ -198,14 +239,9 @@
         </div>
     </header>
 
-    <div class="db-header">
-        <div class="container">
-            <h2 style="font-size: 2rem; margin-bottom: 0.5rem;">👶 子供関連事件データベース</h2>
-            <p>虐待・ネグレクト・家庭内事件の記録と教訓</p>
-            <p style="margin-top: 1rem; font-size: 0.9rem; opacity: 0.9;">
-                🤖 毎週自動更新
-            </p>
-        </div>
+    <div class="db-header" id="banner-header">
+        <img src="images/child-cases-banner.jpg" alt="子供関連ニュース 事件アーカイブ">
+        <div class="tap-hint">👆 タップしてコンテンツを見る</div>
     </div>
 
     <div class="db-container">
