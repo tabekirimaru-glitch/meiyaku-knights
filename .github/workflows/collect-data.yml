@@ -23,16 +23,18 @@ jobs:
           python-version: '3.11'
           
       - name: Install dependencies
-        run: pip install google-generativeai requests
+        run: pip install google-generativeai feedparser requests
           
-      - name: Run data collection
+      - name: Run judgment data collection (Gemini)
         env:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
         run: python scripts/collect_data.py
+        
+      - name: Run child cases collection (RSS)
+        run: python scripts/collect_rss_news.py
         
       - name: Commit and push changes
         uses: stefanzweifel/git-auto-commit-action@v5
         with:
           commit_message: "🤖 Weekly data update"
           file_pattern: "data/"
-          push_options: "--force"
