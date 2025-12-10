@@ -14,20 +14,24 @@ from urllib.parse import urlparse
 DATA_DIR = 'data'
 CHILD_CASES_FILE = os.path.join(DATA_DIR, 'child-cases.json')
 
-# RSSフィード一覧（日本のニュースソース）
+# RSSフィード一覧（直接URLを提供するニュースソースのみ）
 RSS_FEEDS = [
-    {"url": "https://news.google.com/rss/search?q=児童虐待&hl=ja&gl=JP&ceid=JP:ja", "source": "Google News"},
-    {"url": "https://news.google.com/rss/search?q=子ども+事件&hl=ja&gl=JP&ceid=JP:ja", "source": "Google News"},
     {"url": "http://www3.nhk.or.jp/rss/news/cat0.xml", "source": "NHK"},
     {"url": "https://mainichi.jp/rss/etc/mainichi-flash.rss", "source": "毎日新聞"},
     {"url": "https://www.asahi.com/rss/asahi/newsheadlines.rdf", "source": "朝日新聞"},
+    {"url": "https://www.yomiuri.co.jp/feed/rss.xml", "source": "読売新聞"},
+    {"url": "https://www.sankei.com/news.rdf", "source": "産経新聞"},
+    {"url": "https://www.tokyo-np.co.jp/rss/list.rdf", "source": "東京新聞"},
+    # Google Newsはリダイレクトだが記事が見つかりやすい
+    {"url": "https://news.google.com/rss/search?q=児童虐待&hl=ja&gl=JP&ceid=JP:ja", "source": "Google News"},
+    {"url": "https://news.google.com/rss/search?q=子ども+事件&hl=ja&gl=JP&ceid=JP:ja", "source": "Google News"},
 ]
 
-# メインキーワード（少なくとも1つ必須）- 緩和
-MAIN_KEYWORDS = ["虐待", "ネグレクト", "児童", "子ども", "子供", "児童相談所", "保護", "幼児", "乳児", "小学生", "園児"]
+# メインキーワード（広めに設定 - 少なくとも1つ必須）
+MAIN_KEYWORDS = ["虐待", "ネグレクト", "児童", "子ども", "子供", "児童相談所", "保護", "幼児", "乳児", "小学生", "園児", "保育園", "幼稚園", "親権", "連れ去り", "DV", "家庭内暴力"]
 
 # サブキーワード（事件性を示す）
-SUB_KEYWORDS = ["傷害", "逮捕", "死亡", "暴行", "事件", "容疑", "送検", "起訴", "殺害", "遺体"]
+SUB_KEYWORDS = ["傷害", "逮捕", "死亡", "暴行", "事件", "容疑", "送検", "起訴", "殺害", "遺体", "通報", "相談", "保護", "介入"]
 
 def load_existing_data():
     """既存のJSONデータを読み込む"""
