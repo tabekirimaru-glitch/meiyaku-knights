@@ -425,9 +425,7 @@
                         <h3 class="case-title">${item.title}</h3>
                         <div class="case-tags">${tagsHtml}</div>
                         <div class="case-summary"><p>${item.summary}</p></div>
-                        ${item.url && item.url !== '#'
-                        ? `<a href="${item.url}" target="_blank" class="case-link">記事を見る ↗</a>`
-                        : ''}
+                        <a href="https://www.google.com/search?q=${encodeURIComponent(item.title)}" target="_blank" class="case-link">🔍 記事を検索 ↗</a>
                     </div>
                 `;
             });
