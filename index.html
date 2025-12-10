@@ -687,6 +687,222 @@
         .section-block:nth-child(even) {
             background: var(--bg-light);
         }
+
+        /* ===== メディアフィードセクション ===== */
+        .media-feed-section {
+            padding: 1.5rem;
+        }
+
+        .media-stack {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .media-stack-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--primary-dark);
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        /* 漫画バナー */
+        .manga-banner {
+            display: block;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .manga-banner:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+        }
+
+        .manga-banner img {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+
+        /* ショート動画グリッド */
+        .shorts-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+            gap: 0.75rem;
+        }
+
+        .short-thumbnail {
+            aspect-ratio: 9/16;
+            border-radius: 12px;
+            overflow: hidden;
+            position: relative;
+            cursor: pointer;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            transition: transform 0.2s;
+        }
+
+        .short-thumbnail:hover {
+            transform: scale(1.03);
+        }
+
+        .short-thumbnail img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .short-thumbnail .play-overlay {
+            position: absolute;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transition: opacity 0.2s;
+        }
+
+        .short-thumbnail:hover .play-overlay {
+            opacity: 1;
+        }
+
+        .short-thumbnail .play-icon {
+            width: 50px;
+            height: 50px;
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+        }
+
+        /* ロング動画 */
+        .long-video-card {
+            display: block;
+            border-radius: 12px;
+            overflow: hidden;
+            position: relative;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+            transition: transform 0.2s;
+            text-decoration: none;
+            color: inherit;
+        }
+
+        .long-video-card:hover {
+            transform: translateY(-3px);
+        }
+
+        .long-video-card .thumbnail-wrapper {
+            position: relative;
+            aspect-ratio: 16/9;
+        }
+
+        .long-video-card img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .long-video-card .play-button {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 60px;
+            height: 60px;
+            background: rgba(255, 0, 0, 0.9);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.5rem;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        .long-video-card .video-info {
+            padding: 0.75rem;
+            background: white;
+        }
+
+        .long-video-card .video-title {
+            font-weight: 600;
+            font-size: 0.95rem;
+            line-height: 1.4;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        /* 誘導テキスト */
+        .tap-hint {
+            text-align: center;
+            font-size: 0.85rem;
+            color: var(--text-light);
+            margin-top: 0.5rem;
+        }
+
+        /* モーダル */
+        .video-modal {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.9);
+            z-index: 9999;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+        }
+
+        .video-modal.active {
+            display: flex;
+        }
+
+        .video-modal-content {
+            position: relative;
+            width: 100%;
+            max-width: 400px;
+            aspect-ratio: 9/16;
+            background: #000;
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        .video-modal-content iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+
+        .video-modal-close {
+            position: absolute;
+            top: -50px;
+            right: 0;
+            background: white;
+            border: none;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            font-size: 1.5rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        @media (min-width: 768px) {
+            .shorts-grid {
+                grid-template-columns: repeat(4, 1fr);
+            }
+        }
     </style>
 </head>
 
@@ -803,10 +1019,27 @@
                 <!-- JSで動的に表示 -->
             </div>
 
-            <div style="text-align: center;">
-                <a href="judgments.html" class="btn" style="background: white; color: #1e3a5f; font-weight: 700;">
-                    すべての判例を見る →
+            <div style="text-align: center; margin-top: 2rem;">
+                <a href="judgments.html" class="btn"
+                    style="background: linear-gradient(135deg, #fbbf24, #f59e0b); color: #1e3a5f; font-weight: 700; font-size: 1.2rem; padding: 1rem 2.5rem; border-radius: 50px; box-shadow: 0 4px 20px rgba(251, 191, 36, 0.5); display: inline-flex; align-items: center; gap: 0.5rem; transition: all 0.3s; animation: pulse-glow 2s ease-in-out infinite;">
+                    ⚖️ すべての判例を見る
+                    <span style="font-size: 1.5rem;">→</span>
                 </a>
+                <style>
+                    @keyframes pulse-glow {
+
+                        0%,
+                        100% {
+                            box-shadow: 0 4px 20px rgba(251, 191, 36, 0.5);
+                            transform: scale(1);
+                        }
+
+                        50% {
+                            box-shadow: 0 6px 30px rgba(251, 191, 36, 0.8);
+                            transform: scale(1.02);
+                        }
+                    }
+                </style>
             </div>
         </div>
     </section>
@@ -826,6 +1059,34 @@
                     <div id="youtube-carousel" class="youtube-carousel">
                         <p style="color: #666; text-align: center;">読み込み中...</p>
                     </div>
+                    <script>
+                        (function () {
+                            fetch('data/youtube.json')
+                                .then(res => res.json())
+                                .then(videos => {
+                                    const container = document.getElementById('youtube-carousel');
+                                    container.innerHTML = videos.map(video => `
+                                        <a href="https://www.youtube.com/watch?v=${video.id}" target="_blank" class="youtube-video-card">
+                                            <img src="${video.thumbnail}" alt="${video.title}" loading="lazy" onerror="this.src='https://via.placeholder.com/280x158?text=Video'">
+                                            <div class="video-info">
+                                                <div class="video-title">${video.title}</div>
+                                                <div class="video-date">${new Date(video.publishedAt).toLocaleDateString('ja-JP')}</div>
+                                            </div>
+                                        </a>
+                                    `).join('');
+                                })
+                                .catch(err => {
+                                    console.error('YouTube load error:', err);
+                                    document.getElementById('youtube-carousel').innerHTML = `
+                                        <p style="color: #666; text-align: center;">
+                                            <a href="https://www.youtube.com/@meiyaku_knights" target="_blank" style="color: var(--primary-color);">
+                                                📺 YouTubeチャンネルを見る
+                                            </a>
+                                        </p>
+                                    `;
+                                });
+                        })();
+                    </script>
                     <a href="https://www.youtube.com/@meiyaku_knights" target="_blank" class="btn btn-primary"
                         style="width: 100%; margin-top: 1rem;">
                         チャンネルを見る
@@ -859,6 +1120,44 @@
             </div>
         </div>
     </section>
+
+    <!-- (C-2) ユリちゃんの漫画・動画紹介 バナー -->
+    <section class="section-block" id="media-feed" style="background: linear-gradient(135deg, #fef3c7, #fde68a);">
+        <div class="container">
+            <div class="section-header">
+                <h2>📺 ユリちゃんの漫画・動画紹介</h2>
+            </div>
+
+            <!-- バナーリンク -->
+            <a href="media.html" class="content-card"
+                style="display: block; padding: 0; overflow: hidden; text-decoration: none; transition: transform 0.2s, box-shadow 0.2s; position: relative;">
+                <img src="images/yuri_banner.jpg" alt="ユリちゃんの漫画紹介・動画紹介"
+                    style="width: 100%; height: auto; display: block;">
+                <!-- オーバーレイ -->
+                <div
+                    style="position: absolute; bottom: 0; left: 0; right: 0; background: linear-gradient(transparent, rgba(0,0,0,0.7)); padding: 1.5rem 1rem 1rem; text-align: center;">
+                    <span
+                        style="display: inline-flex; align-items: center; gap: 0.5rem; background: white; color: #ec4899; font-weight: 700; font-size: 1.1rem; padding: 0.75rem 1.5rem; border-radius: 50px; box-shadow: 0 4px 15px rgba(0,0,0,0.2);">
+                        <span style="font-size: 1.5rem; animation: bounce 1s infinite;">👆</span>
+                        タップしてコンテンツを見る
+                    </span>
+                </div>
+            </a>
+        </div>
+    </section>
+    <style>
+        @keyframes bounce {
+
+            0%,
+            100% {
+                transform: translateY(0);
+            }
+
+            50% {
+                transform: translateY(-5px);
+            }
+        }
+    </style>
 
     <!-- (D) コミュニティ（会員専用ページへのリンク） -->
     <section class="section-block" id="community" style="background: linear-gradient(135deg, #f0f9ff, #e8f4fc);">
@@ -1007,8 +1306,9 @@
         </div>
     </footer>
 
-    <script src="script.js"></script>
+    <script src="script.js?v=2"></script>
     <script>
+        console.log('🚀 メインスクリプト開始');
         // ハンバーガーメニュー
         const hamburger = document.getElementById('hamburger');
         const headerNav = document.getElementById('headerNav');
@@ -1070,10 +1370,48 @@
         const CACHE_KEY = 'youtube_videos_cache';
         const CACHE_DURATION = 60 * 60 * 1000; // 1時間（ミリ秒）
 
-        async function loadYouTubeVideos() {
+        console.log('📺 YouTube: スクリプト初期化開始');
+
+        // renderYouTubeVideos を先に定義
+        function renderYouTubeVideos(videos) {
+            console.log('📺 YouTube: renderYouTubeVideos 呼び出し', videos);
+            const container = document.getElementById('youtube-carousel');
+            if (!container) {
+                console.error('📺 YouTube: youtube-carousel 要素が見つかりません');
+                return;
+            }
+            container.innerHTML = videos.map(video => `
+                <a href="https://www.youtube.com/watch?v=${video.id}" target="_blank" class="youtube-video-card">
+                    <img src="${video.thumbnail}" alt="${video.title}" loading="lazy">
+                    <div class="video-info">
+                        <div class="video-title">${video.title}</div>
+                        <div class="video-date">${new Date(video.publishedAt).toLocaleDateString('ja-JP')}</div>
+                    </div>
+                </a>
+            `).join('');
+            console.log('📺 YouTube: レンダリング完了');
+        }
+
+        window.loadYouTubeVideos = async function () {
+            console.log('📺 YouTube: loadYouTubeVideos 開始');
             const container = document.getElementById('youtube-carousel');
 
             if (!container) return;
+
+            // まずローカルJSONから読み込み（即時表示優先）
+            try {
+                const localRes = await fetch('data/youtube.json');
+                if (localRes.ok) {
+                    const localData = await localRes.json();
+                    if (localData && localData.length > 0) {
+                        renderYouTubeVideos(localData);
+                        console.log('📺 YouTube: ローカルJSONから表示');
+                        return;
+                    }
+                }
+            } catch (e) {
+                console.log('ローカルJSON読み込み失敗、APIを試行');
+            }
 
             // キャッシュをチェック
             const cached = localStorage.getItem(CACHE_KEY);
@@ -1148,18 +1486,6 @@
             }
         }
 
-        function renderYouTubeVideos(videos) {
-            const container = document.getElementById('youtube-carousel');
-            container.innerHTML = videos.map(video => `
-                <a href="https://www.youtube.com/watch?v=${video.id}" target="_blank" class="youtube-video-card">
-                    <img src="${video.thumbnail}" alt="${video.title}" loading="lazy">
-                    <div class="video-info">
-                        <div class="video-title">${video.title}</div>
-                        <div class="video-date">${new Date(video.publishedAt).toLocaleDateString('ja-JP')}</div>
-                    </div>
-                </a>
-            `).join('');
-        }
 
         // ページ読み込み時にキャッシュをクリアして新しく取得
         const oldCache = localStorage.getItem(CACHE_KEY);
@@ -1176,10 +1502,8 @@
             }
         }
 
-        // グローバルに公開（デバッグ用）
-        window.loadYouTubeVideos = loadYouTubeVideos;
-
-        loadYouTubeVideos();
+        // 動画読み込み実行
+        window.loadYouTubeVideos();
 
         // ===== コミュニティUI JavaScript =====
 

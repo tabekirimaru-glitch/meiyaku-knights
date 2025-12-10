@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ユリちゃんの漫画・動画紹介 - 片翼の盟約騎士団</title>
+    <style>
+        :root {
+            --primary-color: #2563eb;
+            --primary-dark: #1e40af;
+            --bg-light: #f8fafc;
+            --text-dark: #1e293b;
+            --text-light: #64748b;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', 'Hiragino Sans', sans-serif;
+            background: url('images/fancy_bg.jpg') center center / cover fixed;
+            min-height: 100vh;
+            color: var(--text-dark);
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 1rem;
+        }
+
+        /* ヘッダー */
+        .page-header {
+            text-align: center;
+            padding: 2rem 1rem;
+        }
+
+        .page-header h1 {
+            font-size: 1.5rem;
+            color: var(--primary-dark);
+            margin-bottom: 0.5rem;
+        }
+
+        .page-header p {
+            color: var(--text-light);
+        }
+
+        .back-link {
+            display: inline-block;
+            margin-bottom: 1rem;
+            color: var(--primary-color);
+            text-decoration: none;
+        }
+
+        .back-link:hover {
+            text-decoration: underline;
+        }
+
+        /* コンテンツカード */
+        .content-card {
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            margin-bottom: 1.5rem;
+            overflow: hidden;
+        }
+
+        .card-image {
+            width: 100%;
+            max-height: 300px;
+            object-fit: contain;
+            display: block;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        .card-image:hover {
+            transform: scale(1.02);
+        }
+
+        .manga-hint {
+            text-align: center;
+            font-size: 0.85rem;
+            color: var(--text-light);
+            margin-top: 0.5rem;
+            margin-bottom: 1rem;
+        }
+
+        /* 画像拡大モーダル */
+        .image-modal {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.95);
+            z-index: 9999;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+        }
+
+        .image-modal.active {
+            display: flex;
+        }
+
+        .image-modal img {
+            max-width: 100%;
+            max-height: 90vh;
+            object-fit: contain;
+            border-radius: 8px;
+        }
+
+        .image-modal-close {
+            position: fixed;
+            top: 1rem;
+            right: 1rem;
+            background: white;
+            border: none;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            font-size: 1.5rem;
+            cursor: pointer;
+            z-index: 10000;
+        }
+
+        .card-body {
+            padding: 1rem;
+        }
+
+        .card-title {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--primary-dark);
+            margin-bottom: 0.75rem;
+            text-align: center;
+        }
+
+        /* 横並びレイアウト */
+        .media-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.75rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .media-item {
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        .media-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        /* ショート動画ボタン */
+        .short-button {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            background: linear-gradient(135deg, #f472b6, #ec4899);
+            color: white;
+            padding: 1rem;
+            border-radius: 12px;
+            text-decoration: none;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .short-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(236, 72, 153, 0.4);
+        }
+
+        .short-button .icon {
+            font-size: 1.5rem;
+        }
+
+        /* 詳細リンク */
+        .detail-link {
+            display: block;
+            text-align: center;
+            padding: 0.75rem;
+            background: var(--bg-light);
+            border-radius: 8px;
+            color: var(--primary-color);
+            text-decoration: none;
+            font-weight: 500;
+            transition: background 0.2s;
+        }
+
+        .detail-link:hover {
+            background: #e0e7ff;
+        }
+
+        /* 空状態 */
+        .empty-state {
+            text-align: center;
+            padding: 3rem;
+            color: var(--text-light);
+        }
+
+        .empty-state .icon {
+            font-size: 4rem;
+            opacity: 0.5;
+            margin-bottom: 1rem;
+        }
+
+        /* モーダル */
+        .video-modal {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.9);
+            z-index: 9999;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+        }
+
+        .video-modal.active {
+            display: flex;
+        }
+
+        .video-modal-content {
+            position: relative;
+            width: 100%;
+            max-width: 400px;
+            aspect-ratio: 9/16;
+            background: #000;
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        .video-modal-content iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+
+        .video-modal-close {
+            position: absolute;
+            top: -50px;
+            right: 0;
+            background: white;
+            border: none;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <a href="index.html" class="back-link">← トップに戻る</a>
+
+        <div class="page-header">
+            <h1>📺 ユリちゃんの漫画・動画紹介</h1>
+            <p>漫画と動画で楽しく学ぼう！</p>
+        </div>
+
+        <div id="content-list">
+            <div class="empty-state">
+                <div class="icon">📺</div>
+                <p>読み込み中...</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- ショート動画モーダル -->
+    <div class="video-modal" id="shorts-modal">
+        <div class="video-modal-content">
+            <button class="video-modal-close" onclick="closeShortModal()">✕</button>
+            <iframe id="shorts-player" src="" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+        </div>
+    </div>
+
+    <!-- 画像拡大モーダル -->
+    <div class="image-modal" id="image-modal" onclick="closeImageModal()">
+        <button class="image-modal-close" onclick="closeImageModal()">✕</button>
+        <img id="modal-image" src="" alt="拡大画像">
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script>
+        const SUPABASE_URL = 'https://neyhxbdgcqtnyxpuuiqx.supabase.co';
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5leWh4YmRnY3F0bnl4cHV1aXF4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjUzMzE1NDcsImV4cCI6MjA4MDkwNzU0N30.5hfxRgrPI4QKZtC2UWMYOSniiaWaLMuXOFxQfN8_H7E';
+        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+        // コンテンツ読み込み
+        async function loadContent() {
+            const container = document.getElementById('content-list');
+
+            try {
+                const { data, error } = await supabase
+                    .from('media_sets')
+                    .select('*')
+                    .eq('is_active', true)
+                    .order('display_order', { ascending: true });
+
+                if (error) throw error;
+
+                if (!data || data.length === 0) {
+                    container.innerHTML = `
+                        <div class="empty-state">
+                            <div class="icon">📺</div>
+                            <p>コンテンツを準備中です</p>
+                        </div>
+                    `;
+                    return;
+                }
+
+                container.innerHTML = data.map(item => {
+                    const shortId = extractYouTubeId(item.short_video_url);
+                    const shortThumbnail = shortId ? `https://i.ytimg.com/vi/${shortId}/hqdefault.jpg` : '';
+
+                    return `
+                        <div class="content-card">
+                            <div class="card-body">
+                                <h3 class="card-title">${item.title}</h3>
+                                
+                                <div class="media-grid">
+                                    ${item.manga_image_url ? `
+                                        <div class="media-item" onclick="openImageModal('${item.manga_image_url}')" style="cursor: pointer; position: relative;">
+                                            <img src="${item.manga_image_url}" alt="${item.title}"
+                                                 style="width: 100%; height: 200px; object-fit: cover;"
+                                                 onerror="this.parentElement.style.display='none'">
+                                            <div style="position: absolute; bottom: 0; left: 0; right: 0; background: rgba(0,0,0,0.5); color: white; text-align: center; padding: 0.25rem; font-size: 0.75rem;">
+                                                👆 タップで拡大
+                                            </div>
+                                        </div>
+                                    ` : ''}
+                                    
+                                    ${item.short_video_url ? `
+                                        <div class="media-item" onclick="openShortModal('${shortId}')" style="cursor: pointer; position: relative;">
+                                            <img src="${shortThumbnail}" alt="ショート動画"
+                                                 style="width: 100%; height: 200px; object-fit: cover;"
+                                                 onerror="this.src='https://i.ytimg.com/vi/${shortId}/mqdefault.jpg'">
+                                            <div style="position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; background: rgba(0,0,0,0.3);">
+                                                <span style="background: linear-gradient(135deg, #f472b6, #ec4899); color: white; padding: 0.5rem 0.75rem; border-radius: 50px; font-weight: 600; font-size: 0.8rem; display: flex; align-items: center; gap: 0.25rem;">
+                                                    ▶ ショート
+                                                </span>
+                                            </div>
+                                        </div>
+                                    ` : ''}
+                                </div>
+                                
+                                ${item.long_video_url ? `
+                                    <a href="${item.long_video_url}" target="_blank" class="detail-link">
+                                        📺 詳細はこちらの動画をクリック →
+                                    </a>
+                                ` : ''}
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+
+            } catch (err) {
+                console.error('Error:', err);
+                container.innerHTML = `
+                    < div class= "empty-state" >
+                        <div class="icon">⚠️</div>
+                        <p>読み込みエラー</p>
+                    </div >
+                    `;
+            }
+        }
+
+        // YouTube ID抽出
+        function extractYouTubeId(url) {
+            if (!url) return '';
+            const match = url.match(/(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|watch\?v=|shorts\/))([^&?\s]+)/);
+            return match ? match[1] : '';
+        }
+
+        // ショートモーダル
+        function openShortModal(videoId) {
+            const modal = document.getElementById('shorts-modal');
+            const player = document.getElementById('shorts-player');
+            player.src = `https://www.youtube.com/embed/${videoId}?autoplay=1`;
+            modal.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeShortModal() {
+            const modal = document.getElementById('shorts-modal');
+            const player = document.getElementById('shorts-player');
+            player.src = '';
+            modal.classList.remove('active');
+            document.body.style.overflow = '';
+        }
+
+        document.getElementById('shorts-modal').addEventListener('click', function (e) {
+            if (e.target === this) closeShortModal();
+        });
+
+        // 画像モーダル
+        function openImageModal(imageUrl) {
+            const modal = document.getElementById('image-modal');
+            const img = document.getElementById('modal-image');
+            img.src = imageUrl;
+            modal.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeImageModal() {
+            const modal = document.getElementById('image-modal');
+            modal.classList.remove('active');
+            document.body.style.overflow = '';
+        }
+
+        // 初期読み込み
+        loadContent();
+    </script>
+</body>
+
+</html>

@@ -340,6 +340,113 @@
                 <div class="empty-state">読み込み中...</div>
             </div>
         </div>
+
+        <!-- おすすめコンテンツ管理 -->
+        <div class="posts-section" style="margin-top: 2rem;">
+            <h2>📌 おすすめコンテンツ管理</h2>
+
+            <!-- 追加フォーム -->
+            <div style="background: #f8fafc; padding: 1rem; border-radius: 8px; margin-bottom: 1.5rem;">
+                <h3 style="font-size: 1rem; margin-bottom: 1rem;">➕ 新規追加</h3>
+                <form id="recommend-form"
+                    style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem;">
+                    <div class="form-group">
+                        <label>カテゴリ</label>
+                        <select id="rec-category" class="form-input" required>
+                            <option value="book">📚 本</option>
+                            <option value="youtube">🎬 YouTube</option>
+                            <option value="music">🎵 音楽</option>
+                            <option value="quote">💬 名言</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>タイトル</label>
+                        <input type="text" id="rec-title" class="form-input" placeholder="例：離婚調停マニュアル" required>
+                    </div>
+                    <div class="form-group">
+                        <label>著者/チャンネル名</label>
+                        <input type="text" id="rec-author" class="form-input" placeholder="例：山田太郎">
+                    </div>
+                    <div class="form-group">
+                        <label>URL（任意）</label>
+                        <input type="url" id="rec-url" class="form-input" placeholder="https://...">
+                    </div>
+                    <div class="form-group" style="grid-column: 1 / -1;">
+                        <label>説明・コメント</label>
+                        <input type="text" id="rec-description" class="form-input" placeholder="おすすめポイント">
+                    </div>
+                    <div>
+                        <button type="submit" class="btn btn-primary">追加</button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- カテゴリタブ -->
+            <div class="tabs" id="recommend-tabs">
+                <button class="tab active" data-category="book">📚 本</button>
+                <button class="tab" data-category="youtube">🎬 YouTube</button>
+                <button class="tab" data-category="music">🎵 音楽</button>
+                <button class="tab" data-category="quote">💬 名言</button>
+            </div>
+
+            <div id="recommend-list">
+                <div class="empty-state">読み込み中...</div>
+            </div>
+        </div>
+
+        <!-- メディアセット管理 -->
+        <div class="posts-section" style="margin-top: 2rem;">
+            <h2>📺 メディアセット管理</h2>
+            <p style="color: var(--text-light); margin-bottom: 1rem;">漫画バナー + ショート動画 + ロング動画を1セットで管理</p>
+
+            <!-- 追加フォーム -->
+            <div
+                style="background: #fffbeb; padding: 1.5rem; border-radius: 8px; margin-bottom: 1.5rem; border: 1px solid #fcd34d;">
+                <h3 style="font-size: 1rem; margin-bottom: 1rem;">➕ 新しいセットを追加</h3>
+                <form id="media-set-form">
+                    <div style="display: grid; gap: 1rem; margin-bottom: 1rem;">
+                        <div class="form-group">
+                            <label>📝 セット名（タイトル）</label>
+                            <input type="text" id="set-title" class="form-input" placeholder="例：連れ去り別居 第1話" required>
+                        </div>
+                        <div class="form-group">
+                            <label>🖼️ 漫画バナー画像</label>
+                            <input type="file" id="set-manga-file" class="form-input" accept="image/*"
+                                style="padding: 0.5rem;">
+                            <input type="hidden" id="set-manga-image">
+                            <div id="upload-preview" style="margin-top: 0.5rem; display: none;">
+                                <img id="preview-img" src="" alt="プレビュー" style="max-width: 200px; border-radius: 8px;">
+                                <p id="upload-status"
+                                    style="font-size: 0.85rem; color: var(--success); margin-top: 0.25rem;"></p>
+                            </div>
+                            <small style="color: var(--text-light);">※JPG, PNG形式推奨</small>
+                        </div>
+                        <div class="form-group">
+                            <label>⏱️ ショート動画URL（タップで即再生）</label>
+                            <input type="url" id="set-short-url" class="form-input"
+                                placeholder="https://youtube.com/shorts/...">
+                        </div>
+                        <div class="form-group">
+                            <label>🎬 ロング動画URL（詳細はこちらリンク）</label>
+                            <input type="url" id="set-long-url" class="form-input"
+                                placeholder="https://youtube.com/watch?v=...">
+                        </div>
+                        <div class="form-group">
+                            <label>表示順</label>
+                            <input type="number" id="set-order" class="form-input" value="0" min="0"
+                                style="width: 100px;">
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-primary">セットを追加</button>
+                </form>
+            </div>
+
+            <!-- セット一覧 -->
+            <h3 style="margin-bottom: 1rem;">📋 登録済みセット</h3>
+            <div id="media-sets-list">
+                <div class="empty-state">読み込み中...</div>
+            </div>
+        </div>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -347,7 +454,7 @@
         // ===== Supabase設定 =====
         const SUPABASE_URL = 'https://neyhxbdgcqtnyxpuuiqx.supabase.co';
         const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5leWh4YmRnY3F0bnl4cHV1aXF4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjUzMzE1NDcsImV4cCI6MjA4MDkwNzU0N30.5hfxRgrPI4QKZtC2UWMYOSniiaWaLMuXOFxQfN8_H7E';
-        const ADMIN_PASSWORD = 'meiyaku2024'; // 本番環境では環境変数等で管理
+        const ADMIN_PASSWORD = 'kanae5559'; // 管理者パスワード
 
         const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
@@ -515,6 +622,313 @@
             const div = document.createElement('div');
             div.textContent = text;
             return div.innerHTML;
+        }
+
+        // ===== おすすめコンテンツ管理 =====
+        let currentRecCategory = 'book';
+
+        // カテゴリタブ
+        document.querySelectorAll('#recommend-tabs .tab').forEach(tab => {
+            tab.addEventListener('click', () => {
+                document.querySelectorAll('#recommend-tabs .tab').forEach(t => t.classList.remove('active'));
+                tab.classList.add('active');
+                currentRecCategory = tab.dataset.category;
+                loadRecommendations();
+            });
+        });
+
+        // おすすめ追加フォーム
+        document.getElementById('recommend-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const data = {
+                category: document.getElementById('rec-category').value,
+                title: document.getElementById('rec-title').value,
+                author: document.getElementById('rec-author').value || null,
+                url: document.getElementById('rec-url').value || null,
+                description: document.getElementById('rec-description').value || null,
+                is_active: true
+            };
+
+            try {
+                const { error } = await supabase
+                    .from('recommendations')
+                    .insert(data);
+
+                if (error) throw error;
+
+                alert('追加しました！');
+                document.getElementById('recommend-form').reset();
+                // タブを追加したカテゴリに切り替え
+                currentRecCategory = data.category;
+                document.querySelectorAll('#recommend-tabs .tab').forEach(t => {
+                    t.classList.toggle('active', t.dataset.category === data.category);
+                });
+                await loadRecommendations();
+            } catch (error) {
+                alert('追加エラー: ' + error.message);
+            }
+        });
+
+        // おすすめ一覧読み込み
+        async function loadRecommendations() {
+            const container = document.getElementById('recommend-list');
+
+            try {
+                const { data, error } = await supabase
+                    .from('recommendations')
+                    .select('*')
+                    .eq('category', currentRecCategory)
+                    .order('display_order', { ascending: true });
+
+                if (error) throw error;
+
+                if (!data || data.length === 0) {
+                    container.innerHTML = '<div class="empty-state">このカテゴリにはまだコンテンツがありません</div>';
+                    return;
+                }
+
+                const categoryIcons = {
+                    book: '📚',
+                    youtube: '🎬',
+                    music: '🎵',
+                    quote: '💬'
+                };
+
+                container.innerHTML = data.map(item => `
+                    <div class="post-item" style="display: flex; justify-content: space-between; align-items: center;">
+                        <div>
+                            <strong>${categoryIcons[item.category]} ${escapeHtml(item.title)}</strong>
+                            ${item.author ? `<span style="color: var(--text-light);"> / ${escapeHtml(item.author)}</span>` : ''}
+                            ${item.description ? `<p style="margin: 0.25rem 0; font-size: 0.9rem; color: var(--text-light);">${escapeHtml(item.description)}</p>` : ''}
+                            ${item.url ? `<a href="${item.url}" target="_blank" style="font-size: 0.85rem;">🔗 リンク</a>` : ''}
+                        </div>
+                        <div style="display: flex; gap: 0.5rem;">
+                            <button class="btn btn-sm ${item.is_active ? 'btn-warning' : 'btn-success'}" onclick="toggleRecommendation('${item.id}', ${!item.is_active})">
+                                ${item.is_active ? '非表示' : '表示'}
+                            </button>
+                            <button class="btn btn-danger btn-sm" onclick="deleteRecommendation('${item.id}')">削除</button>
+                        </div>
+                    </div>
+                `).join('');
+            } catch (error) {
+                console.error('おすすめ読み込みエラー:', error);
+                container.innerHTML = `<div class="empty-state" style="color: var(--danger);">エラー: ${error.message}</div>`;
+            }
+        }
+
+        // おすすめ表示切り替え
+        async function toggleRecommendation(id, isActive) {
+            try {
+                const { error } = await supabase
+                    .from('recommendations')
+                    .update({ is_active: isActive })
+                    .eq('id', id);
+
+                if (error) throw error;
+                await loadRecommendations();
+            } catch (error) {
+                alert('更新エラー: ' + error.message);
+            }
+        }
+
+        // おすすめ削除
+        async function deleteRecommendation(id) {
+            if (!confirm('本当に削除しますか？')) return;
+
+            try {
+                const { error } = await supabase
+                    .from('recommendations')
+                    .delete()
+                    .eq('id', id);
+
+                if (error) throw error;
+                await loadRecommendations();
+            } catch (error) {
+                alert('削除エラー: ' + error.message);
+            }
+        }
+
+        // ダッシュボード読み込み時におすすめも読み込む
+        const originalLoadDashboard = loadDashboard;
+        loadDashboard = async function () {
+            await originalLoadDashboard();
+            await loadRecommendations();
+            await loadMediaSets();
+        };
+
+        // ===== メディアセット管理 =====
+
+        // 画像アップロード処理
+        const STORAGE_BUCKET = 'media-images';
+
+        document.getElementById('set-manga-file').addEventListener('change', async (e) => {
+            const file = e.target.files[0];
+            if (!file) return;
+
+            const preview = document.getElementById('upload-preview');
+            const previewImg = document.getElementById('preview-img');
+            const status = document.getElementById('upload-status');
+            const hiddenInput = document.getElementById('set-manga-image');
+
+            // プレビュー表示
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                previewImg.src = e.target.result;
+                preview.style.display = 'block';
+                status.textContent = '⏳ アップロード中...';
+                status.style.color = 'var(--warning)';
+            };
+            reader.readAsDataURL(file);
+
+            // Supabase Storageにアップロード
+            try {
+                // ファイル拡張子を取得
+                const ext = file.name.split('.').pop().toLowerCase();
+                const fileName = `manga${Date.now()}.${ext}`;
+
+                const { data, error } = await supabase.storage
+                    .from(STORAGE_BUCKET)
+                    .upload(fileName, file, {
+                        cacheControl: '3600',
+                        upsert: false
+                    });
+
+                if (error) throw error;
+
+                // 公開URLを取得
+                const { data: urlData } = supabase.storage
+                    .from(STORAGE_BUCKET)
+                    .getPublicUrl(fileName);
+
+                hiddenInput.value = urlData.publicUrl;
+                status.textContent = '✅ アップロード完了！';
+                status.style.color = 'var(--success)';
+            } catch (error) {
+                console.error('Upload error:', error);
+                status.textContent = '❌ エラー: ' + error.message;
+                status.style.color = 'var(--danger)';
+            }
+        });
+
+        // メディアセット追加フォーム
+        document.getElementById('media-set-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const data = {
+                title: document.getElementById('set-title').value,
+                manga_image_url: document.getElementById('set-manga-image').value || null,
+                short_video_url: document.getElementById('set-short-url').value || null,
+                long_video_url: document.getElementById('set-long-url').value || null,
+                display_order: parseInt(document.getElementById('set-order').value) || 0,
+                is_active: true
+            };
+
+            try {
+                const { error } = await supabase
+                    .from('media_sets')
+                    .insert(data);
+
+                if (error) throw error;
+
+                alert('セットを追加しました！');
+                document.getElementById('media-set-form').reset();
+                await loadMediaSets();
+            } catch (error) {
+                alert('追加エラー: ' + error.message);
+            }
+        });
+
+        // メディアセット一覧読み込み
+        async function loadMediaSets() {
+            const container = document.getElementById('media-sets-list');
+
+            try {
+                const { data, error } = await supabase
+                    .from('media_sets')
+                    .select('*')
+                    .order('display_order', { ascending: true });
+
+                if (error) throw error;
+
+                if (!data || data.length === 0) {
+                    container.innerHTML = '<div class="empty-state">まだセットが登録されていません</div>';
+                    return;
+                }
+
+                container.innerHTML = data.map(set => {
+                    const shortId = extractYouTubeId(set.short_video_url);
+                    const longId = extractYouTubeId(set.long_video_url);
+
+                    return `
+                        <div class="post-item" style="margin-bottom: 1rem;">
+                            <div style="display: flex; gap: 1rem; align-items: flex-start;">
+                                <img src="${set.manga_image_url || 'https://via.placeholder.com/150x80?text=No+Image'}" 
+                                     alt="${set.title}" 
+                                     style="width: 150px; height: 80px; object-fit: cover; border-radius: 8px;"
+                                     onerror="this.src='https://via.placeholder.com/150x80?text=No+Image'">
+                                <div style="flex: 1;">
+                                    <strong style="font-size: 1.1rem;">${escapeHtml(set.title)}</strong>
+                                    <div style="font-size: 0.85rem; color: var(--text-light); margin-top: 0.5rem;">
+                                        <div>📖 画像: ${set.manga_image_url ? '✅設定済み' : '❌未設定'}</div>
+                                        <div>⏱️ ショート: ${set.short_video_url ? `<a href="${set.short_video_url}" target="_blank">🔗</a>` : '❌未設定'}</div>
+                                        <div>🎬 ロング: ${set.long_video_url ? `<a href="${set.long_video_url}" target="_blank">🔗</a>` : '❌未設定'}</div>
+                                        <div>順序: ${set.display_order}</div>
+                                    </div>
+                                </div>
+                                <div style="display: flex; flex-direction: column; gap: 0.5rem;">
+                                    <button class="btn btn-sm ${set.is_active ? 'btn-warning' : 'btn-success'}" onclick="toggleMediaSet('${set.id}', ${!set.is_active})">
+                                        ${set.is_active ? '非表示' : '表示'}
+                                    </button>
+                                    <button class="btn btn-danger btn-sm" onclick="deleteMediaSet('${set.id}')">削除</button>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+            } catch (error) {
+                console.error('メディアセット読み込みエラー:', error);
+                container.innerHTML = `<div class="empty-state" style="color: var(--danger);">エラー: ${error.message}</div>`;
+            }
+        }
+
+        // YouTube ID抽出
+        function extractYouTubeId(url) {
+            if (!url) return '';
+            const match = url.match(/(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|watch\?v=|shorts\/))([^&?\s]+)/);
+            return match ? match[1] : '';
+        }
+
+        // メディアセット表示切り替え
+        async function toggleMediaSet(id, isActive) {
+            try {
+                const { error } = await supabase
+                    .from('media_sets')
+                    .update({ is_active: isActive })
+                    .eq('id', id);
+
+                if (error) throw error;
+                await loadMediaSets();
+            } catch (error) {
+                alert('更新エラー: ' + error.message);
+            }
+        }
+
+        // メディアセット削除
+        async function deleteMediaSet(id) {
+            if (!confirm('本当に削除しますか？')) return;
+
+            try {
+                const { error } = await supabase
+                    .from('media_sets')
+                    .delete()
+                    .eq('id', id);
+
+                if (error) throw error;
+                await loadMediaSets();
+            } catch (error) {
+                alert('削除エラー: ' + error.message);
+            }
         }
     </script>
 </body>

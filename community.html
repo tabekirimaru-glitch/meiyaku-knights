@@ -677,6 +677,64 @@
             color: var(--primary-color);
         }
 
+        /* おすすめカード新スタイル */
+        .recommend-category {
+            margin-bottom: 2rem;
+        }
+
+        .recommend-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+            gap: 1rem;
+        }
+
+        .recommend-item-card {
+            background: white;
+            border-radius: 12px;
+            padding: 1rem;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+            transition: all 0.2s;
+            border: 1px solid #e5e7eb;
+        }
+
+        .recommend-item-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+            border-color: var(--primary-color);
+        }
+
+        .recommend-item-title {
+            font-weight: 600;
+            color: var(--text-dark);
+            margin-bottom: 0.25rem;
+            font-size: 0.95rem;
+        }
+
+        .recommend-item-author {
+            color: var(--text-light);
+            font-size: 0.85rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .recommend-item-desc {
+            color: var(--text-light);
+            font-size: 0.85rem;
+            line-height: 1.4;
+            margin-bottom: 0.5rem;
+        }
+
+        .recommend-item-link {
+            display: inline-block;
+            color: var(--primary-color);
+            font-size: 0.85rem;
+            text-decoration: none;
+            margin-top: 0.5rem;
+        }
+
+        .recommend-item-link:hover {
+            text-decoration: underline;
+        }
+
         /* モバイル対応 */
         @media (max-width: 768px) {
             .header-logo span {
@@ -1581,89 +1639,114 @@
         //     // 3回検知でブロック処理
         // }
 
-        // ===== おすすめコンテンツ読み込み =====
+        // ===== おすすめコンテンツ読み込み（Supabaseから取得） =====
         async function loadRecommendations() {
             const grid = document.getElementById('recommendGrid');
+
             try {
-                const response = await fetch('data/recommendations.json');
-                const data = await response.json();
+                // Supabaseからアクティブなおすすめを取得
+                const { data, error } = await supabase
+                    .from('recommendations')
+                    .select('*')
+                    .eq('is_active', true)
+                    .order('display_order', { ascending: true });
+
+                if (error) throw error;
+
+                if (!data || data.length === 0) {
+                    // フォールバック: ローカルJSONを使用
+                    console.log('Supabaseにデータがないため、ローカルJSONを使用');
+                    const response = await fetch('data/recommendations.json');
+                    const localData = await response.json();
+                    renderLocalRecommendations(localData);
+                    return;
+                }
+
+                // カテゴリごとにグループ化
+                const grouped = {
+                    book: data.filter(d => d.category === 'book'),
+                    youtube: data.filter(d => d.category === 'youtube'),
+                    music: data.filter(d => d.category === 'music'),
+                    quote: data.filter(d => d.category === 'quote')
+                };
+
+                const categoryInfo = {
+                    book: { icon: '📚', title: 'おすすめ本' },
+                    youtube: { icon: '🎬', title: 'おすすめYouTube' },
+                    music: { icon: '🎵', title: '元気が出る音楽' },
+                    quote: { icon: '💬', title: '元気が出る言葉' }
+                };
 
                 let html = '';
 
-                // 本
-                if (data.books && data.books.length > 0) {
-                    html += `
-                        <div class="recommend-card">
-                            <h4>📚 おすすめ本</h4>
-                            <ul class="recommend-list">
-                                ${data.books.map(book => `
-                                    <li><a href="${book.url}" target="_blank">${book.title}</a>
-                                        <small style="display: block; color: var(--text-light);">${book.author}</small>
-                                    </li>
-                                `).join('')}
-                            </ul>
-                        </div>
-                    `;
+                for (const [category, items] of Object.entries(grouped)) {
+                    if (items.length > 0) {
+                        const info = categoryInfo[category];
+                        html += `
+                            <div class="recommend-category">
+                                <h4 style="margin-bottom: 1rem; color: var(--primary-dark);">${info.icon} ${info.title}</h4>
+                                <div class="recommend-cards">
+                                    ${items.map(item => `
+                                        <div class="recommend-item-card">
+                                            <div class="recommend-item-title">${item.title}</div>
+                                            ${item.author ? `<div class="recommend-item-author">${item.author}</div>` : ''}
+                                            ${item.description ? `<div class="recommend-item-desc">${item.description}</div>` : ''}
+                                            ${item.url ? `<a href="${item.url}" target="_blank" class="recommend-item-link">🔗 詳しく見る</a>` : ''}
+                                        </div>
+                                    `).join('')}
+                                </div>
+                            </div>
+                        `;
+                    }
                 }
 
-                // YouTube
-                if (data.youtube && data.youtube.length > 0) {
-                    html += `
-                        <div class="recommend-card">
-                            <h4>🎬 おすすめYouTube</h4>
-                            <ul class="recommend-list">
-                                ${data.youtube.map(ch => `
-                                    <li><a href="${ch.url}" target="_blank">${ch.title}</a>
-                                        <small style="display: block; color: var(--text-light);">${ch.description}</small>
-                                    </li>
-                                `).join('')}
-                            </ul>
-                        </div>
-                    `;
-                }
+                grid.innerHTML = html || '<div style="color: var(--text-light);">まだコンテンツがありません</div>';
+                console.log('Supabaseからおすすめコンテンツを読み込みました');
 
-                // 音楽
-                if (data.music && data.music.length > 0) {
-                    html += `
-                        <div class="recommend-card">
-                            <h4>🎵 元気が出る音楽</h4>
-                            <ul class="recommend-list">
-                                ${data.music.map(m => `
-                                    <li><strong>${m.title}</strong>（${m.artist}）
-                                        <small style="display: block; color: var(--text-light);">${m.comment}</small>
-                                    </li>
-                                `).join('')}
-                            </ul>
-                        </div>
-                    `;
-                }
-
-                // 名言
-                if (data.quotes && data.quotes.length > 0) {
-                    html += `
-                        <div class="recommend-card">
-                            <h4>💬 元気が出る言葉</h4>
-                            <ul class="recommend-list">
-                                ${data.quotes.map(q => `
-                                    <li>「${q.text}」
-                                        <small style="display: block; color: var(--text-light);">— ${q.author}</small>
-                                    </li>
-                                `).join('')}
-                            </ul>
-                        </div>
-                    `;
-                }
-
-                grid.innerHTML = html;
-                console.log('おすすめコンテンツを読み込みました');
             } catch (error) {
                 console.error('おすすめ読み込みエラー:', error);
-                grid.innerHTML = `
-                    <div style="text-align: center; padding: 2rem; color: #dc2626;">
-                        おすすめコンテンツを読み込めませんでした
-                    </div>
-                `;
+                // フォールバック
+                try {
+                    const response = await fetch('data/recommendations.json');
+                    const localData = await response.json();
+                    renderLocalRecommendations(localData);
+                } catch (e) {
+                    grid.innerHTML = `
+                        <div style="text-align: center; padding: 2rem; color: #dc2626;">
+                            おすすめコンテンツを読み込めませんでした
+                        </div>
+                    `;
+                }
             }
+        }
+
+        // ローカルJSON用の描画関数（フォールバック）
+        function renderLocalRecommendations(data) {
+            const grid = document.getElementById('recommendGrid');
+            let html = '';
+
+            if (data.books && data.books.length > 0) {
+                html += `<div class="recommend-category"><h4>📚 おすすめ本</h4><div class="recommend-cards">
+                    ${data.books.map(b => `<div class="recommend-item-card"><div class="recommend-item-title">${b.title}</div><div class="recommend-item-author">${b.author}</div>${b.url ? `<a href="${b.url}" target="_blank" class="recommend-item-link">🔗</a>` : ''}</div>`).join('')}
+                </div></div>`;
+            }
+            if (data.youtube && data.youtube.length > 0) {
+                html += `<div class="recommend-category"><h4>🎬 おすすめYouTube</h4><div class="recommend-cards">
+                    ${data.youtube.map(y => `<div class="recommend-item-card"><div class="recommend-item-title">${y.title}</div><div class="recommend-item-desc">${y.description}</div>${y.url ? `<a href="${y.url}" target="_blank" class="recommend-item-link">🔗</a>` : ''}</div>`).join('')}
+                </div></div>`;
+            }
+            if (data.music && data.music.length > 0) {
+                html += `<div class="recommend-category"><h4>🎵 元気が出る音楽</h4><div class="recommend-cards">
+                    ${data.music.map(m => `<div class="recommend-item-card"><div class="recommend-item-title">${m.title}</div><div class="recommend-item-author">${m.artist}</div><div class="recommend-item-desc">${m.comment}</div></div>`).join('')}
+                </div></div>`;
+            }
+            if (data.quotes && data.quotes.length > 0) {
+                html += `<div class="recommend-category"><h4>💬 元気が出る言葉</h4><div class="recommend-cards">
+                    ${data.quotes.map(q => `<div class="recommend-item-card"><div class="recommend-item-title">「${q.text}」</div><div class="recommend-item-author">— ${q.author}</div></div>`).join('')}
+                </div></div>`;
+            }
+
+            grid.innerHTML = html;
         }
 
         // ページ読み込み時に実行

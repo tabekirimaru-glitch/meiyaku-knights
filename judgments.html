@@ -229,7 +229,7 @@
             <nav class="header-nav">
                 <a href="index.html">ホーム</a>
                 <a href="judgments.html" class="active">判決DB</a>
-                <a href="index.html#action">行動する</a>
+                <a href="child-cases.html">事件DB</a>
                 <a href="https://www.meiyaku-knights.jp/" target="_blank">ブログ</a>
             </nav>
         </div>
@@ -301,19 +301,17 @@
     <script>
         let judgments = [];
 
+        // 基本タグ（常に表示される）
         const tagCategories = {
-            "📍 都道府県": ["東京", "大阪", "愛知", "福岡", "北海道", "神奈川", "埼玉", "千葉", "兵庫", "京都", "広島", "宮城", "沖縄"],
-            "📅 経過期間": ["3ヶ月以内", "半年以内", "1年以上"],
-            "⚖️ 法的手続き": ["調停前", "調停中", "審判", "訴訟"],
-            "👨‍⚖️ 弁護士": ["自分弁護士あり", "本人訴訟", "相手弁護士あり"],
-            "🏷️ キーワード": ["連れ去り", "監護者指定", "引き渡し", "面会交流", "親権"],
-            "👶 子供の年齢": ["乳幼児", "小学生", "中学生以上"],
-            "🏆 結果": ["認容", "却下", "和解"],
-            "⚠️ 事件種別": ["虐待", "ネグレクト", "児童買春", "殺人"],
-            "😢 子供の被害": ["子の虐待", "子の犠牲", "重症"],
-            "👤 加害者": ["片親が原因", "別居親", "同居親", "内縁・交際相手"],
-            "🏠 家庭背景": ["不倫", "DV", "離婚係争中"],
-            "📜 法改正・制度": ["共同親権", "民法改正", "養育費制度"]
+            "📅 判決・事件の期間": ["直近6ヶ月", "直近1年", "2024年", "2023年", "2022年以前"],
+            "⚖️ 法的手続き": ["調停前", "調停中", "審判", "訴訟", "抗告"],
+            "👨‍👩‍👧 当事者": ["父親", "母親", "父親側", "母親側"],
+            "🏃 連れ去り状況": ["連れ去り", "連れ去られ", "別居親", "同居親"],
+            "🏷️ 争点": ["親権", "監護者指定", "子の引き渡し", "面会交流", "養育費"],
+            "🏆 結果": ["認容", "却下", "和解", "棄却"],
+            "👶 子供の年齢": ["乳幼児", "小学生以上", "中学生以上"],
+            "👨‍⚖️ 弁護士": ["自弁あり", "相手弁あり", "本人訴訟"],
+            "🏠 背景・状況": ["DV", "不倫", "実家介入", "精神疾患", "モラハラ"]
         };
 
         const dateRangeOptions = [
@@ -340,7 +338,6 @@
         function generateFilters(data) {
             const container = document.getElementById('dynamic-filters');
             container.innerHTML = '';
-            container.innerHTML += createDateRangeFilter();
 
             // タグの出現回数をカウント
             const tagCounts = {};
@@ -348,24 +345,25 @@
                 tagCounts[tag] = (tagCounts[tag] || 0) + 1;
             }));
 
-            // 20件以上のタグだけをフィルターに表示
-            const MIN_TAG_COUNT = 20;
-            const frequentTags = new Set(
-                Object.entries(tagCounts)
-                    .filter(([tag, count]) => count >= MIN_TAG_COUNT)
-                    .map(([tag]) => tag)
-            );
-
+            // 基本タグは常に表示（データに存在するもの）
+            const usedTags = new Set();
             for (const [categoryName, definedTags] of Object.entries(tagCategories)) {
-                const existingTags = definedTags.filter(tag => frequentTags.has(tag));
+                const existingTags = definedTags.filter(tag => tagCounts[tag] && tagCounts[tag] > 0);
                 if (existingTags.length > 0) {
                     container.innerHTML += createFilterGroupHtml(categoryName, existingTags);
-                    existingTags.forEach(tag => frequentTags.delete(tag));
+                    existingTags.forEach(tag => usedTags.add(tag));
                 }
             }
 
-            if (frequentTags.size > 0) {
-                container.innerHTML += createFilterGroupHtml("✨ その他・新着タグ", Array.from(frequentTags));
+            // 20件以上のタグ（基本タグ以外）を「よく使われるタグ」として表示
+            const MIN_TAG_COUNT = 20;
+            const frequentTags = Object.entries(tagCounts)
+                .filter(([tag, count]) => count >= MIN_TAG_COUNT && !usedTags.has(tag))
+                .sort((a, b) => b[1] - a[1])
+                .map(([tag]) => tag);
+
+            if (frequentTags.length > 0) {
+                container.innerHTML += createFilterGroupHtml("🔥 よく使われるタグ", frequentTags);
             }
         }
 

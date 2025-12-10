@@ -6,6 +6,8 @@ const slides = document.querySelectorAll('.slide');
 const dots = document.querySelectorAll('.dot');
 
 function showSlide(index) {
+    if (!slides || slides.length === 0) return;
+
     // インデックスの範囲チェック
     if (index >= slides.length) {
         currentSlideIndex = 0;
@@ -20,8 +22,8 @@ function showSlide(index) {
     dots.forEach(dot => dot.classList.remove('active'));
 
     // 現在のスライドとドットをアクティブに
-    slides[currentSlideIndex].classList.add('active');
-    dots[currentSlideIndex].classList.add('active');
+    if (slides[currentSlideIndex]) slides[currentSlideIndex].classList.add('active');
+    if (dots[currentSlideIndex]) dots[currentSlideIndex].classList.add('active');
 }
 
 function changeSlide(direction) {
@@ -32,10 +34,12 @@ function currentSlide(index) {
     showSlide(index);
 }
 
-// 自動スライド（5秒ごと）
-setInterval(() => {
-    changeSlide(1);
-}, 5000);
+// 自動スライド（5秒ごと）- スライドがある場合のみ
+if (slides && slides.length > 0) {
+    setInterval(() => {
+        changeSlide(1);
+    }, 5000);
+}
 
 // ===========================
 // 統計カウンターアニメーション

@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="子供関連事件データベース - 片翼の盟約騎士団。虐待・ネグレクト・家庭内事件の記録。">
+    <title>子供関連事件データベース | 片翼の盟約騎士団</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .db-header {
+            background: linear-gradient(135deg, #7c3aed 0%, #a855f7 100%);
+            padding: 3rem 0;
+            color: white;
+            text-align: center;
+        }
+
+        .db-container {
+            display: flex;
+            gap: 2rem;
+            padding: 3rem 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+            align-items: flex-start;
+        }
+
+        .search-sidebar {
+            flex: 0 0 280px;
+            background: white;
+            padding: 1.5rem;
+            border-radius: 16px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            border-top: 5px solid #a855f7;
+            position: sticky;
+            top: 100px;
+        }
+
+        .filter-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .filter-title {
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            color: #7c3aed;
+        }
+
+        .filter-options {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .checkbox-label {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            cursor: pointer;
+            font-size: 0.95rem;
+        }
+
+        .search-btn {
+            width: 100%;
+            padding: 0.8rem;
+            background: #7c3aed;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        .search-btn:hover {
+            background: #6d28d9;
+        }
+
+        .results-area {
+            flex: 1;
+        }
+
+        .results-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .case-card {
+            background: white;
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            border-left: 4px solid #a855f7;
+        }
+
+        .case-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
+        }
+
+        .case-meta {
+            display: flex;
+            gap: 1rem;
+            font-size: 0.85rem;
+            color: #64748b;
+            margin-bottom: 0.5rem;
+        }
+
+        .case-title {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: #7c3aed;
+            margin-bottom: 1rem;
+        }
+
+        .case-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .tag {
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            background: #f3e8ff;
+            color: #7c3aed;
+        }
+
+        .tag-danger {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        .case-summary {
+            background: #f8fafc;
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+            font-size: 0.95rem;
+        }
+
+        .case-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: #7c3aed;
+            text-decoration: none;
+            font-weight: 700;
+        }
+
+        .case-link:hover {
+            text-decoration: underline;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 3rem;
+            color: #64748b;
+        }
+
+        .empty-state .icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+
+        @media (max-width: 768px) {
+            .db-container {
+                flex-direction: column;
+            }
+
+            .search-sidebar {
+                width: 100%;
+                position: static;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <header class="header">
+        <div class="container">
+            <div class="logo">
+                <img src="images/shield-emblem.png" alt="片翼の盟約騎士団" class="logo-emblem">
+                <div class="logo-text">
+                    <h1>片翼の盟約騎士団</h1>
+                    <p class="tagline">One-Winged Knights Covenant</p>
+                </div>
+            </div>
+            <nav class="header-nav">
+                <a href="index.html">ホーム</a>
+                <a href="judgments.html">判決DB</a>
+                <a href="child-cases.html" class="active">事件DB</a>
+            </nav>
+        </div>
+    </header>
+
+    <div class="db-header">
+        <div class="container">
+            <h2 style="font-size: 2rem; margin-bottom: 0.5rem;">👶 子供関連事件データベース</h2>
+            <p>虐待・ネグレクト・家庭内事件の記録と教訓</p>
+            <p style="margin-top: 1rem; font-size: 0.9rem; opacity: 0.9;">
+                🤖 毎週自動更新
+            </p>
+        </div>
+    </div>
+
+    <div class="db-container">
+        <aside class="search-sidebar">
+            <h3 style="margin-bottom: 1.5rem; color: #6d28d9;">🔍 条件で絞り込む</h3>
+
+            <div id="dynamic-filters">
+                <p style="color: #666; font-size: 0.9rem;">読み込み中...</p>
+            </div>
+
+            <button class="search-btn" onclick="filterCases()">検索する</button>
+        </aside>
+
+        <main class="results-area">
+            <div class="results-header">
+                <div style="font-weight: 700; color: #64748b;">
+                    <span id="count">0</span> 件の事件が見つかりました
+                </div>
+                <select style="padding: 0.5rem; border-radius: 4px;" onchange="sortCases(this.value)">
+                    <option value="newest">新しい順</option>
+                    <option value="oldest">古い順</option>
+                </select>
+            </div>
+
+            <div id="case-list">
+                <div class="empty-state">
+                    <div class="icon">📊</div>
+                    <p>読み込み中...</p>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-bottom">
+                <p>&copy; 2025 片翼の盟約騎士団. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        let cases = [];
+        let filteredCases = [];
+
+        const tagCategories = {
+            "⚠️ 事件種別": ["虐待", "ネグレクト", "暴行", "傷害", "死亡事件", "心中"],
+            "👤 加害者": ["実父", "実母", "継父", "継母", "内縁", "交際相手"],
+            "📋 結果": ["逮捕", "書類送検", "起訴", "保護", "児童相談所"],
+            "📅 年度": ["2024年", "2023年", "2022年以前"]
+        };
+
+        async function fetchCases() {
+            try {
+                const response = await fetch('data/child-cases.json');
+                if (!response.ok) throw new Error('データの取得に失敗しました');
+                cases = await response.json();
+
+                if (cases.length === 0) {
+                    document.getElementById('case-list').innerHTML = `
+                        <div class="empty-state">
+                            <div class="icon">📊</div>
+                            <p>データ収集中です。次回の自動更新をお待ちください。</p>
+                        </div>
+                    `;
+                    document.getElementById('dynamic-filters').innerHTML = '<p style="color: #666;">データがまだありません</p>';
+                    return;
+                }
+
+                generateFilters(cases);
+                filterCases();
+            } catch (error) {
+                console.error('Error:', error);
+                document.getElementById('case-list').innerHTML = `
+                    <div class="empty-state">
+                        <div class="icon">⚠️</div>
+                        <p>データの読み込みに失敗しました</p>
+                    </div>
+                `;
+            }
+        }
+
+        function generateFilters(data) {
+            const container = document.getElementById('dynamic-filters');
+            container.innerHTML = '';
+
+            const tagCounts = {};
+            data.forEach(item => item.tags.forEach(tag => {
+                tagCounts[tag] = (tagCounts[tag] || 0) + 1;
+            }));
+
+            for (const [categoryName, definedTags] of Object.entries(tagCategories)) {
+                const existingTags = definedTags.filter(tag => tagCounts[tag] && tagCounts[tag] > 0);
+                if (existingTags.length > 0) {
+                    container.innerHTML += createFilterGroupHtml(categoryName, existingTags);
+                }
+            }
+
+            // その他のタグ
+            const usedTags = new Set(Object.values(tagCategories).flat());
+            const otherTags = Object.keys(tagCounts).filter(tag => !usedTags.has(tag));
+            if (otherTags.length > 0) {
+                container.innerHTML += createFilterGroupHtml("🏷️ その他", otherTags.slice(0, 10));
+            }
+        }
+
+        function createFilterGroupHtml(title, tags) {
+            const optionsHtml = tags.map(tag => `
+                <label class="checkbox-label">
+                    <input type="checkbox" value="${tag}" onchange="filterCases()"> ${tag}
+                </label>
+            `).join('');
+            return `<div class="filter-group"><div class="filter-title">${title}</div><div class="filter-options">${optionsHtml}</div></div>`;
+        }
+
+        function filterCases() {
+            const checkboxes = document.querySelectorAll('.checkbox-label input:checked');
+            const selectedTags = Array.from(checkboxes).map(cb => cb.value);
+
+            filteredCases = selectedTags.length === 0
+                ? [...cases]
+                : cases.filter(item => selectedTags.some(tag => item.tags.includes(tag)));
+
+            renderCases(filteredCases);
+        }
+
+        function sortCases(order) {
+            filteredCases.sort((a, b) => {
+                const dateA = new Date(a.date);
+                const dateB = new Date(b.date);
+                return order === 'newest' ? dateB - dateA : dateA - dateB;
+            });
+            renderCases(filteredCases);
+        }
+
+        function renderCases(data) {
+            const list = document.getElementById('case-list');
+            const count = document.getElementById('count');
+            list.innerHTML = '';
+            count.textContent = data.length;
+
+            if (data.length === 0) {
+                list.innerHTML = `
+                    <div class="empty-state">
+                        <div class="icon">🔍</div>
+                        <p>該当する事件は見つかりませんでした</p>
+                    </div>
+                `;
+                return;
+            }
+
+            data.forEach(item => {
+                const tagsHtml = item.tags.map(tag => {
+                    const isDanger = ['虐待', 'ネグレクト', '死亡事件', '心中', '暴行', '傷害'].includes(tag);
+                    return `<span class="tag ${isDanger ? 'tag-danger' : ''}">${tag}</span>`;
+                }).join('');
+
+                list.innerHTML += `
+                    <div class="case-card">
+                        <div class="case-meta">
+                            <span>📅 ${item.date}</span>
+                            <span>📍 ${item.location || '不明'}</span>
+                            ${item.source ? `<span>📰 ${item.source}</span>` : ''}
+                        </div>
+                        <h3 class="case-title">${item.title}</h3>
+                        <div class="case-tags">${tagsHtml}</div>
+                        <div class="case-summary"><p>${item.summary}</p></div>
+                        ${item.url && item.url !== '#'
+                        ? `<a href="${item.url}" target="_blank" class="case-link">記事を見る ↗</a>`
+                        : ''}
+                    </div>
+                `;
+            });
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            fetchCases();
+        });
+    </script>
+</body>
+
+</html>
