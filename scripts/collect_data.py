@@ -203,8 +203,8 @@ def main():
     # 判例データ収集
     collect_judgments()
     
-    # 子供関連事件データ収集
-    collect_child_cases()
+    # 子供関連事件データ収集は停止（URLの信頼性問題のため）
+    # collect_child_cases()
     
     print("=" * 50)
     print("✅ データ収集完了!")
