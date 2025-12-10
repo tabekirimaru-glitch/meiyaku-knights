@@ -251,10 +251,14 @@
         let cases = [];
         let filteredCases = [];
 
+        // 基本タグカテゴリ（判例ページと同様の構造）
         const tagCategories = {
-            "⚠️ 事件種別": ["虐待", "ネグレクト", "暴行", "傷害", "死亡事件", "心中"],
-            "👤 加害者": ["実父", "実母", "継父", "継母", "内縁", "交際相手"],
-            "📋 結果": ["逮捕", "書類送検", "起訴", "保護", "児童相談所"],
+            "📍 都道府県": ["北海道", "東京", "神奈川", "埼玉", "千葉", "愛知", "大阪", "京都", "兵庫", "福岡", "沖縄"],
+            "⚠️ 事件種別": ["虐待", "ネグレクト", "暴行", "傷害", "死亡事件", "心中", "性的虐待", "監禁"],
+            "👤 加害者": ["実父", "実母", "継父", "継母", "内縁", "交際相手", "祖父母", "親族"],
+            "👶 被害者": ["乳幼児", "小学生", "中学生", "高校生", "複数"],
+            "📋 結果": ["逮捕", "書類送検", "起訴", "保護", "死亡", "重傷"],
+            "🏢 機関": ["児童相談所", "警察", "学校", "病院", "近隣通報"],
             "📅 年度": ["2024年", "2023年", "2022年以前"]
         };
 
@@ -292,15 +296,35 @@
             const container = document.getElementById('dynamic-filters');
             container.innerHTML = '';
 
+            // タグカウント
             const tagCounts = {};
             data.forEach(item => item.tags.forEach(tag => {
                 tagCounts[tag] = (tagCounts[tag] || 0) + 1;
             }));
 
+            // 都道府県カウント（locationから抽出）
+            const locationCounts = {};
+            data.forEach(item => {
+                if (item.location) {
+                    // "〇〇県"や"東京都"などから都道府県名を抽出
+                    const pref = item.location.replace(/県|府|都|道/g, '');
+                    locationCounts[pref] = (locationCounts[pref] || 0) + 1;
+                }
+            });
+
+            // 都道府県フィルター（データに存在するもの）
+            const prefList = tagCategories["📍 都道府県"];
+            const existingPrefs = prefList.filter(pref => locationCounts[pref] && locationCounts[pref] > 0);
+            if (existingPrefs.length > 0) {
+                container.innerHTML += createFilterGroupHtml("📍 都道府県", existingPrefs, "location");
+            }
+
+            // 他のタグカテゴリ
             for (const [categoryName, definedTags] of Object.entries(tagCategories)) {
+                if (categoryName === "📍 都道府県") continue; // 既に処理済み
                 const existingTags = definedTags.filter(tag => tagCounts[tag] && tagCounts[tag] > 0);
                 if (existingTags.length > 0) {
-                    container.innerHTML += createFilterGroupHtml(categoryName, existingTags);
+                    container.innerHTML += createFilterGroupHtml(categoryName, existingTags, "tag");
                 }
             }
 
@@ -308,28 +332,43 @@
             const usedTags = new Set(Object.values(tagCategories).flat());
             const otherTags = Object.keys(tagCounts).filter(tag => !usedTags.has(tag));
             if (otherTags.length > 0) {
-                container.innerHTML += createFilterGroupHtml("🏷️ その他", otherTags.slice(0, 10));
+                container.innerHTML += createFilterGroupHtml("🔥 よく使われるタグ", otherTags.slice(0, 10), "tag");
             }
         }
 
-        function createFilterGroupHtml(title, tags) {
+        function createFilterGroupHtml(title, tags, type = "tag") {
             const optionsHtml = tags.map(tag => `
                 <label class="checkbox-label">
-                    <input type="checkbox" value="${tag}" onchange="filterCases()"> ${tag}
+                    <input type="checkbox" value="${tag}" data-type="${type}" onchange="filterCases()"> ${tag}
                 </label>
             `).join('');
             return `<div class="filter-group"><div class="filter-title">${title}</div><div class="filter-options">${optionsHtml}</div></div>`;
         }
 
         function filterCases() {
-            const checkboxes = document.querySelectorAll('.checkbox-label input:checked');
-            const selectedTags = Array.from(checkboxes).map(cb => cb.value);
+            const tagCheckboxes = document.querySelectorAll('.checkbox-label input[data-type="tag"]:checked');
+            const locationCheckboxes = document.querySelectorAll('.checkbox-label input[data-type="location"]:checked');
+            const selectedTags = Array.from(tagCheckboxes).map(cb => cb.value);
+            const selectedLocations = Array.from(locationCheckboxes).map(cb => cb.value);
 
-            filteredCases = selectedTags.length === 0
-                ? [...cases]
-                : cases.filter(item => selectedTags.some(tag => item.tags.includes(tag)));
+            filteredCases = cases.filter(item => {
+                const tagMatch = selectedTags.length === 0 || selectedTags.some(tag => item.tags.includes(tag));
+                const locationMatch = selectedLocations.length === 0 || selectedLocations.some(loc =>
+                    item.location && item.location.includes(loc)
+                );
+                return tagMatch && locationMatch;
+            });
 
             renderCases(filteredCases);
+        }
+
+        function searchByTag(tag) {
+            const checkboxes = document.querySelectorAll('.checkbox-label input');
+            checkboxes.forEach(cb => {
+                if (cb.value === tag) cb.checked = true;
+            });
+            filterCases();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
         function sortCases(order) {
@@ -359,8 +398,8 @@
 
             data.forEach(item => {
                 const tagsHtml = item.tags.map(tag => {
-                    const isDanger = ['虐待', 'ネグレクト', '死亡事件', '心中', '暴行', '傷害'].includes(tag);
-                    return `<span class="tag ${isDanger ? 'tag-danger' : ''}">${tag}</span>`;
+                    const isDanger = ['虐待', 'ネグレクト', '死亡事件', '心中', '暴行', '傷害', '性的虐待'].includes(tag);
+                    return `<span class="tag ${isDanger ? 'tag-danger' : ''}" onclick="searchByTag('${tag}')" style="cursor: pointer;" title="このタグで検索">${tag}</span>`;
                 }).join('');
 
                 list.innerHTML += `
