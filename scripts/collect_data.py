@@ -24,7 +24,7 @@ for m in genai.list_models():
         print(f"  - {m.name}")
 
 # モデル設定
-model = genai.GenerativeModel('models/gemini-1.5-flash')
+model = genai.GenerativeModel('models/gemini-2.0-flash')
 
 # データファイルパス
 DATA_DIR = 'data'
