@@ -4,12 +4,696 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="片翼の盟約騎士団 - 子供の連れ去り別居問題に立ち向かう。情報を武器に、行動する。">
+    <meta name="description" content="片翼の盟約騎士団 - 連れ去り別居や親子断絶に苦しむ親のための総合情報プラットフォーム">
     <title>片翼の盟約騎士団 | 立ち上がれ、子供のために</title>
     <link rel="stylesheet" href="style.css">
+    <style>
+        /* Phase 1 追加スタイル - モバイルファースト */
+
+        /* ハンバーガーメニュー */
+        .hamburger {
+            display: none;
+            flex-direction: column;
+            gap: 5px;
+            cursor: pointer;
+            padding: 10px;
+            z-index: 1001;
+        }
+
+        .hamburger span {
+            width: 25px;
+            height: 3px;
+            background: var(--primary-color);
+            border-radius: 3px;
+            transition: all 0.3s;
+        }
+
+        .hamburger.active span:nth-child(1) {
+            transform: rotate(45deg) translate(6px, 6px);
+        }
+
+        .hamburger.active span:nth-child(2) {
+            opacity: 0;
+        }
+
+        .hamburger.active span:nth-child(3) {
+            transform: rotate(-45deg) translate(6px, -6px);
+        }
+
+        @media (max-width: 768px) {
+            .hamburger {
+                display: flex;
+            }
+
+            .header-nav {
+                position: fixed;
+                top: 0;
+                right: -100%;
+                width: 80%;
+                max-width: 300px;
+                height: 100vh;
+                background: white;
+                flex-direction: column;
+                padding: 80px 20px 20px;
+                box-shadow: -5px 0 20px rgba(0, 0, 0, 0.1);
+                transition: right 0.3s ease;
+                z-index: 1000;
+            }
+
+            .header-nav.active {
+                right: 0;
+            }
+
+            .header-nav a {
+                padding: 1rem;
+                border-bottom: 1px solid #eee;
+                font-size: 1.1rem;
+            }
+
+            .menu-overlay {
+                display: none;
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: rgba(0, 0, 0, 0.5);
+                z-index: 999;
+            }
+
+            .menu-overlay.active {
+                display: block;
+            }
+        }
+
+        /* カード型デザイン */
+        .content-card {
+            background: white;
+            border-radius: 16px;
+            padding: 1.5rem;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+            transition: all 0.3s ease;
+        }
+
+        .content-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
+        }
+
+        /* 判例カード */
+        .judgment-card-mini {
+            background: white;
+            border-radius: 12px;
+            padding: 1.25rem;
+            border-left: 4px solid var(--secondary-color);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.06);
+            margin-bottom: 1rem;
+        }
+
+        .judgment-card-mini h4 {
+            font-size: 1rem;
+            color: var(--primary-dark);
+            margin-bottom: 0.5rem;
+            line-height: 1.4;
+        }
+
+        .judgment-card-mini .meta {
+            font-size: 0.8rem;
+            color: var(--text-light);
+            margin-bottom: 0.5rem;
+        }
+
+        .judgment-card-mini .tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.3rem;
+        }
+
+        .judgment-card-mini .tag {
+            padding: 0.2rem 0.6rem;
+            background: var(--bg-light);
+            border-radius: 12px;
+            font-size: 0.75rem;
+            color: var(--text-dark);
+            cursor: pointer;
+        }
+
+        .judgment-card-mini .tag:hover {
+            background: var(--primary-color);
+            color: white;
+        }
+
+        /* アコーディオン */
+        .accordion {
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.06);
+        }
+
+        .accordion-header {
+            padding: 1.25rem;
+            background: #fef2f2;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-weight: 600;
+            color: #991b1b;
+            transition: background 0.3s;
+        }
+
+        .accordion-header:hover {
+            background: #fee2e2;
+        }
+
+        .accordion-header .icon {
+            transition: transform 0.3s;
+        }
+
+        .accordion.active .accordion-header .icon {
+            transform: rotate(180deg);
+        }
+
+        .accordion-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease;
+            background: white;
+        }
+
+        .accordion.active .accordion-content {
+            max-height: 500px;
+        }
+
+        .accordion-content-inner {
+            padding: 1.25rem;
+        }
+
+        /* セクション見出し */
+        .section-header {
+            margin-bottom: 1.5rem;
+        }
+
+        .section-header h2 {
+            font-size: 1.5rem;
+            color: var(--primary-dark);
+            margin-bottom: 0.5rem;
+        }
+
+        .section-header p {
+            color: var(--text-light);
+            font-size: 0.95rem;
+        }
+
+        /* ヒロハブ */
+        .sns-icons {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.75rem;
+            justify-content: center;
+        }
+
+        .sns-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            color: white;
+            text-decoration: none;
+            transition: transform 0.2s;
+        }
+
+        .sns-icon:hover {
+            transform: scale(1.1);
+        }
+
+        .sns-youtube {
+            background: #FF0000;
+        }
+
+        .sns-tiktok {
+            background: #000000;
+        }
+
+        .sns-twitter {
+            background: #1DA1F2;
+        }
+
+        .sns-note {
+            background: #41C9B4;
+        }
+
+        .sns-marshmallow {
+            background: #FF69B4;
+        }
+
+        .sns-litlink {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+        }
+
+        /* YouTube埋め込み */
+        .youtube-embed {
+            position: relative;
+            padding-bottom: 56.25%;
+            height: 0;
+            overflow: hidden;
+            border-radius: 12px;
+            margin-bottom: 1rem;
+        }
+
+        .youtube-embed iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+
+        /* YouTube カルーセル */
+        .youtube-carousel {
+            display: flex;
+            gap: 1rem;
+            overflow-x: auto;
+            scroll-snap-type: x mandatory;
+            -webkit-overflow-scrolling: touch;
+            padding-bottom: 0.5rem;
+        }
+
+        .youtube-carousel::-webkit-scrollbar {
+            height: 6px;
+        }
+
+        .youtube-carousel::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 3px;
+        }
+
+        .youtube-carousel::-webkit-scrollbar-thumb {
+            background: #ccc;
+            border-radius: 3px;
+        }
+
+        .youtube-video-card {
+            flex: 0 0 280px;
+            scroll-snap-align: start;
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+            transition: transform 0.2s;
+            text-decoration: none;
+            color: inherit;
+        }
+
+        .youtube-video-card:hover {
+            transform: translateY(-3px);
+        }
+
+        .youtube-video-card img {
+            width: 100%;
+            height: 158px;
+            object-fit: cover;
+        }
+
+        .youtube-video-card .video-info {
+            padding: 0.75rem;
+        }
+
+        .youtube-video-card .video-title {
+            font-size: 0.9rem;
+            font-weight: 600;
+            line-height: 1.3;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            color: var(--text-dark);
+        }
+
+        .youtube-video-card .video-date {
+            font-size: 0.75rem;
+            color: var(--text-light);
+            margin-top: 0.25rem;
+        }
+
+        /* Coming Soon */
+        .coming-soon-box {
+            background: linear-gradient(135deg, #f0f9ff, #e0f2fe);
+            border: 2px dashed #0ea5e9;
+            border-radius: 16px;
+            padding: 2rem;
+            text-align: center;
+        }
+
+        .coming-soon-box h3 {
+            color: #0369a1;
+            margin-bottom: 0.5rem;
+        }
+
+        .coming-soon-box p {
+            color: #0284c7;
+        }
+
+        /* 相談先ボックス */
+        .hotline-box {
+            background: linear-gradient(135deg, #fefce8, #fef9c3);
+            border-left: 4px solid #eab308;
+            border-radius: 12px;
+            padding: 1.25rem;
+            margin-bottom: 1rem;
+        }
+
+        .hotline-box h4 {
+            color: #854d0e;
+            margin-bottom: 0.5rem;
+        }
+
+        .hotline-box .phone {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: #a16207;
+        }
+
+        /* ボタン最小サイズ */
+        .btn {
+            min-height: 48px;
+            min-width: 48px;
+            padding: 0.875rem 1.5rem;
+        }
+
+        /* グリッド */
+        .two-column {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 1.5rem;
+        }
+
+        @media (min-width: 768px) {
+            .two-column {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+        /* ===== コミュニティUI スタイル ===== */
+
+        /* タブ */
+        .community-tabs {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .community-tab {
+            flex: 1;
+            padding: 1rem;
+            border: none;
+            background: white;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            color: var(--text-light);
+        }
+
+        .community-tab.active {
+            background: var(--primary-color);
+            color: white;
+        }
+
+        .community-tab-content {
+            display: none;
+        }
+
+        .community-tab-content.active {
+            display: block;
+        }
+
+        /* フォーム */
+        .form-group {
+            margin-bottom: 1.25rem;
+        }
+
+        .form-label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: var(--text-dark);
+        }
+
+        .required {
+            color: #dc2626;
+            font-size: 0.8rem;
+        }
+
+        .form-input,
+        .form-select,
+        .form-textarea {
+            width: 100%;
+            padding: 0.875rem;
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: border-color 0.2s;
+        }
+
+        .form-input:focus,
+        .form-select:focus,
+        .form-textarea:focus {
+            outline: none;
+            border-color: var(--primary-color);
+        }
+
+        .form-textarea {
+            resize: vertical;
+            min-height: 120px;
+        }
+
+        /* ラジオボタン */
+        .radio-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+
+        .radio-item {
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+            padding: 0.5rem 0.75rem;
+            background: #f3f4f6;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: background 0.2s;
+        }
+
+        .radio-item:hover {
+            background: #e5e7eb;
+        }
+
+        .radio-item input {
+            margin: 0;
+        }
+
+        /* タグチップ */
+        .tag-category {
+            margin-bottom: 0.75rem;
+        }
+
+        .tag-category-label {
+            display: block;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--text-light);
+            margin-bottom: 0.5rem;
+        }
+
+        .tag-chips {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+
+        .tag-chip {
+            padding: 0.5rem 1rem;
+            border: 2px solid #d1d5db;
+            border-radius: 20px;
+            background: white;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .tag-chip:hover {
+            border-color: var(--primary-color);
+        }
+
+        .tag-chip.selected {
+            background: var(--primary-color);
+            border-color: var(--primary-color);
+            color: white;
+        }
+
+        /* 画像アップロード警告 */
+        .upload-warning {
+            background: #fef2f2;
+            border: 1px solid #fca5a5;
+            border-radius: 8px;
+            padding: 0.75rem;
+            margin-bottom: 0.75rem;
+            font-size: 0.85rem;
+            color: #dc2626;
+        }
+
+        .file-input {
+            width: 100%;
+            padding: 0.75rem;
+            border: 2px dashed #d1d5db;
+            border-radius: 8px;
+            background: #f9fafb;
+        }
+
+        .image-preview {
+            margin-top: 0.5rem;
+        }
+
+        .image-preview img {
+            max-width: 200px;
+            border-radius: 8px;
+        }
+
+        /* フィルター */
+        .list-filter {
+            display: flex;
+            gap: 0.75rem;
+            margin-bottom: 1rem;
+        }
+
+        /* 体験談リスト */
+        .experience-list {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .experience-item {
+            display: flex;
+            gap: 0.75rem;
+            padding: 1rem;
+            background: #f9fafb;
+            border-radius: 12px;
+            border-left: 4px solid var(--secondary-color);
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .experience-item:hover {
+            background: #f3f4f6;
+            transform: translateX(3px);
+        }
+
+        .experience-icon {
+            font-size: 1.5rem;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: white;
+            border-radius: 8px;
+            flex-shrink: 0;
+        }
+
+        .experience-content {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .experience-header {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            align-items: center;
+            margin-bottom: 0.25rem;
+        }
+
+        .experience-name {
+            font-weight: 700;
+            color: var(--primary-dark);
+        }
+
+        .experience-meta {
+            font-size: 0.8rem;
+            color: var(--text-light);
+        }
+
+        .experience-title {
+            font-size: 1rem;
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+            color: var(--text-dark);
+        }
+
+        .experience-summary {
+            font-size: 0.9rem;
+            color: var(--text-light);
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .experience-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.25rem;
+            margin-top: 0.5rem;
+        }
+
+        .tag-mini {
+            padding: 0.15rem 0.5rem;
+            background: #e0e7ff;
+            border-radius: 10px;
+            font-size: 0.75rem;
+            color: #4338ca;
+        }
+
+        .experience-footer {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.75rem;
+            margin-top: 0.5rem;
+            font-size: 0.8rem;
+            color: var(--text-light);
+        }
+
+        .btn-secondary {
+            background: #f3f4f6;
+            color: var(--text-dark);
+            border: 2px solid #d1d5db;
+        }
+
+        .btn-secondary:hover {
+            background: #e5e7eb;
+        }
+
+        .section-block:nth-child(even) {
+            background: var(--bg-light);
+        }
+    </style>
 </head>
 
 <body>
+    <!-- メニューオーバーレイ -->
+    <div class="menu-overlay" id="menuOverlay"></div>
+
     <!-- ヘッダー -->
     <header class="header">
         <div class="container">
@@ -20,406 +704,267 @@
                     <p class="tagline">One-Winged Knights Covenant</p>
                 </div>
             </div>
-            <nav class="header-nav">
+            <div class="hamburger" id="hamburger">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+            <nav class="header-nav" id="headerNav">
                 <a href="#home">ホーム</a>
-                <a href="#learn">学ぶ</a>
-                <a href="#action">行動する</a>
+                <a href="#judgments">判例DB</a>
+                <a href="#hiro-hub">ヒロの活動</a>
+                <a href="#community">コミュニティ</a>
+                <a href="#news">ニュース</a>
                 <a href="https://www.meiyaku-knights.jp/" target="_blank">ブログ</a>
-                <a href="#resources">リソース</a>
             </nav>
         </div>
     </header>
 
-    <!-- ヒーローセクション -->
-    <section class="hero-banner">
+    <!-- (A) ヒーローセクション -->
+    <section class="hero-banner" id="home">
         <div class="hero-image-bg"></div>
         <div class="hero-overlay"></div>
         <div class="container hero-content-wrapper">
             <div class="hero-content">
                 <img src="images/crown.png" alt="crown" class="hero-crown">
-                <h2 class="hero-title">法律も制度も<br>守ってくれないなら</h2>
+                <h2 class="hero-title">あなたは一人じゃない</h2>
                 <p class="hero-subtitle-large">
-                    私たちは自分で知って、戦わないといけない
+                    連れ去り別居・親子断絶に苦しむすべての親へ
                 </p>
                 <div class="hero-cta">
-                    <h3 class="cta-battle-cry">立ち上がれ！</h3>
-                    <p class="cta-sub">離れていても、あなたは親です</p>
+                    <p class="cta-sub">知識を武器に、仲間とともに立ち上がろう</p>
                 </div>
                 <div class="hero-buttons">
-                    <a href="#learn" class="btn btn-primary btn-knight">今すぐ学ぶ</a>
-                    <a href="#action" class="btn btn-glass btn-knight">行動を起こす</a>
+                    <a href="#guide" class="btn btn-primary btn-knight">初めての方へ</a>
+                    <a href="#judgments" class="btn btn-glass btn-knight">判例を調べる</a>
                 </div>
             </div>
-        </div>
-        <div class="action-header">
-            <img src="images/sword.png" alt="sword" class="action-sword">
-            <h2 class="section-title">私たちに何ができるのか</h2>
-            <p class="section-subtitle">情報を得たら、次は行動。具体的なアクションガイド</p>
-        </div>
-
-        <div class="action-grid">
-            <!-- Step 1 -->
-            <div class="action-step">
-                <div class="step-number">STEP 1</div>
-                <h3>まず、心を守る</h3>
-                <p>連れ去り別居は精神的に大きなダメージを与えます。まずはメンタルケアから。</p>
-                <ul class="action-list">
-                    <li>カウンセリング窓口に相談</li>
-                    <li>同じ境遇の仲間とつながる</li>
-                    <li>自分を責めない</li>
-                </ul>
-                <a href="#mental-care" class="action-btn">メンタルケア情報 →</a>
-            </div>
-
-            <!-- Step 2 -->
-            <div class="action-step">
-                <div class="step-number">STEP 2</div>
-                <h3>法律を知る</h3>
-                <p>親権、養育費、面会交流。自分の権利を正しく理解しましょう。</p>
-                <ul class="action-list">
-                    <li>無料法律相談を活用</li>
-                    <li>判決事例を調べる</li>
-                    <li>弁護士に相談</li>
-                </ul>
-                <a href="#resources" class="action-btn">法律リソース →</a>
-            </div>
-
-            <!-- Step 3 -->
-            <div class="action-step">
-                <div class="step-number">STEP 3</div>
-                <h3>声を上げる</h3>
-                <p>一人では変えられない。でも、みんなの声が集まれば社会を動かせる。</p>
-                <ul class="action-list">
-                    <li>体験談を共有する</li>
-                    <li>SNSで情報発信</li>
-                    <li>署名活動に参加</li>
-                </ul>
-                <a href="#community" class="action-btn">コミュニティに参加 →</a>
-            </div>
-        </div>
         </div>
     </section>
 
-    <!-- 学ぶセクション - 裁判例・時事ニュース -->
-    <section class="section" id="learn"
-        style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 4rem 0; color: white;">
+    <!-- 初めての方へガイド -->
+    <section class="section-block" id="guide">
         <div class="container">
-            <h2 class="section-title" style="color: white; text-shadow: 2px 2px 4px rgba(0,0,0,0.3);">📚 学ぶ：裁判例・時事ニュース
-            </h2>
-            <p class="section-subtitle" style="color: rgba(255,255,255,0.9);">
-                知識は武器。判例とニュースで戦い方を学ぼう
-                <span
-                    style="display: inline-block; margin-left: 1rem; padding: 0.3rem 1rem; background: rgba(255,255,255,0.2); border-radius: 20px; font-size: 0.85rem; font-weight: 700; backdrop-filter: blur(10px);">
-                    🤖 AI自動収集 - 週2回更新
-                </span>
-            </p>
-
-            <div
-                style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem; margin-top: 2rem;">
-                <!-- 判決データベース -->
-                <div class="glass-effect"
-                    style="padding: 2rem; border-radius: 16px; background: rgba(255,255,255,0.1); backdrop-filter: blur(10px); border: 2px solid rgba(255,255,255,0.2);">
-                    <h3
-                        style="font-size: 1.5rem; margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem;">
-                        ⚖️ 判決データベース
-                    </h3>
-                    <p style="color: rgba(255,255,255,0.9); margin-bottom: 1.5rem;">
-                        類似の判例を検索して、自分のケースと比較。勝つための戦略を立てよう。
-                    </p>
-                    <ul style="list-style: none; padding: 0; margin-bottom: 1.5rem; color: rgba(255,255,255,0.9);">
-                        <li style="margin-bottom: 0.5rem;">✓ 監護者指定・引き渡し判例</li>
-                        <li style="margin-bottom: 0.5rem;">✓ 期間・地域・結果でフィルター</li>
-                        <li style="margin-bottom: 0.5rem;">✓ 毎週AI自動更新</li>
+            <div class="section-header">
+                <h2>📖 初めての方へ</h2>
+                <p>いま何をすべきか、3つのステップで解説します</p>
+            </div>
+            <div class="action-grid">
+                <div class="action-step">
+                    <div class="step-number">STEP 1</div>
+                    <h3>まず、心を守る</h3>
+                    <p>連れ去り別居は精神的に大きなダメージを与えます。まずはメンタルケアから。</p>
+                    <ul class="action-list">
+                        <li>カウンセリング窓口に相談</li>
+                        <li>同じ境遇の仲間とつながる</li>
+                        <li>自分を責めない</li>
                     </ul>
-                    <a href="judgments.html" class="btn"
-                        style="background: white; color: #667eea; font-weight: 700; display: inline-block; padding: 0.8rem 1.5rem; border-radius: 8px; text-decoration: none; transition: all 0.3s;">
-                        判決DBを見る →
-                    </a>
                 </div>
-
-                <!-- 時事ニュース -->
-                <div class="glass-effect"
-                    style="padding: 2rem; border-radius: 16px; background: rgba(255,255,255,0.1); backdrop-filter: blur(10px); border: 2px solid rgba(255,255,255,0.2);">
-                    <h3
-                        style="font-size: 1.5rem; margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem;">
-                        📰 時事ニュース・法改正
-                    </h3>
-                    <p style="color: rgba(255,255,255,0.9); margin-bottom: 1.5rem;">
-                        共同親権、民法改正、虐待事件。最新の動きを追いかけよう。
-                    </p>
-                    <ul style="list-style: none; padding: 0; margin-bottom: 1.5rem; color: rgba(255,255,255,0.9);">
-                        <li style="margin-bottom: 0.5rem;">✓ 最新の法改正情報</li>
-                        <li style="margin-bottom: 0.5rem;">✓ 児童虐待・犯罪ニュース</li>
-                        <li style="margin-bottom: 0.5rem;">✓ 全国の報道を網羅</li>
+                <div class="action-step">
+                    <div class="step-number">STEP 2</div>
+                    <h3>法律を知る</h3>
+                    <p>親権、養育費、面会交流。自分の権利を正しく理解しましょう。</p>
+                    <ul class="action-list">
+                        <li>無料法律相談を活用</li>
+                        <li>判決事例を調べる</li>
+                        <li>弁護士に相談</li>
                     </ul>
-                    <a href="judgments.html" class="btn"
-                        style="background: white; color: #667eea; font-weight: 700; display: inline-block; padding: 0.8rem 1.5rem; border-radius: 8px; text-decoration: none; transition: all 0.3s;">
-                        ニュースを見る →
-                    </a>
+                </div>
+                <div class="action-step">
+                    <div class="step-number">STEP 3</div>
+                    <h3>声を上げる</h3>
+                    <p>一人では変えられない。でも、みんなの声が集まれば社会を動かせる。</p>
+                    <ul class="action-list">
+                        <li>体験談を共有する</li>
+                        <li>SNSで情報発信</li>
+                        <li>署名活動に参加</li>
+                    </ul>
                 </div>
             </div>
+        </div>
+    </section>
 
-            <!-- 最新の更新情報 -->
-            <div
-                style="margin-top: 3rem; padding: 1.5rem; background: rgba(255,255,255,0.1); border-radius: 12px; backdrop-filter: blur(10px);">
-                <h4 style="margin-bottom: 1rem; font-size: 1.2rem;">🔔 最新の更新</h4>
-                <p style="color: rgba(255,255,255,0.9); font-size: 0.95rem;">
-                    直近の自動収集で<strong>新しい判例・ニュースが追加されました</strong>。判決DBをチェックして最新情報を確認しましょう。
+    <!-- (B) 判例データベース -->
+    <section class="section-block" id="judgments"
+        style="background: linear-gradient(135deg, #1e3a5f 0%, #2d5a87 100%); color: white;">
+        <div class="container">
+            <div class="section-header" style="color: white;">
+                <h2 style="color: white;">⚖️ 判決データベース</h2>
+                <p style="color: rgba(255,255,255,0.9);">
+                    類似の判例を検索して、戦略を立てよう
+                    <span
+                        style="display: inline-block; margin-left: 0.5rem; padding: 0.2rem 0.75rem; background: rgba(255,255,255,0.2); border-radius: 12px; font-size: 0.8rem;">
+                        🤖 週2回更新
+                    </span>
+                </p>
+            </div>
+
+            <div id="latest-judgments" class="two-column" style="margin-bottom: 1.5rem;">
+                <!-- JSで動的に表示 -->
+            </div>
+
+            <div style="text-align: center;">
+                <a href="judgments.html" class="btn" style="background: white; color: #1e3a5f; font-weight: 700;">
+                    すべての判例を見る →
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- (C) ヒロ・アクティビティハブ -->
+    <section class="section-block" id="hiro-hub">
+        <div class="container">
+            <div class="section-header">
+                <h2>📺 ヒロ・アクティビティハブ</h2>
+                <p>活動家ヒロの最新コンテンツをチェック</p>
+            </div>
+
+            <div class="two-column">
+                <!-- YouTube -->
+                <div class="content-card">
+                    <h3 style="margin-bottom: 1rem;">🎬 最新YouTube動画</h3>
+                    <div id="youtube-carousel" class="youtube-carousel">
+                        <p style="color: #666; text-align: center;">読み込み中...</p>
+                    </div>
+                    <a href="https://www.youtube.com/@meiyaku_knights" target="_blank" class="btn btn-primary"
+                        style="width: 100%; margin-top: 1rem;">
+                        チャンネルを見る
+                    </a>
+                </div>
+
+                <!-- SNSリンク -->
+                <div class="content-card">
+                    <h3 style="margin-bottom: 1rem;">🔗 SNS・各種リンク</h3>
+                    <div class="sns-icons">
+                        <a href="https://www.youtube.com/@meiyaku_knights" target="_blank" class="sns-icon sns-youtube"
+                            title="YouTube">▶</a>
+                        <a href="https://www.tiktok.com/@meiyaku_knight" target="_blank" class="sns-icon sns-tiktok"
+                            title="TikTok">♪</a>
+                        <a href="https://x.com/meiyaku_knights" target="_blank" class="sns-icon sns-twitter"
+                            title="X (Twitter)">𝕏</a>
+                        <a href="https://note.com/meiyaku_knights" target="_blank" class="sns-icon sns-note"
+                            title="note">n</a>
+                        <a href="https://marshmallow-qa.com/ky8old04cnlnyzb" target="_blank"
+                            class="sns-icon sns-marshmallow" title="マシュマロ">🍡</a>
+                        <a href="https://lit.link/meiyaku_knights" target="_blank" class="sns-icon sns-litlink"
+                            title="lit.link">🔗</a>
+                    </div>
+                    <div style="margin-top: 1.5rem; padding: 1rem; background: var(--bg-light); border-radius: 8px;">
+                        <p style="font-size: 0.9rem; color: var(--text-light);">
+                            📝 noteで体験談や法律解説を発信中<br>
+                            🍡 マシュマロで匿名質問を受付中
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- (D) コミュニティ（会員専用ページへのリンク） -->
+    <section class="section-block" id="community" style="background: linear-gradient(135deg, #f0f9ff, #e8f4fc);">
+        <div class="container">
+            <div class="section-header">
+                <h2>🤝 みんなの体験談コミュニティ</h2>
+                <p>同じ境遇の仲間と情報を共有しよう</p>
+            </div>
+
+            <div class="content-card" style="text-align: center; padding: 2.5rem;">
+                <div style="font-size: 4rem; margin-bottom: 1rem;">🔐</div>
+                <h3 style="color: var(--primary-dark); margin-bottom: 1rem;">会員限定コミュニティ</h3>
+                <p style="color: var(--text-light); margin-bottom: 1.5rem;">
+                    体験談の投稿・閲覧にはログインが必要です
+                </p>
+
+                <div
+                    style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-bottom: 2rem; text-align: left;">
+                    <div style="padding: 1rem; background: var(--bg-light); border-radius: 12px;">
+                        <strong>📋 体験談一覧</strong>
+                        <p style="font-size: 0.9rem; color: var(--text-light); margin-top: 0.25rem;">都道府県別に検索・閲覧</p>
+                    </div>
+                    <div style="padding: 1rem; background: var(--bg-light); border-radius: 12px;">
+                        <strong>📝 体験談投稿</strong>
+                        <p style="font-size: 0.9rem; color: var(--text-light); margin-top: 0.25rem;">あなたの経験を共有</p>
+                    </div>
+                    <div style="padding: 1rem; background: var(--bg-light); border-radius: 12px;">
+                        <strong>💡 おすすめ</strong>
+                        <p style="font-size: 0.9rem; color: var(--text-light); margin-top: 0.25rem;">本・YouTube・音楽</p>
+                    </div>
+                </div>
+
+                <a href="community.html" class="btn btn-primary" style="font-size: 1.1rem; padding: 1rem 2rem;">
+                    🚀 コミュニティに参加する
+                </a>
+
+                <p style="margin-top: 1rem; font-size: 0.85rem; color: var(--text-light);">
+                    ※ログイン後に全機能をご利用いただけます
                 </p>
             </div>
         </div>
     </section>
 
-    <!-- メンタルケア & 参考チャンネル -->
-    <section class="mental-care-section" id="mental-care">
+    <!-- (E) ニュースアーカイブ（アコーディオン） -->
+    <section class="section-block" id="news" style="background: #fff5f5;">
         <div class="container">
-            <h2 class="section-title">心のケアと参考チャンネル</h2>
-            <p class="section-subtitle">一人で抱え込まないで。あなたを支えるリソース</p>
-
-            <div class="mental-grid">
-                <!-- メンタルケア -->
-                <div class="mental-card">
-                    <h3>🧠 メンタルケア</h3>
-                    <ul class="mental-list">
-                        <li><strong>こころの健康相談統一ダイヤル</strong><br>0570-064-556</li>
-                        <li><strong>よりそいホットライン</strong><br>0120-279-338（24時間無料）</li>
-                        <li><strong>日本臨床心理士会</strong><br><a href="https://www.jsccp.jp/" target="_blank">臨床心理士を探す</a>
-                        </li>
-                    </ul>
-                </div>
-
-                <!-- 参考YouTubeチャンネル -->
-                <div class="mental-card">
-                    <h3>🎥 参考YouTubeチャンネル</h3>
-                    <ul class="mental-list">
-                        <li><strong>片翼の盟約騎士団</strong><br><a href="https://www.youtube.com/@meiyaku_knights"
-                                target="_blank">体験談と情報発信</a></li>
-                        <li><strong>共同親権チャンネル</strong><br>法律解説・事例紹介</li>
-                        <li><strong>離婚弁護士チャンネル</strong><br>法的アドバイス</li>
-                    </ul>
-                </div>
-
-                <!-- コミュニティ -->
-                <div class="mental-card">
-                    <h3>🤝 仲間を見つける</h3>
-                    <ul class="mental-list">
-                        <li><strong>Discord（承認制）</strong><br>同じ境遇の親たちと交流</li>
-                        <li><strong>定期オフ会</strong><br>対面で支え合う場</li>
-                        <li><strong>SNSコミュニティ</strong><br><a href="https://lit.link/meiyaku_knights"
-                                target="_blank">SNS一覧</a></li>
-                    </ul>
-                </div>
+            <div class="section-header">
+                <h2>📰 子供関連ニュース・事件アーカイブ</h2>
+                <p>閲覧注意：センシティブな内容を含みます</p>
             </div>
-        </div>
-    </section>
 
-    <!-- 統計インフォグラフィック -->
-    <section class="stats-section">
-        <div class="container">
-            <h2 class="section-title">連れ去り別居の現実</h2>
-            <p class="section-subtitle">知ることから、戦いは始まる</p>
-            <div class="stats-grid">
-                <div class="stat-card">
-                    <div class="stat-icon">📊</div>
-                    <div class="stat-number" data-target="150000">0</div>
-                    <div class="stat-label">年間の別居件数（推定）</div>
+            <div class="accordion" id="newsAccordion">
+                <div class="accordion-header" onclick="toggleAccordion('newsAccordion')">
+                    <span>⚠️ ニュース・事件アーカイブを開く</span>
+                    <span class="icon">▼</span>
                 </div>
-                <div class="stat-card">
-                    <div class="stat-icon">👶</div>
-                    <div class="stat-number" data-target="200000">0</div>
-                    <div class="stat-label">影響を受ける子供たち</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-icon">⚖️</div>
-                    <div class="stat-number" data-target="85">0</div>
-                    <div class="stat-label">面会交流実施率（%）</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-icon">💔</div>
-                    <div class="stat-number" data-target="30">0</div>
-                    <div class="stat-label">連れ去りから面会まで（日）</div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- 漫画スライドショー -->
-    <section class="manga-slider" id="manga-slider">
-        <div class="container">
-            <h2 class="section-title">ストーリーで理解する連れ去り別居</h2>
-            <p class="section-subtitle">実際に起きている問題を、わかりやすく</p>
-
-            <div class="slider-container">
-                <div class="slider-wrapper">
-                    <div class="slide active">
-                        <div class="slide-content glass-effect">
-                            <div class="slide-number">1/4</div>
-                            <h3>ある日、突然...</h3>
-                            <p>「仕事から帰ると、家には誰もいなかった」<br>多くの親が経験する、突然の別居。</p>
-                            <div class="slide-image">📱📦🏠</div>
-                        </div>
-                    </div>
-                    <div class="slide">
-                        <div class="slide-content glass-effect">
-                            <div class="slide-number">2/4</div>
-                            <h3>子供に会えない日々</h3>
-                            <p>連絡を取ろうにも応答なし。<br>子供の声を聞くことすら叶わない。</p>
-                            <div class="slide-image">📞❌😢</div>
-                        </div>
-                    </div>
-                    <div class="slide">
-                        <div class="slide-content glass-effect">
-                            <div class="slide-number">3/4</div>
-                            <h3>法律は機能しない？</h3>
-                            <p>裁判所に申し立てても、時間がかかる。<br>その間も、子供との時間は失われていく。</p>
-                            <div class="slide-image">⚖️⏰📋</div>
-                        </div>
-                    </div>
-                    <div class="slide">
-                        <div class="slide-content glass-effect">
-                            <div class="slide-number">4/4</div>
-                            <h3>でも、希望はある</h3>
-                            <p>同じ経験をした仲間がいる。<br>あなたは一人じゃない。一緒に声を上げよう。</p>
-                            <div class="slide-image">🤝💪✨</div>
+                <div class="accordion-content">
+                    <div class="accordion-content-inner">
+                        <div class="coming-soon-box" style="background: white; border-color: #fca5a5;">
+                            <h3 style="color: #991b1b;">🗺️ 事件マップ（準備中）</h3>
+                            <p style="color: #b91c1c;">Googleマップと連携した事件発生マップを準備しています</p>
+                            <div style="margin-top: 1rem; font-size: 0.9rem; color: #991b1b;">
+                                <p>予定している機能:</p>
+                                <ul style="list-style: none; padding: 0; margin-top: 0.5rem;">
+                                    <li>📍 都道府県別の事件検索</li>
+                                    <li>📅 年表での時系列表示</li>
+                                    <li>🏷️ 事件種別でフィルター</li>
+                                </ul>
+                            </div>
                         </div>
                     </div>
                 </div>
-                <button class="slider-btn prev" onclick="changeSlide(-1)">‹</button>
-                <button class="slider-btn next" onclick="changeSlide(1)">›</button>
-                <div class="slider-dots">
-                    <span class="dot active" onclick="currentSlide(0)"></span>
-                    <span class="dot" onclick="currentSlide(1)"></span>
-                    <span class="dot" onclick="currentSlide(2)"></span>
-                    <span class="dot" onclick="currentSlide(3)"></span>
-                </div>
             </div>
         </div>
     </section>
 
-    <!-- コミュニティ投稿セクション -->
-    <section class="community-section" id="community">
+    <!-- (F) 相談先・フッター -->
+    <section class="section-block" style="background: linear-gradient(135deg, #f0fdf4, #dcfce7);">
         <div class="container">
-            <h2 class="section-title">みんなで作るコミュニティ</h2>
-            <p class="section-subtitle">あなたの経験が、誰かの力になる</p>
-
-            <div class="community-info">
-                <div class="info-box">
-                    <h3>📝 投稿できる内容</h3>
-                    <ul>
-                        <li>あなたが受けた処遇の体験談</li>
-                        <li>参考になった判決事例の共有</li>
-                        <li>役立ったリソース・情報</li>
-                        <li>メンタルケアの工夫</li>
-                    </ul>
-                </div>
-
-                <div class="info-box">
-                    <h3>🛡️ 安心・安全な場を守るために</h3>
-                    <ul>
-                        <li>すべての投稿は承認制</li>
-                        <li>誹謗中傷は削除</li>
-                        <li>建設的な議論を推奨</li>
-                        <li>プライバシー保護</li>
-                    </ul>
-                </div>
+            <div class="section-header">
+                <h2>📞 困ったときの相談先</h2>
+                <p>一人で抱え込まないで</p>
             </div>
 
-            <div class="community-cta">
-                <p><strong>投稿はこちらから（準備中）</strong></p>
-                <p class="small-text">※現在、投稿システムを構築中です。もうしばらくお待ちください。</p>
-            </div>
-        </div>
-    </section>
-
-    <!-- 多様な視点セクション -->
-    <section class="diverse-views">
-        <div class="container">
-            <h2 class="section-title">すべての声に耳を傾ける</h2>
-            <p class="section-subtitle">対立ではなく、理解を</p>
-
-            <div class="views-grid">
-                <div class="view-card">
-                    <h3>連れ去りされた親の声</h3>
-                    <p>突然子供に会えなくなった親たちの苦しみと、取り戻すための戦い。</p>
-                    <a href="https://www.meiyaku-knights.jp/" class="view-link">体験談を読む →</a>
+            <div class="two-column">
+                <div class="hotline-box">
+                    <h4>🧠 こころの健康相談統一ダイヤル</h4>
+                    <p class="phone">0570-064-556</p>
+                    <p style="font-size: 0.85rem; color: #713f12;">平日9:00〜17:00（地域により異なる）</p>
                 </div>
-
-                <div class="view-card">
-                    <h3>子供たちの声</h3>
-                    <p>親の離婚を経験した子供たちは何を感じているのか。大人になった今、語る。</p>
-                    <a href="https://www.meiyaku-knights.jp/" class="view-link">子供の体験談 →</a>
+                <div class="hotline-box">
+                    <h4>💚 よりそいホットライン</h4>
+                    <p class="phone">0120-279-338</p>
+                    <p style="font-size: 0.85rem; color: #713f12;">24時間無料</p>
                 </div>
-
-                <div class="view-card special-card">
-                    <h3>共同親権に不安を感じる方へ</h3>
-                    <p>DV被害、モラハラ、虐待。共同親権に懸念を持つ理由は様々です。あなたの不安も大切です。</p>
-                    <a href="#" class="view-link">不安な方への情報 →</a>
+                <div class="hotline-box">
+                    <h4>⚖️ 法テラス（無料法律相談）</h4>
+                    <p class="phone">0570-078374</p>
+                    <p style="font-size: 0.85rem; color: #713f12;">
+                        <a href="https://www.houterasu.or.jp/" target="_blank">houterasu.or.jp</a>
+                    </p>
                 </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- リソースセクション -->
-    <section class="resources" id="resources">
-        <div class="container">
-            <h2 class="section-title">武器庫：役立つリソース</h2>
-            <p class="section-subtitle">戦うための武器を揃えよう</p>
-
-            <div class="resources-grid">
-                <div class="resource-category">
-                    <h3 class="resource-title">🏛️ 公的機関・相談窓口</h3>
-                    <ul class="resource-list">
-                        <li><a href="https://www.courts.go.jp/" target="_blank">裁判所ウェブサイト</a></li>
-                        <li><a href="https://www.houterasu.or.jp/" target="_blank">法テラス（無料法律相談）</a></li>
-                        <li><a href="https://www.moj.go.jp/" target="_blank">法務省</a></li>
-                    </ul>
-                </div>
-
-                <div class="resource-category">
-                    <h3 class="resource-title">🤝 支援団体</h3>
-                    <ul class="resource-list">
-                        <li><a href="#" target="_blank">共同親権を考える会</a></li>
-                        <li><a href="#" target="_blank">親子ネット</a></li>
-                        <li><a href="#" target="_blank">面会交流支援団体</a></li>
-                    </ul>
-                </div>
-
-                <div class="resource-category">
-                    <h3 class="resource-title">💬 質問・相談</h3>
-                    <ul class="resource-list">
-                        <li><a href="https://marshmallow-qa.com/ky8old04cnlnyzb" target="_blank">マシュマロで匿名質問</a></li>
-                        <li><a href="https://twitcasting.tv/tabekirimaru" target="_blank">ツイキャス配信</a></li>
-                        <li><a href="https://lit.link/meiyaku_knights" target="_blank">SNS一覧</a></li>
-                    </ul>
-                </div>
-
-                <div class="resource-category">
-                    <h3 class="resource-title">📘 学習・情報収集</h3>
-                    <ul class="resource-list">
-                        <li><a href="https://note.com/meiyaku_knights" target="_blank">note記事</a></li>
-                        <li><a href="https://www.youtube.com/@meiyaku_knights" target="_blank">YouTubeチャンネル</a></li>
-                        <li><a href="https://www.tiktok.com/@meiyaku_knight" target="_blank">TikTok</a></li>
-                    </ul>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- CTAセクション -->
-    <section class="cta">
-        <div class="container">
-            <div class="cta-content glass-effect knight-border">
-                <img src="images/shield-emblem.png" alt="emblem" class="cta-emblem">
-                <h2 class="cta-title">一緒に戦おう</h2>
-                <p class="cta-description">
-                    あなたの声、経験、質問、すべてが力になります。<br>
-                    <strong>片翼の盟約騎士団に参加しませんか。</strong>
-                </p>
-                <div class="cta-buttons">
-                    <a href="https://marshmallow-qa.com/ky8old04cnlnyzb" target="_blank"
-                        class="btn btn-primary btn-knight">匿名で質問する</a>
-                    <a href="https://www.youtube.com/@meiyaku_knights" target="_blank"
-                        class="btn btn-outline btn-knight">YouTubeを見る</a>
+                <div class="hotline-box">
+                    <h4>👶 児童相談所全国共通ダイヤル</h4>
+                    <p class="phone">189</p>
+                    <p style="font-size: 0.85rem; color: #713f12;">24時間対応</p>
                 </div>
             </div>
         </div>
@@ -436,19 +981,20 @@
                     <p>子供を真ん中に取り戻すための戦い</p>
                 </div>
                 <div class="footer-section">
-                    <h4>リンク</h4>
+                    <h4>サイトマップ</h4>
                     <ul>
-                        <li><a href="https://www.meiyaku-knights.jp/">ブログ</a></li>
-                        <li><a href="https://lit.link/meiyaku_knights">SNS一覧</a></li>
-                        <li><a href="#resources">リソース</a></li>
+                        <li><a href="#home">ホーム</a></li>
+                        <li><a href="judgments.html">判例データベース</a></li>
+                        <li><a href="opal-collector.html">データ収集ツール</a></li>
                     </ul>
                 </div>
                 <div class="footer-section">
-                    <h4>SNS</h4>
+                    <h4>外部リンク</h4>
                     <ul>
-                        <li><a href="https://www.youtube.com/@meiyaku_knights">YouTube</a></li>
-                        <li><a href="https://www.tiktok.com/@meiyaku_knight">TikTok</a></li>
-                        <li><a href="https://note.com/meiyaku_knights">note</a></li>
+                        <li><a href="https://www.meiyaku-knights.jp/" target="_blank">ブログ</a></li>
+                        <li><a href="https://lit.link/meiyaku_knights" target="_blank">SNS一覧</a></li>
+                        <li><a href="https://www.youtube.com/@meiyaku_knights" target="_blank">YouTube</a>
+                        </li>
                     </ul>
                 </div>
             </div>
@@ -462,6 +1008,260 @@
     </footer>
 
     <script src="script.js"></script>
+    <script>
+        // ハンバーガーメニュー
+        const hamburger = document.getElementById('hamburger');
+        const headerNav = document.getElementById('headerNav');
+        const menuOverlay = document.getElementById('menuOverlay');
+
+        hamburger.addEventListener('click', () => {
+            hamburger.classList.toggle('active');
+            headerNav.classList.toggle('active');
+            menuOverlay.classList.toggle('active');
+        });
+
+        menuOverlay.addEventListener('click', () => {
+            hamburger.classList.remove('active');
+            headerNav.classList.remove('active');
+            menuOverlay.classList.remove('active');
+        });
+
+        // メニューリンククリック時に閉じる
+        headerNav.querySelectorAll('a').forEach(link => {
+            link.addEventListener('click', () => {
+                hamburger.classList.remove('active');
+                headerNav.classList.remove('active');
+                menuOverlay.classList.remove('active');
+            });
+        });
+
+        // アコーディオン
+        function toggleAccordion(id) {
+            document.getElementById(id).classList.toggle('active');
+        }
+
+        // 最新判例を表示
+        async function loadLatestJudgments() {
+            try {
+                const response = await fetch('data/judgments.json');
+                const data = await response.json();
+                const latest = data.slice(-4).reverse();
+
+                const container = document.getElementById('latest-judgments');
+                container.innerHTML = latest.map(item => `
+                    <div class="judgment-card-mini">
+                        <div class="meta">📅 ${item.date} | 🏛️ ${item.court}</div>
+                        <h4>${item.title}</h4>
+                        <div class="tags">
+                            ${item.tags.slice(0, 3).map(tag => `<span class="tag">${tag}</span>`).join('')}
+                        </div>
+                    </div>
+                `).join('');
+            } catch (e) {
+                console.error('判例読み込みエラー:', e);
+            }
+        }
+
+        loadLatestJudgments();
+
+        // ===== YouTube API Integration (PlaylistItems + Cache) =====
+        const YOUTUBE_API_KEY = 'AIzaSyAfWkCf-skC5IGd40KTvf7IVdugt0mHvgU';
+        const CHANNEL_HANDLE = '@meiyaku_knights';
+        const CACHE_KEY = 'youtube_videos_cache';
+        const CACHE_DURATION = 60 * 60 * 1000; // 1時間（ミリ秒）
+
+        async function loadYouTubeVideos() {
+            const container = document.getElementById('youtube-carousel');
+
+            if (!container) return;
+
+            // キャッシュをチェック
+            const cached = localStorage.getItem(CACHE_KEY);
+            if (cached) {
+                const { data, timestamp } = JSON.parse(cached);
+                if (Date.now() - timestamp < CACHE_DURATION) {
+                    renderYouTubeVideos(data);
+                    console.log('📺 YouTube: キャッシュから読み込み');
+                    return;
+                }
+            }
+
+            try {
+                // チャンネル情報を取得（forHandleで@ハンドルから検索）
+                const channelRes = await fetch(
+                    `https://www.googleapis.com/youtube/v3/channels?part=contentDetails&forHandle=${CHANNEL_HANDLE}&key=${YOUTUBE_API_KEY}`
+                );
+                const channelData = await channelRes.json();
+
+                if (!channelData.items || channelData.items.length === 0) {
+                    throw new Error('チャンネルが見つかりません');
+                }
+
+                const uploadsPlaylistId = channelData.items[0].contentDetails.relatedPlaylists.uploads;
+
+                // PlaylistItems APIで最新動画を取得（コスト効率良）
+                const videosRes = await fetch(
+                    `https://www.googleapis.com/youtube/v3/playlistItems?part=snippet&playlistId=${uploadsPlaylistId}&maxResults=6&key=${YOUTUBE_API_KEY}`
+                );
+                const videosData = await videosRes.json();
+
+                if (!videosData.items) {
+                    throw new Error('動画が見つかりません');
+                }
+
+                const videos = videosData.items.map(item => ({
+                    id: item.snippet.resourceId.videoId,
+                    title: item.snippet.title,
+                    thumbnail: item.snippet.thumbnails.medium?.url || item.snippet.thumbnails.default?.url,
+                    publishedAt: item.snippet.publishedAt
+                }));
+
+                // キャッシュに保存
+                localStorage.setItem(CACHE_KEY, JSON.stringify({
+                    data: videos,
+                    timestamp: Date.now()
+                }));
+
+                console.log('📺 YouTube: APIから取得＆キャッシュ保存');
+                renderYouTubeVideos(videos);
+
+
+            } catch (error) {
+                console.error('YouTube API エラー:', error);
+
+                // Fallback to local data
+                console.log('Trying local fallback data...');
+                try {
+                    const fallbackRes = await fetch('data/youtube.json');
+                    if (!fallbackRes.ok) throw new Error('Fallback not found');
+                    const fallbackData = await fallbackRes.json();
+                    renderYouTubeVideos(fallbackData);
+                } catch (e2) {
+                    container.innerHTML = `
+                        <div style="text-align: center; padding: 1rem; color: #666;">
+                            <p>動画を読み込めませんでした</p>
+                            <a href="https://www.youtube.com/@meiyaku_knights" target="_blank" 
+                               style="color: var(--primary-color);">YouTubeで見る →</a>
+                        </div>
+                    `;
+                }
+            }
+        }
+
+        function renderYouTubeVideos(videos) {
+            const container = document.getElementById('youtube-carousel');
+            container.innerHTML = videos.map(video => `
+                <a href="https://www.youtube.com/watch?v=${video.id}" target="_blank" class="youtube-video-card">
+                    <img src="${video.thumbnail}" alt="${video.title}" loading="lazy">
+                    <div class="video-info">
+                        <div class="video-title">${video.title}</div>
+                        <div class="video-date">${new Date(video.publishedAt).toLocaleDateString('ja-JP')}</div>
+                    </div>
+                </a>
+            `).join('');
+        }
+
+        // ページ読み込み時にキャッシュをクリアして新しく取得
+        const oldCache = localStorage.getItem(CACHE_KEY);
+        if (oldCache) {
+            try {
+                const { data } = JSON.parse(oldCache);
+                // 空のキャッシュまたは無効なキャッシュがある場合はクリア
+                if (!data || data.length === 0) {
+                    localStorage.removeItem(CACHE_KEY);
+                    console.log('📺 YouTube: 無効なキャッシュをクリア');
+                }
+            } catch (e) {
+                localStorage.removeItem(CACHE_KEY);
+            }
+        }
+
+        // グローバルに公開（デバッグ用）
+        window.loadYouTubeVideos = loadYouTubeVideos;
+
+        loadYouTubeVideos();
+
+        // ===== コミュニティUI JavaScript =====
+
+        // タブ切り替え
+        document.querySelectorAll('.community-tab').forEach(tab => {
+            tab.addEventListener('click', () => {
+                // タブのアクティブ状態を切り替え
+                document.querySelectorAll('.community-tab').forEach(t => t.classList.remove('active'));
+                tab.classList.add('active');
+
+                // コンテンツの表示切り替え
+                const targetTab = tab.dataset.tab;
+                document.querySelectorAll('.community-tab-content').forEach(content => {
+                    content.classList.remove('active');
+                });
+                document.getElementById(`community-tab-${targetTab}`).classList.add('active');
+            });
+        });
+
+        // タグチップの選択
+        document.querySelectorAll('.tag-chip').forEach(chip => {
+            chip.addEventListener('click', () => {
+                chip.classList.toggle('selected');
+            });
+        });
+
+        // 画像プレビュー
+        const imageInput = document.getElementById('image-upload');
+        if (imageInput) {
+            imageInput.addEventListener('change', function (e) {
+                const file = e.target.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = function (e) {
+                        document.getElementById('image-preview').innerHTML =
+                            `<img src="${e.target.result}" alt="プレビュー">`;
+                    };
+                    reader.readAsDataURL(file);
+                }
+            });
+        }
+
+        // フォーム送信（プレビュー）
+        function handleFormSubmit(event) {
+            event.preventDefault();
+
+            const handleName = document.getElementById('handle-name').value;
+            const prefecture = document.getElementById('prefecture').value;
+            const court = document.getElementById('court').value;
+            const phase = document.querySelector('input[name="phase"]:checked')?.value || '未選択';
+            const experienceText = document.getElementById('experience-text').value;
+
+            // 選択されたタグを収集
+            const selectedTags = [];
+            document.querySelectorAll('.tag-chip.selected').forEach(chip => {
+                selectedTags.push(chip.dataset.tag);
+            });
+
+            // カスタムタグを追加
+            const customTags = document.getElementById('custom-tags').value;
+            if (customTags) {
+                customTags.split(',').forEach(tag => {
+                    selectedTags.push(tag.trim());
+                });
+            }
+
+            // プレビュー表示
+            alert(`【投稿プレビュー】\n\nハンドルネーム: ${handleName}\n都道府県: ${prefecture}\n裁判所: ${court || '未入力'}\nフェーズ: ${phase}\nタグ: ${selectedTags.join(', ') || 'なし'}\n\n本文:\n${experienceText}\n\n※認証機能実装後に実際の投稿が可能になります`);
+
+            return false;
+        }
+
+        // TODO: AIフィルター処理（将来実装）
+        // function checkCommentWithAI(comment, userId) {
+        //     // AIで不適切コメントをチェック
+        //     // 3回検知でブロック処理
+        //     // const userWarningCount = getUserWarningCount(userId);
+        //     // if (isInappropriate && userWarningCount >= 3) {
+        //     //     blockUser(userId);
+        //     // }
+        // }
+    </script>
 </body>
 
 </html>

@@ -342,19 +342,30 @@
             container.innerHTML = '';
             container.innerHTML += createDateRangeFilter();
 
-            const allTags = new Set();
-            data.forEach(item => item.tags.forEach(tag => allTags.add(tag)));
+            // タグの出現回数をカウント
+            const tagCounts = {};
+            data.forEach(item => item.tags.forEach(tag => {
+                tagCounts[tag] = (tagCounts[tag] || 0) + 1;
+            }));
+
+            // 20件以上のタグだけをフィルターに表示
+            const MIN_TAG_COUNT = 20;
+            const frequentTags = new Set(
+                Object.entries(tagCounts)
+                    .filter(([tag, count]) => count >= MIN_TAG_COUNT)
+                    .map(([tag]) => tag)
+            );
 
             for (const [categoryName, definedTags] of Object.entries(tagCategories)) {
-                const existingTags = definedTags.filter(tag => allTags.has(tag));
+                const existingTags = definedTags.filter(tag => frequentTags.has(tag));
                 if (existingTags.length > 0) {
                     container.innerHTML += createFilterGroupHtml(categoryName, existingTags);
-                    existingTags.forEach(tag => allTags.delete(tag));
+                    existingTags.forEach(tag => frequentTags.delete(tag));
                 }
             }
 
-            if (allTags.size > 0) {
-                container.innerHTML += createFilterGroupHtml("✨ その他・新着タグ", Array.from(allTags));
+            if (frequentTags.size > 0) {
+                container.innerHTML += createFilterGroupHtml("✨ その他・新着タグ", Array.from(frequentTags));
             }
         }
 

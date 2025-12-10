@@ -1,0 +1,522 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>管理画面 - 片翼の盟約騎士団</title>
+    <style>
+        :root {
+            --primary-color: #2563eb;
+            --primary-dark: #1e40af;
+            --success: #22c55e;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --bg-light: #f8fafc;
+            --text-dark: #1e293b;
+            --text-light: #64748b;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', 'Hiragino Sans', sans-serif;
+            background: var(--bg-light);
+            min-height: 100vh;
+            color: var(--text-dark);
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .header {
+            background: white;
+            padding: 1.5rem 2rem;
+            border-bottom: 1px solid #e5e7eb;
+            margin-bottom: 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header h1 {
+            font-size: 1.5rem;
+            color: var(--primary-dark);
+        }
+
+        .header .back-link {
+            color: var(--primary-color);
+            text-decoration: none;
+        }
+
+        /* Login Form */
+        .login-box {
+            max-width: 400px;
+            margin: 4rem auto;
+            background: white;
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .login-box h2 {
+            margin-bottom: 1.5rem;
+            text-align: center;
+        }
+
+        .form-group {
+            margin-bottom: 1rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid #d1d5db;
+            border-radius: 8px;
+            font-size: 1rem;
+        }
+
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.95rem;
+            font-weight: 600;
+            transition: all 0.2s;
+        }
+
+        .btn-primary {
+            background: var(--primary-color);
+            color: white;
+            width: 100%;
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-dark);
+        }
+
+        .btn-success {
+            background: var(--success);
+            color: white;
+        }
+
+        .btn-danger {
+            background: var(--danger);
+            color: white;
+        }
+
+        .btn-warning {
+            background: var(--warning);
+            color: white;
+        }
+
+        .btn-sm {
+            padding: 0.4rem 0.8rem;
+            font-size: 0.85rem;
+        }
+
+        /* Dashboard */
+        .dashboard {
+            display: none;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        }
+
+        .stat-card .label {
+            color: var(--text-light);
+            font-size: 0.9rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-card .value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--primary-dark);
+        }
+
+        .stat-card.pending .value {
+            color: var(--warning);
+        }
+
+        /* Posts List */
+        .posts-section {
+            background: white;
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        }
+
+        .posts-section h2 {
+            margin-bottom: 1rem;
+            font-size: 1.2rem;
+        }
+
+        .post-item {
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .post-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .post-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 0.75rem;
+        }
+
+        .post-meta {
+            font-size: 0.85rem;
+            color: var(--text-light);
+        }
+
+        .post-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .post-content {
+            color: var(--text-light);
+            font-size: 0.95rem;
+            margin-bottom: 0.75rem;
+            line-height: 1.6;
+        }
+
+        .post-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .tag {
+            background: #e0e7ff;
+            color: var(--primary-dark);
+            padding: 0.2rem 0.6rem;
+            border-radius: 12px;
+            font-size: 0.8rem;
+        }
+
+        .post-actions {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+
+        .status-badge {
+            padding: 0.25rem 0.75rem;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .status-pending {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .status-approved {
+            background: #dcfce7;
+            color: #166534;
+        }
+
+        .status-rejected {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 3rem;
+            color: var(--text-light);
+        }
+
+        .tabs {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .tab {
+            padding: 0.5rem 1rem;
+            background: #f1f5f9;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.9rem;
+        }
+
+        .tab.active {
+            background: var(--primary-color);
+            color: white;
+        }
+
+        .fingerprint {
+            font-family: monospace;
+            font-size: 0.75rem;
+            color: #9ca3af;
+            word-break: break-all;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="header">
+        <h1>🛡️ 管理画面</h1>
+        <a href="community.html" class="back-link">← コミュニティに戻る</a>
+    </div>
+
+    <!-- Login -->
+    <div id="login-section" class="container">
+        <div class="login-box">
+            <h2>🔐 管理者ログイン</h2>
+            <form id="login-form">
+                <div class="form-group">
+                    <label>パスワード</label>
+                    <input type="password" id="admin-password" class="form-input" placeholder="管理者パスワードを入力">
+                </div>
+                <button type="submit" class="btn btn-primary">ログイン</button>
+            </form>
+            <p id="login-error" style="color: var(--danger); margin-top: 1rem; display: none;"></p>
+        </div>
+    </div>
+
+    <!-- Dashboard -->
+    <div id="dashboard" class="dashboard container">
+        <div class="stats-grid">
+            <div class="stat-card pending">
+                <div class="label">⏳ 承認待ち</div>
+                <div class="value" id="pending-count">--</div>
+            </div>
+            <div class="stat-card">
+                <div class="label">✅ 承認済み</div>
+                <div class="value" id="approved-count">--</div>
+            </div>
+            <div class="stat-card">
+                <div class="label">🚫 ブロック中</div>
+                <div class="value" id="blocked-count">--</div>
+            </div>
+        </div>
+
+        <div class="posts-section">
+            <div class="tabs">
+                <button class="tab active" data-status="pending">⏳ 承認待ち</button>
+                <button class="tab" data-status="approved">✅ 承認済み</button>
+                <button class="tab" data-status="rejected">❌ 非承認</button>
+            </div>
+
+            <div id="posts-list">
+                <div class="empty-state">読み込み中...</div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script>
+        // ===== Supabase設定 =====
+        const SUPABASE_URL = 'https://neyhxbdgcqtnyxpuuiqx.supabase.co';
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5leWh4YmRnY3F0bnl4cHV1aXF4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjUzMzE1NDcsImV4cCI6MjA4MDkwNzU0N30.5hfxRgrPI4QKZtC2UWMYOSniiaWaLMuXOFxQfN8_H7E';
+        const ADMIN_PASSWORD = 'meiyaku2024'; // 本番環境では環境変数等で管理
+
+        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+        let currentStatusFilter = 'pending';
+
+        // ===== ログイン =====
+        document.getElementById('login-form').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const password = document.getElementById('admin-password').value;
+
+            if (password === ADMIN_PASSWORD) {
+                document.getElementById('login-section').style.display = 'none';
+                document.getElementById('dashboard').style.display = 'block';
+                loadDashboard();
+            } else {
+                const errorEl = document.getElementById('login-error');
+                errorEl.textContent = 'パスワードが正しくありません';
+                errorEl.style.display = 'block';
+            }
+        });
+
+        // ===== タブ切り替え =====
+        document.querySelectorAll('.tab').forEach(tab => {
+            tab.addEventListener('click', () => {
+                document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+                tab.classList.add('active');
+                currentStatusFilter = tab.dataset.status;
+                loadPosts();
+            });
+        });
+
+        // ===== ダッシュボード読み込み =====
+        async function loadDashboard() {
+            await loadStats();
+            await loadPosts();
+        }
+
+        // ===== 統計読み込み =====
+        async function loadStats() {
+            try {
+                const { data: posts, error } = await supabase
+                    .from('posts')
+                    .select('status');
+
+                if (error) throw error;
+
+                const pending = posts.filter(p => p.status === 'pending').length;
+                const approved = posts.filter(p => p.status === 'approved').length;
+
+                document.getElementById('pending-count').textContent = pending;
+                document.getElementById('approved-count').textContent = approved;
+
+                // ブロックユーザー数
+                const { data: blocked } = await supabase
+                    .from('blocked_users')
+                    .select('id');
+
+                document.getElementById('blocked-count').textContent = blocked?.length || 0;
+            } catch (error) {
+                console.error('統計読み込みエラー:', error);
+            }
+        }
+
+        // ===== 投稿一覧読み込み =====
+        async function loadPosts() {
+            const container = document.getElementById('posts-list');
+
+            try {
+                const { data: posts, error } = await supabase
+                    .from('posts')
+                    .select('*')
+                    .eq('status', currentStatusFilter)
+                    .order('created_at', { ascending: false });
+
+                if (error) throw error;
+
+                if (!posts || posts.length === 0) {
+                    container.innerHTML = '<div class="empty-state">該当する投稿はありません</div>';
+                    return;
+                }
+
+                container.innerHTML = posts.map(post => `
+                    <div class="post-item" data-id="${post.id}">
+                        <div class="post-header">
+                            <div>
+                                <span class="post-meta">
+                                    ${post.author_name} / ${post.prefecture || '未設定'} / ${post.phase || '未設定'}
+                                </span>
+                                <span class="status-badge status-${post.status}">
+                                    ${post.status === 'pending' ? '⏳ 承認待ち' : post.status === 'approved' ? '✅ 承認済み' : '❌ 非承認'}
+                                </span>
+                            </div>
+                            <div class="post-meta">${new Date(post.created_at).toLocaleString('ja-JP')}</div>
+                        </div>
+                        <h3 class="post-title">${escapeHtml(post.title)}</h3>
+                        <p class="post-content">${escapeHtml(post.content).substring(0, 300)}${post.content.length > 300 ? '...' : ''}</p>
+                        <div class="post-tags">
+                            ${(post.tags || []).map(tag => `<span class="tag">${escapeHtml(tag)}</span>`).join('')}
+                        </div>
+                        <div class="fingerprint">ID: ${post.user_fingerprint || '不明'}</div>
+                        <div class="post-actions">
+                            ${post.status === 'pending' ? `
+                                <button class="btn btn-success btn-sm" onclick="updateStatus('${post.id}', 'approved')">✅ 承認</button>
+                                <button class="btn btn-danger btn-sm" onclick="updateStatus('${post.id}', 'rejected')">❌ 非承認</button>
+                            ` : ''}
+                            ${post.status !== 'approved' ? `
+                                <button class="btn btn-success btn-sm" onclick="updateStatus('${post.id}', 'approved')">✅ 承認に変更</button>
+                            ` : ''}
+                            <button class="btn btn-warning btn-sm" onclick="blockUser('${post.user_fingerprint}', '${post.id}')">🚫 この投稿者をブロック</button>
+                        </div>
+                    </div>
+                `).join('');
+            } catch (error) {
+                console.error('投稿読み込みエラー:', error);
+                container.innerHTML = `<div class="empty-state" style="color: var(--danger);">エラー: ${error.message}</div>`;
+            }
+        }
+
+        // ===== ステータス更新 =====
+        async function updateStatus(postId, newStatus) {
+            try {
+                const { error } = await supabase
+                    .from('posts')
+                    .update({ status: newStatus })
+                    .eq('id', postId);
+
+                if (error) throw error;
+
+                await loadDashboard();
+            } catch (error) {
+                alert('更新エラー: ' + error.message);
+            }
+        }
+
+        // ===== ユーザーブロック =====
+        async function blockUser(fingerprint, postId) {
+            if (!fingerprint) {
+                alert('この投稿者のフィンガープリントが不明なためブロックできません');
+                return;
+            }
+
+            const reason = prompt('ブロック理由（任意）:');
+
+            try {
+                // ブロックリストに追加
+                const { error: blockError } = await supabase
+                    .from('blocked_users')
+                    .upsert({ fingerprint, reason });
+
+                if (blockError) throw blockError;
+
+                // この投稿を非承認に
+                await updateStatus(postId, 'rejected');
+
+                alert('ユーザーをブロックしました');
+                await loadDashboard();
+            } catch (error) {
+                alert('ブロックエラー: ' + error.message);
+            }
+        }
+
+        // ===== HTMLエスケープ =====
+        function escapeHtml(text) {
+            if (!text) return '';
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+    </script>
+</body>
+
+</html>

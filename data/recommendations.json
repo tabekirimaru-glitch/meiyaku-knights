@@ -1,0 +1,62 @@
+{
+    "books": [
+        {
+            "title": "離婚調停・訴訟の実務",
+            "author": "家事法研究会",
+            "url": "https://www.amazon.co.jp/dp/example1"
+        },
+        {
+            "title": "子どもの連れ去り問題と対策",
+            "author": "弁護士 山田太郎",
+            "url": "https://www.amazon.co.jp/dp/example2"
+        },
+        {
+            "title": "面会交流を実現するために",
+            "author": "NPO法人親子ネット",
+            "url": "https://www.amazon.co.jp/dp/example3"
+        }
+    ],
+    "youtube": [
+        {
+            "title": "片翼の盟約騎士団 公式チャンネル",
+            "description": "親権・面会交流の最新情報",
+            "url": "https://www.youtube.com/@meiyaku_knights"
+        },
+        {
+            "title": "弁護士◯◯チャンネル",
+            "description": "家事事件の解説動画",
+            "url": "https://www.youtube.com/@example"
+        }
+    ],
+    "music": [
+        {
+            "title": "Stand by Me",
+            "artist": "Ben E. King",
+            "comment": "辛いときに聴いて勇気をもらいました"
+        },
+        {
+            "title": "負けないで",
+            "artist": "ZARD",
+            "comment": "調停前に必ず聴く曲"
+        },
+        {
+            "title": "栄光の架橋",
+            "artist": "ゆず",
+            "comment": "子供に会えた時に流した曲"
+        }
+    ],
+    "quotes": [
+        {
+            "text": "諦めなければ、必ず道は開ける",
+            "author": "先輩騎士より"
+        },
+        {
+            "text": "子供はあなたを待っています",
+            "author": "管理人"
+        },
+        {
+            "text": "一人で戦わなくていい。仲間がいる。",
+            "author": "コミュニティメンバー"
+        }
+    ]
+}

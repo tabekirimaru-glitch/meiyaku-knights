@@ -1,0 +1,657 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Opal判決データ収集ツール | 片翼の盟約騎士団</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .collector-container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 2rem 20px;
+        }
+
+        .tabs {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 1.5rem;
+            border-bottom: 2px solid var(--bg-light);
+            padding-bottom: 0.5rem;
+        }
+
+        .tab-btn {
+            padding: 0.8rem 1.5rem;
+            border: none;
+            background: var(--bg-light);
+            border-radius: 8px 8px 0 0;
+            cursor: pointer;
+            font-weight: 600;
+            color: var(--text-light);
+            transition: all 0.3s;
+        }
+
+        .tab-btn.active {
+            background: var(--primary-color);
+            color: white;
+        }
+
+        .tab-btn:hover:not(.active) {
+            background: #e2e8f0;
+        }
+
+        .tab-content {
+            display: none;
+            background: white;
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: var(--shadow);
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: var(--primary-dark);
+        }
+
+        .form-select,
+        .form-input,
+        .form-textarea {
+            width: 100%;
+            padding: 0.8rem;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: border-color 0.3s;
+        }
+
+        .form-select:focus,
+        .form-input:focus,
+        .form-textarea:focus {
+            outline: none;
+            border-color: var(--primary-color);
+        }
+
+        .form-textarea {
+            min-height: 150px;
+            font-family: 'Consolas', 'Monaco', monospace;
+            resize: vertical;
+        }
+
+        .checkbox-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+
+        .checkbox-item {
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+            padding: 0.4rem 0.8rem;
+            background: var(--bg-light);
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .checkbox-item:hover {
+            background: #e2e8f0;
+        }
+
+        .checkbox-item input:checked+span {
+            color: var(--primary-color);
+            font-weight: 600;
+        }
+
+        .prompt-output {
+            background: #1e293b;
+            color: #e2e8f0;
+            padding: 1.5rem;
+            border-radius: 8px;
+            font-family: 'Consolas', 'Monaco', monospace;
+            white-space: pre-wrap;
+            line-height: 1.6;
+            margin-bottom: 1rem;
+        }
+
+        .btn-row {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 0.8rem 1.5rem;
+            border: none;
+            border-radius: 8px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .btn-primary {
+            background: var(--primary-color);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-dark);
+        }
+
+        .btn-secondary {
+            background: var(--secondary-color);
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background: #d97706;
+        }
+
+        .btn-success {
+            background: #10b981;
+            color: white;
+        }
+
+        .btn-success:hover {
+            background: #059669;
+        }
+
+        .alert {
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+        }
+
+        .alert-success {
+            background: #dcfce7;
+            color: #166534;
+            border: 1px solid #86efac;
+        }
+
+        .alert-error {
+            background: #fee2e2;
+            color: #991b1b;
+            border: 1px solid #fca5a5;
+        }
+
+        .alert-info {
+            background: #e0f2fe;
+            color: #075985;
+            border: 1px solid #7dd3fc;
+        }
+
+        .preview-card {
+            background: var(--bg-light);
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 0.5rem;
+            border-left: 4px solid var(--secondary-color);
+        }
+
+        .preview-card h4 {
+            color: var(--primary-color);
+            margin-bottom: 0.5rem;
+        }
+
+        .preview-card .meta {
+            font-size: 0.85rem;
+            color: var(--text-light);
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .stat-card {
+            background: var(--bg-light);
+            padding: 1rem;
+            border-radius: 8px;
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--primary-color);
+        }
+
+        .stat-label {
+            color: var(--text-light);
+            font-size: 0.9rem;
+        }
+
+        .tag-stats {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+
+        .tag-stat {
+            padding: 0.3rem 0.8rem;
+            background: var(--bg-light);
+            border-radius: 20px;
+            font-size: 0.85rem;
+        }
+
+        .tag-stat .count {
+            font-weight: 700;
+            color: var(--primary-color);
+        }
+
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.9rem;
+        }
+
+        .data-table th,
+        .data-table td {
+            padding: 0.8rem;
+            text-align: left;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .data-table th {
+            background: var(--bg-light);
+            font-weight: 700;
+            color: var(--primary-dark);
+        }
+
+        .data-table tr:hover {
+            background: #f8fafc;
+        }
+
+        @media (max-width: 768px) {
+            .tabs {
+                flex-wrap: wrap;
+            }
+
+            .tab-btn {
+                flex: 1;
+                text-align: center;
+                padding: 0.6rem 0.8rem;
+                font-size: 0.9rem;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- ヘッダー -->
+    <header class="header">
+        <div class="container">
+            <div class="logo">
+                <img src="images/shield-emblem.png" alt="片翼の盟約騎士団" class="logo-emblem">
+                <div class="logo-text">
+                    <h1>片翼の盟約騎士団</h1>
+                    <p class="tagline">One-Winged Knights Covenant</p>
+                </div>
+            </div>
+            <nav class="header-nav">
+                <a href="index.html">ホーム</a>
+                <a href="judgments.html">判決DB</a>
+                <a href="opal-collector.html" class="active">データ収集</a>
+            </nav>
+        </div>
+    </header>
+
+    <div class="collector-container">
+        <h2 style="margin-bottom: 1.5rem; color: var(--primary-dark);">🔮 Opal判決データ収集ツール</h2>
+
+        <!-- タブナビゲーション -->
+        <div class="tabs">
+            <button class="tab-btn active" data-tab="prompt">📝 プロンプト生成</button>
+            <button class="tab-btn" data-tab="integrate">📥 データ統合</button>
+            <button class="tab-btn" data-tab="view">📊 現在のデータ</button>
+        </div>
+
+        <!-- プロンプト生成タブ -->
+        <div id="tab-prompt" class="tab-content active">
+            <h3 style="margin-bottom: 1rem;">Opal用プロンプトを生成</h3>
+
+            <div class="form-group">
+                <label class="form-label">📂 収集カテゴリ（複数選択可）</label>
+                <div class="checkbox-group" id="category-checkboxes">
+                    <label class="checkbox-item"><input type="checkbox" value="親権"> <span>親権</span></label>
+                    <label class="checkbox-item"><input type="checkbox" value="監護者指定"> <span>監護者指定</span></label>
+                    <label class="checkbox-item"><input type="checkbox" value="面会交流"> <span>面会交流</span></label>
+                    <label class="checkbox-item"><input type="checkbox" value="子の引き渡し"> <span>子の引き渡し</span></label>
+                    <label class="checkbox-item"><input type="checkbox" value="養育費"> <span>養育費</span></label>
+                    <label class="checkbox-item"><input type="checkbox" value="DV・モラハラ"> <span>DV・モラハラ</span></label>
+                    <label class="checkbox-item"><input type="checkbox" value="離婚"> <span>離婚</span></label>
+                    <label class="checkbox-item"><input type="checkbox" value="連れ去り"> <span>連れ去り</span></label>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">🔑 追加キーワード（任意）</label>
+                <input type="text" class="form-input" id="keywords" placeholder="例: 父親 勝訴, 高裁, 直接強制">
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">📅 期間</label>
+                <select class="form-select" id="period">
+                    <option value="2024年〜現在">2024年〜現在</option>
+                    <option value="2023年">2023年</option>
+                    <option value="2022年以前">2022年以前</option>
+                    <option value="指定なし">指定なし</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">🔢 収集件数</label>
+                <select class="form-select" id="count">
+                    <option value="5">5件</option>
+                    <option value="10" selected>10件</option>
+                    <option value="20">20件</option>
+                    <option value="30">30件</option>
+                </select>
+            </div>
+
+            <button class="btn btn-primary" onclick="generatePrompt()">✨ プロンプトを生成</button>
+
+            <div id="prompt-result" style="margin-top: 1.5rem; display: none;">
+                <label class="form-label">生成されたプロンプト</label>
+                <div class="prompt-output" id="prompt-text"></div>
+                <div class="btn-row">
+                    <button class="btn btn-secondary" onclick="copyPrompt()">📋 コピー</button>
+                </div>
+                <div id="copy-message" class="alert alert-success" style="display: none; margin-top: 1rem;">
+                    ✅ クリップボードにコピーしました！
+                </div>
+            </div>
+        </div>
+
+        <!-- データ統合タブ -->
+        <div id="tab-integrate" class="tab-content">
+            <h3 style="margin-bottom: 1rem;">Opalの出力を統合</h3>
+
+            <div class="alert alert-info">
+                💡 Opalから取得したJSON配列をそのまま貼り付けてください。既存データとマージして新しいjudgments.jsonを生成します。
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">📋 OpalからのJSON出力</label>
+                <textarea class="form-textarea" id="opal-output" placeholder='[
+  {
+    "date": "2024-XX-XX",
+    "court": "〇〇家庭裁判所",
+    "title": "判決タイトル",
+    "tags": ["親権", "面会交流"],
+    "summary": "事例の概要",
+    "url": "https://..."
+  }
+]' style="min-height: 250px;"></textarea>
+            </div>
+
+            <div class="btn-row">
+                <button class="btn btn-primary" onclick="validateAndPreview()">🔍 検証＆プレビュー</button>
+                <button class="btn btn-success" onclick="downloadMerged()" id="download-btn" disabled>💾
+                    マージ済みJSONをダウンロード</button>
+            </div>
+
+            <div id="validation-result" style="margin-top: 1.5rem;"></div>
+            <div id="preview-area" style="margin-top: 1rem;"></div>
+        </div>
+
+        <!-- 現在のデータタブ -->
+        <div id="tab-view" class="tab-content">
+            <h3 style="margin-bottom: 1rem;">現在のデータ統計</h3>
+
+            <div class="stats-grid" id="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-number" id="total-count">--</div>
+                    <div class="stat-label">総判例数</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="tag-count">--</div>
+                    <div class="stat-label">ユニークタグ数</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="latest-date">--</div>
+                    <div class="stat-label">最新の判決日</div>
+                </div>
+            </div>
+
+            <h4 style="margin-bottom: 0.5rem;">タグ出現回数（上位20件）</h4>
+            <div class="tag-stats" id="tag-stats"></div>
+
+            <h4 style="margin: 1.5rem 0 0.5rem;">最近追加されたデータ（直近10件）</h4>
+            <div id="recent-data"></div>
+        </div>
+    </div>
+
+    <script>
+        let existingData = [];
+        let newData = [];
+
+        // タブ切り替え
+        document.querySelectorAll('.tab-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+                document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+                btn.classList.add('active');
+                document.getElementById('tab-' + btn.dataset.tab).classList.add('active');
+
+                if (btn.dataset.tab === 'view') {
+                    loadExistingData();
+                }
+            });
+        });
+
+        // プロンプト生成
+        function generatePrompt() {
+            const categories = Array.from(document.querySelectorAll('#category-checkboxes input:checked'))
+                .map(cb => cb.value);
+            const keywords = document.getElementById('keywords').value;
+            const period = document.getElementById('period').value;
+            const count = document.getElementById('count').value;
+
+            if (categories.length === 0) {
+                alert('カテゴリを1つ以上選択してください');
+                return;
+            }
+
+            const prompt = `以下の条件で日本の家庭裁判所の判決・事例を${count}件収集してください。
+
+【収集条件】
+- カテゴリ: ${categories.join('、')}
+${keywords ? `- キーワード: ${keywords}` : ''}
+- 期間: ${period}
+
+【重要な指示】
+1. 実在する判例・事例のみを収集してください（法律事務所の解決事例も可）
+2. URLは実際にアクセス可能なものを記載してください
+3. 弁護士事務所の解決事例、裁判所の判例データベース、法律情報サイトなどから収集してください
+
+【出力形式】
+以下のJSON配列形式で出力してください：
+
+\`\`\`json
+[
+  {
+    "date": "YYYY-MM-DD",
+    "court": "〇〇家庭裁判所",
+    "title": "事例のタイトル（30文字程度）",
+    "tags": ["タグ1", "タグ2", "タグ3"],
+    "summary": "事例の概要（100文字程度）",
+    "url": "https://実際のURL"
+  }
+]
+\`\`\`
+
+【タグの例】
+親権, 監護者指定, 面会交流, 子の引き渡し, 養育費, DV, モラハラ, 連れ去り, 離婚, 父親, 母親, 認容, 却下, 和解, 調停, 審判, 訴訟 など`;
+
+            document.getElementById('prompt-text').textContent = prompt;
+            document.getElementById('prompt-result').style.display = 'block';
+        }
+
+        // プロンプトをコピー
+        function copyPrompt() {
+            const text = document.getElementById('prompt-text').textContent;
+            navigator.clipboard.writeText(text).then(() => {
+                const msg = document.getElementById('copy-message');
+                msg.style.display = 'block';
+                setTimeout(() => msg.style.display = 'none', 2000);
+            });
+        }
+
+        // データ検証とプレビュー
+        async function validateAndPreview() {
+            const input = document.getElementById('opal-output').value.trim();
+            const resultDiv = document.getElementById('validation-result');
+            const previewDiv = document.getElementById('preview-area');
+            const downloadBtn = document.getElementById('download-btn');
+
+            try {
+                // JSONパース（コードブロック記号を除去）
+                let cleanInput = input.replace(/```json\n?/g, '').replace(/```\n?/g, '');
+                newData = JSON.parse(cleanInput);
+
+                if (!Array.isArray(newData)) {
+                    throw new Error('配列形式である必要があります');
+                }
+
+                // 既存データ読み込み
+                await loadExistingData();
+
+                // バリデーション
+                const errors = [];
+                const warnings = [];
+                const existingUrls = new Set(existingData.map(d => d.url));
+
+                newData.forEach((item, i) => {
+                    if (!item.date) errors.push(`[${i + 1}] date が未設定`);
+                    if (!item.court) errors.push(`[${i + 1}] court が未設定`);
+                    if (!item.title) errors.push(`[${i + 1}] title が未設定`);
+                    if (!item.tags || !Array.isArray(item.tags)) errors.push(`[${i + 1}] tags が配列でない`);
+                    if (!item.summary) errors.push(`[${i + 1}] summary が未設定`);
+                    if (!item.url) errors.push(`[${i + 1}] url が未設定`);
+                    if (existingUrls.has(item.url)) warnings.push(`[${i + 1}] "${item.title}" は既存データと重複（スキップされます）`);
+                });
+
+                if (errors.length > 0) {
+                    resultDiv.innerHTML = `<div class="alert alert-error">❌ エラー:\n${errors.join('\n')}</div>`;
+                    downloadBtn.disabled = true;
+                    previewDiv.innerHTML = '';
+                    return;
+                }
+
+                // 重複を除外
+                const nonDuplicates = newData.filter(item => !existingUrls.has(item.url));
+
+                let html = `<div class="alert alert-success">✅ ${newData.length}件中 ${nonDuplicates.length}件を追加可能</div>`;
+                if (warnings.length > 0) {
+                    html += `<div class="alert alert-info">⚠️ 重複:\n${warnings.join('\n')}</div>`;
+                }
+                resultDiv.innerHTML = html;
+
+                // プレビュー
+                previewDiv.innerHTML = '<h4>追加されるデータ</h4>' +
+                    nonDuplicates.map(item => `
+                        <div class="preview-card">
+                            <h4>${item.title}</h4>
+                            <div class="meta">📅 ${item.date} | 🏛️ ${item.court}</div>
+                            <div style="margin-top: 0.5rem;">${item.tags.map(t => `<span class="tag-stat">${t}</span>`).join(' ')}</div>
+                        </div>
+                    `).join('');
+
+                newData = nonDuplicates;
+                downloadBtn.disabled = nonDuplicates.length === 0;
+
+            } catch (e) {
+                resultDiv.innerHTML = `<div class="alert alert-error">❌ JSONパースエラー: ${e.message}</div>`;
+                previewDiv.innerHTML = '';
+                downloadBtn.disabled = true;
+            }
+        }
+
+        // 既存データ読み込み
+        async function loadExistingData() {
+            try {
+                const response = await fetch('data/judgments.json');
+                existingData = await response.json();
+                updateStats();
+            } catch (e) {
+                console.error('データ読み込みエラー:', e);
+                existingData = [];
+            }
+        }
+
+        // 統計更新
+        function updateStats() {
+            document.getElementById('total-count').textContent = existingData.length;
+
+            const allTags = {};
+            existingData.forEach(item => {
+                item.tags.forEach(tag => {
+                    allTags[tag] = (allTags[tag] || 0) + 1;
+                });
+            });
+
+            document.getElementById('tag-count').textContent = Object.keys(allTags).length;
+
+            // 最新日付
+            const dates = existingData.map(d => d.date).sort().reverse();
+            document.getElementById('latest-date').textContent = dates[0] || '--';
+
+            // タグ統計（上位20件）
+            const sortedTags = Object.entries(allTags).sort((a, b) => b[1] - a[1]).slice(0, 20);
+            document.getElementById('tag-stats').innerHTML = sortedTags.map(([tag, count]) =>
+                `<span class="tag-stat">${tag} <span class="count">(${count})</span></span>`
+            ).join('');
+
+            // 最近のデータ
+            const recent = existingData.slice(-10).reverse();
+            document.getElementById('recent-data').innerHTML = recent.map(item => `
+                <div class="preview-card">
+                    <h4>${item.title}</h4>
+                    <div class="meta">📅 ${item.date} | 🏛️ ${item.court}</div>
+                </div>
+            `).join('');
+        }
+
+        // マージ済みJSONダウンロード
+        function downloadMerged() {
+            const maxId = Math.max(...existingData.map(d => d.id || 0), 0);
+            const mergedData = [
+                ...existingData,
+                ...newData.map((item, i) => ({
+                    id: maxId + i + 1,
+                    ...item
+                }))
+            ];
+
+            const blob = new Blob([JSON.stringify(mergedData, null, 4)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'judgments.json';
+            a.click();
+            URL.revokeObjectURL(url);
+        }
+
+        // 初期読み込み
+        loadExistingData();
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,1674 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="片翼の盟約騎士団 - 会員コミュニティ">
+    <title>コミュニティ | 片翼の盟約騎士団</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <style>
+        /* コミュニティページ専用スタイル */
+        :root {
+            --primary-color: #1e40af;
+            --primary-dark: #1e3a5f;
+            --secondary-color: #059669;
+            --text-dark: #1f2937;
+            --text-light: #6b7280;
+            --bg-light: #f8fafc;
+        }
+
+        body {
+            font-family: 'Noto Sans JP', sans-serif;
+            background: var(--bg-light);
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 1rem;
+        }
+
+        /* ログインゲート */
+        .login-gate {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(5px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+        }
+
+        .login-gate.hidden {
+            display: none;
+        }
+
+        .login-modal {
+            background: white;
+            border-radius: 20px;
+            padding: 2.5rem;
+            max-width: 400px;
+            width: 90%;
+            text-align: center;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
+        }
+
+        .login-modal h2 {
+            margin-bottom: 1rem;
+            color: var(--primary-dark);
+        }
+
+        .login-modal p {
+            color: var(--text-light);
+            margin-bottom: 1.5rem;
+        }
+
+        .login-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.75rem;
+            width: 100%;
+            padding: 1rem;
+            border: none;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            margin-bottom: 0.75rem;
+        }
+
+        .login-btn.google {
+            background: #4285f4;
+            color: white;
+        }
+
+        .login-btn.google:hover {
+            background: #3367d6;
+        }
+
+        .login-btn.demo {
+            background: #f3f4f6;
+            color: var(--text-dark);
+            border: 2px solid #d1d5db;
+        }
+
+        .login-btn.demo:hover {
+            background: #e5e7eb;
+        }
+
+        .back-link {
+            margin-top: 1rem;
+            display: inline-block;
+            color: var(--text-light);
+            text-decoration: none;
+        }
+
+        /* ヘッダー */
+        .community-header {
+            background: linear-gradient(135deg, #1e3a5f, #2d5a87);
+            color: white;
+            padding: 1.5rem 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-inner {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .header-logo {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            text-decoration: none;
+            color: white;
+        }
+
+        .header-logo img {
+            width: 40px;
+            height: 40px;
+        }
+
+        .header-logo span {
+            font-weight: 700;
+            font-size: 1.1rem;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-size: 0.9rem;
+        }
+
+        .logout-btn {
+            padding: 0.5rem 1rem;
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            border-radius: 8px;
+            color: white;
+            cursor: pointer;
+        }
+
+        /* ナビゲーション */
+        .community-nav {
+            background: white;
+            border-bottom: 1px solid #e5e7eb;
+            padding: 0.5rem 0;
+            position: sticky;
+            top: 68px;
+            z-index: 99;
+        }
+
+        .nav-items {
+            display: flex;
+            gap: 0.5rem;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .nav-item {
+            padding: 0.75rem 1.25rem;
+            border: none;
+            background: transparent;
+            font-size: 0.95rem;
+            font-weight: 600;
+            color: var(--text-light);
+            cursor: pointer;
+            white-space: nowrap;
+            border-radius: 8px;
+            transition: all 0.2s;
+        }
+
+        .section-block:nth-child(even) {
+            background: var(--bg-light);
+        }
+
+        /* ===== 検索・フィルタサイドバー ===== */
+        .experiences-container {
+            display: grid;
+            grid-template-columns: 260px 1fr;
+            gap: 2rem;
+            align-items: start;
+        }
+
+        .filters-sidebar {
+            position: sticky;
+            top: 85px;
+            /* ヘッダー考慮 */
+        }
+
+        .filter-box {
+            background: white;
+            border-radius: 12px;
+            padding: 1.5rem;
+            border: 1px solid #e5e7eb;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
+        }
+
+        .filter-heading {
+            font-size: 1.1rem;
+            color: var(--primary-dark);
+            margin-bottom: 1.25rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            border-bottom: 2px solid #f3f4f6;
+            padding-bottom: 0.75rem;
+        }
+
+        .filter-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .filter-group:last-child {
+            margin-bottom: 0;
+        }
+
+        .filter-label {
+            display: block;
+            font-weight: 700;
+            font-size: 0.95rem;
+            margin-bottom: 0.75rem;
+            color: #374151;
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+
+        .checkbox-list {
+            display: flex;
+            flex-direction: column;
+            gap: 0.6rem;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .checkbox-item {
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            font-size: 0.9rem;
+            color: var(--text-dark);
+            cursor: pointer;
+            line-height: 1.4;
+            transition: color 0.2s;
+        }
+
+        .checkbox-item:hover {
+            color: var(--primary-color);
+        }
+
+        .checkbox-item input[type="checkbox"] {
+            width: 16px;
+            height: 16px;
+            accent-color: var(--primary-color);
+            cursor: pointer;
+        }
+
+        @media (max-width: 900px) {
+            .experiences-container {
+                grid-template-columns: 1fr;
+            }
+
+            .filters-sidebar {
+                position: static;
+                margin-bottom: 2rem;
+            }
+        }
+
+        .nav-item.active {
+            background: var(--primary-color);
+            color: white;
+        }
+
+        /* メインコンテンツ */
+        .community-main {
+            padding: 1.5rem 0 3rem;
+        }
+
+        /* セクション */
+        .page-section {
+            display: none;
+        }
+
+        .page-section.active {
+            display: block;
+        }
+
+        /* カード */
+        .content-card {
+            background: white;
+            border-radius: 16px;
+            padding: 1.5rem;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+            margin-bottom: 1.5rem;
+        }
+
+        /* フォーム */
+        .form-group {
+            margin-bottom: 1.25rem;
+        }
+
+        .form-label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: var(--text-dark);
+        }
+
+        .required {
+            color: #dc2626;
+            font-size: 0.8rem;
+        }
+
+        .form-input,
+        .form-select,
+        .form-textarea {
+            width: 100%;
+            padding: 0.875rem;
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: border-color 0.2s;
+        }
+
+        .form-input:focus,
+        .form-select:focus,
+        .form-textarea:focus {
+            outline: none;
+            border-color: var(--primary-color);
+        }
+
+        .form-textarea {
+            resize: vertical;
+            min-height: 120px;
+        }
+
+        /* ラジオ */
+        .radio-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+
+        .radio-item {
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+            padding: 0.5rem 0.75rem;
+            background: #f3f4f6;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 0.9rem;
+        }
+
+        .radio-item:hover {
+            background: #e5e7eb;
+        }
+
+        /* タグチップ */
+        .tag-category {
+            margin-bottom: 0.75rem;
+        }
+
+        .tag-category-label {
+            display: block;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--text-light);
+            margin-bottom: 0.5rem;
+        }
+
+        .tag-chips {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+
+        .tag-chip {
+            padding: 0.5rem 1rem;
+            border: 2px solid #d1d5db;
+            border-radius: 20px;
+            background: white;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .tag-chip:hover {
+            border-color: var(--primary-color);
+        }
+
+        .tag-chip.selected {
+            background: var(--primary-color);
+            border-color: var(--primary-color);
+            color: white;
+        }
+
+        /* アップロード警告 */
+        .upload-warning {
+            background: #fef2f2;
+            border: 1px solid #fca5a5;
+            border-radius: 8px;
+            padding: 0.75rem;
+            margin-bottom: 0.75rem;
+            font-size: 0.85rem;
+            color: #dc2626;
+        }
+
+        /* ボタン */
+        .btn {
+            padding: 0.875rem 1.5rem;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            min-height: 48px;
+        }
+
+        .btn-primary {
+            background: var(--primary-color);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-dark);
+        }
+
+        /* 検索バー */
+        .search-bar {
+            display: flex;
+            gap: 0.75rem;
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
+        }
+
+        .search-input {
+            flex: 1;
+            min-width: 200px;
+            padding: 0.875rem;
+            border: 2px solid #e5e7eb;
+            border-radius: 12px;
+            font-size: 1rem;
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: var(--primary-color);
+        }
+
+        /* 都道府県グリッド */
+        .prefecture-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 0.75rem;
+            margin-bottom: 2rem;
+        }
+
+        .prefecture-card {
+            padding: 1rem;
+            background: white;
+            border-radius: 12px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: 2px solid transparent;
+        }
+
+        .prefecture-card:hover {
+            border-color: var(--primary-color);
+            transform: translateY(-2px);
+        }
+
+        .prefecture-card.active {
+            border-color: var(--primary-color);
+            background: #eff6ff;
+        }
+
+        .prefecture-name {
+            font-weight: 600;
+            color: var(--text-dark);
+        }
+
+        .prefecture-count {
+            font-size: 0.85rem;
+            color: var(--text-light);
+            margin-top: 0.25rem;
+        }
+
+        /* 体験談リスト */
+        .experience-list {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .experience-item {
+            display: flex;
+            gap: 0.75rem;
+            padding: 1.25rem;
+            background: white;
+            border-radius: 12px;
+            border-left: 4px solid var(--secondary-color);
+            cursor: pointer;
+            transition: all 0.2s;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+        }
+
+        .experience-item:hover {
+            transform: translateX(3px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .experience-icon {
+            font-size: 1.5rem;
+            width: 48px;
+            height: 48px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--bg-light);
+            border-radius: 12px;
+            flex-shrink: 0;
+        }
+
+        .experience-content {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .experience-header {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            align-items: center;
+            margin-bottom: 0.25rem;
+        }
+
+        .experience-name {
+            font-weight: 700;
+            color: var(--primary-dark);
+        }
+
+        .experience-meta {
+            font-size: 0.8rem;
+            color: var(--text-light);
+        }
+
+        .experience-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: var(--text-dark);
+        }
+
+        .experience-summary {
+            font-size: 0.9rem;
+            color: var(--text-light);
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .experience-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.25rem;
+            margin-top: 0.75rem;
+        }
+
+        .tag-mini {
+            padding: 0.2rem 0.6rem;
+            background: #e0e7ff;
+            border-radius: 10px;
+            font-size: 0.75rem;
+            color: #4338ca;
+        }
+
+        .experience-footer {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            margin-top: 0.75rem;
+            font-size: 0.85rem;
+            color: var(--text-light);
+            align-items: center;
+        }
+
+        .action-btn {
+            background: transparent;
+            border: 1px solid #d1d5db;
+            border-radius: 20px;
+            padding: 0.25rem 0.75rem;
+            cursor: pointer;
+            font-size: 0.85rem;
+            color: var(--text-light);
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+        }
+
+        .action-btn:hover {
+            background: #f3f4f6;
+            color: var(--primary-color);
+            border-color: var(--primary-color);
+        }
+
+        /* おすすめセクション */
+        .recommend-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 1rem;
+        }
+
+        .recommend-card {
+            background: white;
+            border-radius: 12px;
+            padding: 1.25rem;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+        }
+
+        .recommend-card h4 {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 0.75rem;
+            color: var(--primary-dark);
+        }
+
+        .recommend-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .recommend-list li {
+            padding: 0.5rem 0;
+            border-bottom: 1px solid #f3f4f6;
+        }
+
+        .recommend-list li:last-child {
+            border-bottom: none;
+        }
+
+        .recommend-list a {
+            color: var(--text-dark);
+            text-decoration: none;
+        }
+
+        .recommend-list a:hover {
+            color: var(--primary-color);
+        }
+
+        /* モバイル対応 */
+        @media (max-width: 768px) {
+            .header-logo span {
+                display: none;
+            }
+
+            .prefecture-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- ログインゲート -->
+    <div class="login-gate" id="loginGate">
+        <div class="login-modal">
+            <h2>🔐 会員コミュニティ</h2>
+            <p>体験談の投稿・閲覧にはログインが必要です</p>
+
+            <button class="login-btn google" id="btnLoginGoogle">
+                <svg width="20" height="20" viewBox="0 0 24 24">
+                    <path fill="currentColor"
+                        d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" />
+                    <path fill="currentColor"
+                        d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" />
+                    <path fill="currentColor"
+                        d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" />
+                    <path fill="currentColor"
+                        d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" />
+                </svg>
+                Googleでログイン
+            </button>
+
+            <button class="login-btn demo" id="btnLoginDemo" onclick="alert('クリックされました！'); window.loginDemo();">
+                👤 デモモードで閲覧
+            </button>
+
+            <a href="index.html" class="back-link">← トップページに戻る</a>
+        </div>
+    </div>
+
+    <!-- ヘッダー -->
+    <header class="community-header">
+        <div class="container">
+            <div class="header-inner">
+                <a href="index.html" class="header-logo">
+                    <img src="images/shield-emblem.png" alt="ロゴ">
+                    <span>片翼の盟約騎士団</span>
+                </a>
+                <div class="user-info" id="userInfo" style="display: none;">
+                    <span id="userName">ゲスト</span>
+                    <button class="logout-btn" onclick="logout()">ログアウト</button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- ナビゲーション -->
+    <nav class="community-nav">
+        <div class="container">
+            <div class="nav-items">
+                <button class="nav-item active" data-section="experiences">📋 みんなの体験談</button>
+                <button class="nav-item" data-section="post">📝 体験談を投稿</button>
+                <button class="nav-item" data-section="recommend">💡 おすすめ</button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- メインコンテンツ -->
+    <main class="community-main">
+        <div class="container">
+            <!-- みんなの体験談 -->
+            <section id="section-experiences" class="page-section active">
+                <div class="experiences-container">
+                    <!-- サイドバー（フィルタ） -->
+                    <aside class="filters-sidebar">
+                        <div class="filter-box">
+                            <h3 class="filter-heading">
+                                <span style="font-size: 1.4rem;">🔍</span> 条件で絞り込む
+                            </h3>
+
+                            <!-- キーワード -->
+                            <div class="filter-group">
+                                <label class="filter-label">キーワード</label>
+                                <input type="text" class="form-input" id="sidebarSearch" placeholder="例：調停、面会交流">
+                            </div>
+
+                            <!-- タグフィルタ -->
+                            <div class="filter-group">
+                                <label class="filter-label">🏷️ タグ</label>
+                                <div id="tagCheckboxes" class="checkbox-list">
+                                    <!-- JSで生成 -->
+                                    <div style="color: var(--text-light); font-size: 0.9rem;">タグを読み込み中...</div>
+                                </div>
+                            </div>
+
+                            <!-- 期間（ダミー） -->
+                            <div class="filter-group">
+                                <label class="filter-label">📅 判決・事件の期間</label>
+                                <div class="checkbox-list">
+                                    <label class="checkbox-item"><input type="checkbox" name="date-filter">
+                                        直近6ヶ月</label>
+                                    <label class="checkbox-item"><input type="checkbox" name="date-filter"> 直近1年</label>
+                                    <label class="checkbox-item"><input type="checkbox" name="date-filter">
+                                        2024年</label>
+                                    <label class="checkbox-item"><input type="checkbox" name="date-filter">
+                                        2023年</label>
+                                </div>
+                            </div>
+
+                            <!-- 結果（ダミー） -->
+                            <div class="filter-group">
+                                <label class="filter-label">🏆 結果</label>
+                                <div class="checkbox-list">
+                                    <label class="checkbox-item"><input type="checkbox" name="result-filter">
+                                        勝訴・認容</label>
+                                    <label class="checkbox-item"><input type="checkbox" name="result-filter"> 和解</label>
+                                    <label class="checkbox-item"><input type="checkbox" name="result-filter">
+                                        敗訴・棄却</label>
+                                </div>
+                            </div>
+                        </div>
+                    </aside>
+
+                    <!-- メインコンテンツ -->
+                    <div class="experiences-main">
+                        <h2 style="margin-bottom: 1rem;">📋 みんなの体験談 <span id="experienceCount"
+                                style="font-weight: normal;"></span></h2>
+
+                        <!-- 都道府県グリッド -->
+                        <h3 style="margin-bottom: 0.75rem; font-size: 1rem; color: var(--text-light);">📍 都道府県から探す</h3>
+                        <div class="prefecture-grid" id="prefectureGrid">
+                            <div class="prefecture-card" data-pref="全国">
+                                <div class="prefecture-name">全国</div>
+                                <div class="prefecture-count">--件</div>
+                            </div>
+                            <div class="prefecture-card" data-pref="東京都">
+                                <div class="prefecture-name">東京都</div>
+                                <div class="prefecture-count">--件</div>
+                            </div>
+                            <div class="prefecture-card" data-pref="大阪府">
+                                <div class="prefecture-name">大阪府</div>
+                                <div class="prefecture-count">--件</div>
+                            </div>
+                            <div class="prefecture-card" data-pref="神奈川県">
+                                <div class="prefecture-name">神奈川県</div>
+                                <div class="prefecture-count">--件</div>
+                            </div>
+                            <div class="prefecture-card" data-pref="愛知県">
+                                <div class="prefecture-name">愛知県</div>
+                                <div class="prefecture-count">--件</div>
+                            </div>
+                            <div class="prefecture-card" data-pref="北海道">
+                                <div class="prefecture-name">北海道</div>
+                                <div class="prefecture-count">--件</div>
+                            </div>
+                            <div class="prefecture-card" data-pref="福岡県">
+                                <div class="prefecture-name">福岡県</div>
+                                <div class="prefecture-count">--件</div>
+                            </div>
+                            <div class="prefecture-card" data-pref="埼玉県">
+                                <div class="prefecture-name">埼玉県</div>
+                                <div class="prefecture-count">--件</div>
+                            </div>
+                        </div>
+
+                        <!-- 体験談リスト -->
+                        <div
+                            style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem;">
+                            <h3 style="font-size: 1rem; color: var(--text-light); margin: 0;">📄 最新の体験談</h3>
+                            <!-- 並び替えが必要ならここに追加 -->
+                        </div>
+                        <div class="experience-list" id="experienceList">
+                            <div style="text-align: center; padding: 2rem; color: var(--text-light);">
+                                読み込み中...
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 体験談を投稿 -->
+            <section id="section-post" class="page-section">
+                <h2 style="margin-bottom: 1rem;">📝 体験談を投稿</h2>
+
+                <div class="content-card">
+                    <form id="experience-form" onsubmit="return handleFormSubmit(event)">
+                        <!-- ハンドルネーム -->
+                        <div class="form-group">
+                            <label class="form-label">ハンドルネーム <span class="required">*必須</span></label>
+                            <input type="text" class="form-input" id="handle-name" placeholder="例：東京パパ" required>
+                        </div>
+
+                        <!-- 都道府県 -->
+                        <div class="form-group">
+                            <label class="form-label">都道府県 <span class="required">*必須</span></label>
+                            <select class="form-select" id="prefecture" required>
+                                <option value="">選択してください</option>
+                                <option value="北海道">北海道</option>
+                                <option value="青森県">青森県</option>
+                                <option value="岩手県">岩手県</option>
+                                <option value="宮城県">宮城県</option>
+                                <option value="秋田県">秋田県</option>
+                                <option value="山形県">山形県</option>
+                                <option value="福島県">福島県</option>
+                                <option value="茨城県">茨城県</option>
+                                <option value="栃木県">栃木県</option>
+                                <option value="群馬県">群馬県</option>
+                                <option value="埼玉県">埼玉県</option>
+                                <option value="千葉県">千葉県</option>
+                                <option value="東京都">東京都</option>
+                                <option value="神奈川県">神奈川県</option>
+                                <option value="新潟県">新潟県</option>
+                                <option value="富山県">富山県</option>
+                                <option value="石川県">石川県</option>
+                                <option value="福井県">福井県</option>
+                                <option value="山梨県">山梨県</option>
+                                <option value="長野県">長野県</option>
+                                <option value="岐阜県">岐阜県</option>
+                                <option value="静岡県">静岡県</option>
+                                <option value="愛知県">愛知県</option>
+                                <option value="三重県">三重県</option>
+                                <option value="滋賀県">滋賀県</option>
+                                <option value="京都府">京都府</option>
+                                <option value="大阪府">大阪府</option>
+                                <option value="兵庫県">兵庫県</option>
+                                <option value="奈良県">奈良県</option>
+                                <option value="和歌山県">和歌山県</option>
+                                <option value="鳥取県">鳥取県</option>
+                                <option value="島根県">島根県</option>
+                                <option value="岡山県">岡山県</option>
+                                <option value="広島県">広島県</option>
+                                <option value="山口県">山口県</option>
+                                <option value="徳島県">徳島県</option>
+                                <option value="香川県">香川県</option>
+                                <option value="愛媛県">愛媛県</option>
+                                <option value="高知県">高知県</option>
+                                <option value="福岡県">福岡県</option>
+                                <option value="佐賀県">佐賀県</option>
+                                <option value="長崎県">長崎県</option>
+                                <option value="熊本県">熊本県</option>
+                                <option value="大分県">大分県</option>
+                                <option value="宮崎県">宮崎県</option>
+                                <option value="鹿児島県">鹿児島県</option>
+                                <option value="沖縄県">沖縄県</option>
+                            </select>
+                        </div>
+
+                        <!-- 担当裁判所 -->
+                        <div class="form-group">
+                            <label class="form-label">担当裁判所（任意）</label>
+                            <input type="text" class="form-input" id="court" placeholder="例：東京家庭裁判所">
+                        </div>
+
+                        <!-- 現在のフェーズ -->
+                        <div class="form-group">
+                            <label class="form-label">現在のフェーズ</label>
+                            <div class="radio-group">
+                                <label class="radio-item"><input type="radio" name="phase" value="別居直後"> 別居直後</label>
+                                <label class="radio-item"><input type="radio" name="phase" value="調停中"> 調停中</label>
+                                <label class="radio-item"><input type="radio" name="phase" value="審判中"> 審判中</label>
+                                <label class="radio-item"><input type="radio" name="phase" value="高裁"> 高裁</label>
+                                <label class="radio-item"><input type="radio" name="phase" value="結審後"> 結審後</label>
+                                <label class="radio-item"><input type="radio" name="phase" value="その他"> その他</label>
+                            </div>
+                        </div>
+
+                        <!-- タグ選択 -->
+                        <div class="form-group">
+                            <label class="form-label">タグを選択（複数可）</label>
+
+                            <div class="tag-category">
+                                <span class="tag-category-label">👶 子供属性</span>
+                                <div class="tag-chips">
+                                    <button type="button" class="tag-chip" data-tag="娘">娘</button>
+                                    <button type="button" class="tag-chip" data-tag="息子">息子</button>
+                                    <button type="button" class="tag-chip" data-tag="乳児">乳児</button>
+                                    <button type="button" class="tag-chip" data-tag="幼児">幼児</button>
+                                    <button type="button" class="tag-chip" data-tag="小学生以上">小学生以上</button>
+                                    <button type="button" class="tag-chip" data-tag="子供複数">子供複数</button>
+                                </div>
+                            </div>
+
+                            <div class="tag-category">
+                                <span class="tag-category-label">👤 当事者</span>
+                                <div class="tag-chips">
+                                    <button type="button" class="tag-chip" data-tag="妻側">妻側</button>
+                                    <button type="button" class="tag-chip" data-tag="夫側">夫側</button>
+                                    <button type="button" class="tag-chip" data-tag="実家連れ去り">実家連れ去り</button>
+                                </div>
+                            </div>
+
+                            <div class="tag-category">
+                                <span class="tag-category-label">⚖️ 弁護士介入</span>
+                                <div class="tag-chips">
+                                    <button type="button" class="tag-chip" data-tag="自弁あり">自弁あり</button>
+                                    <button type="button" class="tag-chip" data-tag="相手弁あり">相手弁あり</button>
+                                </div>
+                            </div>
+
+                            <div class="tag-category">
+                                <span class="tag-category-label">📋 背景・状況</span>
+                                <div class="tag-chips">
+                                    <button type="button" class="tag-chip" data-tag="不倫">不倫</button>
+                                    <button type="button" class="tag-chip" data-tag="DV冤罪">DV冤罪</button>
+                                    <button type="button" class="tag-chip" data-tag="面会交流">面会交流</button>
+                                    <button type="button" class="tag-chip" data-tag="親権争い">親権争い</button>
+                                    <button type="button" class="tag-chip" data-tag="養育費">養育費</button>
+                                    <button type="button" class="tag-chip" data-tag="実家介入">実家介入</button>
+                                    <button type="button" class="tag-chip" data-tag="精神疾患">精神疾患</button>
+                                </div>
+                            </div>
+
+                            <div style="margin-top: 0.75rem;">
+                                <input type="text" class="form-input" id="custom-tags" placeholder="その他タグ（カンマ区切り）">
+                            </div>
+                        </div>
+
+                        <!-- タイトル -->
+                        <div class="form-group">
+                            <label class="form-label">タイトル <span class="required">*必須</span></label>
+                            <input type="text" class="form-input" id="experience-title" placeholder="例：調停で面会交流が認められた経験"
+                                required>
+                        </div>
+
+                        <!-- 体験談本文 -->
+                        <div class="form-group">
+                            <label class="form-label">体験談 <span class="required">*必須</span></label>
+                            <textarea class="form-textarea" id="experience-text" rows="8"
+                                placeholder="あなたの経験を共有してください。同じ境遇の方の参考になります。" required></textarea>
+                        </div>
+
+                        <!-- 画像アップロード -->
+                        <div class="form-group">
+                            <label class="form-label">画像アップロード（任意）</label>
+                            <div class="upload-warning">
+                                ⚠️ <strong>個人名・住所は必ず黒塗りしてください</strong><br>
+                                判決文等を掲載する場合、個人が特定できる情報は必ず隠してください。
+                            </div>
+                            <input type="file" id="image-upload" accept="image/*"
+                                style="width: 100%; padding: 0.75rem; border: 2px dashed #d1d5db; border-radius: 8px;">
+                        </div>
+
+                        <button type="submit" class="btn btn-primary" style="width: 100%;">
+                            投稿する
+                        </button>
+                        <p
+                            style="text-align: center; margin-top: 0.75rem; font-size: 0.85rem; color: var(--text-light);">
+                            ※投稿は管理者の承認後に公開されます
+                        </p>
+                    </form>
+                </div>
+            </section>
+
+            <!-- おすすめ -->
+            <section id="section-recommend" class="page-section">
+                <h2 style="margin-bottom: 1rem;">💡 おすすめコンテンツ</h2>
+                <p style="margin-bottom: 1rem; font-size: 0.9rem; color: var(--text-light);">
+                    ※管理人が <code>data/recommendations.json</code> を編集して更新できます
+                </p>
+
+                <div class="recommend-grid" id="recommendGrid">
+                    <!-- JSONから動的に読み込み -->
+                    <div style="text-align: center; padding: 2rem; color: var(--text-light);">
+                        読み込み中...
+                    </div>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <script>
+        // ===== Supabase設定 =====
+        const SUPABASE_URL = 'https://neyhxbdgcqtnyxpuuiqx.supabase.co';
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5leWh4YmRnY3F0bnl4cHV1aXF4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjUzMzE1NDcsImV4cCI6MjA4MDkwNzU0N30.5hfxRgrPI4QKZtC2UWMYOSniiaWaLMuXOFxQfN8_H7E';
+
+        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+        // ===== ブラウザフィンガープリント生成（簡易版） =====
+        function generateFingerprint() {
+            const canvas = document.createElement('canvas');
+            const ctx = canvas.getContext('2d');
+            ctx.textBaseline = 'alphabetic';
+            ctx.font = '14px Arial';
+            ctx.fillText('fingerprint', 2, 15);
+            const canvasData = canvas.toDataURL();
+
+            const fingerprint = [
+                navigator.userAgent,
+                navigator.language,
+                screen.width + 'x' + screen.height,
+                new Date().getTimezoneOffset(),
+                canvasData.slice(-50)
+            ].join('|');
+
+            // 簡易ハッシュ
+            let hash = 0;
+            for (let i = 0; i < fingerprint.length; i++) {
+                const char = fingerprint.charCodeAt(i);
+                hash = ((hash << 5) - hash) + char;
+                hash = hash & hash;
+            }
+            return 'fp_' + Math.abs(hash).toString(16);
+        }
+
+        const userFingerprint = generateFingerprint();
+        console.log('User Fingerprint:', userFingerprint);
+
+        // ===== ログイン処理 =====
+        let isLoggedIn = false;
+        let currentUser = null;
+
+        function checkLoginStatus() {
+            // TODO: Firebase認証でログイン状態を確認
+            const savedLogin = localStorage.getItem('community_login');
+            if (savedLogin) {
+                const loginData = JSON.parse(savedLogin);
+                if (Date.now() - loginData.timestamp < 24 * 60 * 60 * 1000) { // 24時間有効
+                    loginSuccess(loginData.name);
+                    return;
+                }
+            }
+            document.getElementById('loginGate').classList.remove('hidden');
+        }
+
+        function loginSuccess(name) {
+            isLoggedIn = true;
+            currentUser = name;
+            document.getElementById('loginGate').classList.add('hidden');
+            document.getElementById('userInfo').style.display = 'flex';
+            document.getElementById('userName').textContent = name;
+        }
+
+        // 初期チェック
+        checkLoginStatus();
+
+        // グローバルスコープに関数を公開（onclick属性から呼び出すため）
+        window.loginWithGoogle = function () {
+            // TODO: Firebase Google認証
+            // firebase.auth().signInWithPopup(provider)
+            alert('Google認証は準備中です。デモモードをお使いください。');
+        };
+
+        window.loginDemo = function () {
+            let name = prompt('ハンドルネームを入力してください:', 'ゲスト');
+            // null（キャンセル）または空の場合はデフォルト名を使用
+            if (name === null) {
+                name = 'ゲスト';
+            }
+            if (name.trim() === '') {
+                name = 'ゲスト';
+            }
+            console.log('ログイン処理開始:', name);
+            localStorage.setItem('community_login', JSON.stringify({
+                name: name,
+                timestamp: Date.now()
+            }));
+            loginSuccess(name);
+        };
+
+        window.logout = function () {
+            localStorage.removeItem('community_login');
+            location.reload();
+        };
+
+        // ===== ログインボタン イベントリスナー =====
+        console.log('イベントリスナー設定開始');
+        const btnGoogle = document.getElementById('btnLoginGoogle');
+        const btnDemo = document.getElementById('btnLoginDemo');
+        console.log('btnGoogle:', btnGoogle);
+        console.log('btnDemo:', btnDemo);
+
+        if (btnGoogle) {
+            btnGoogle.addEventListener('click', function () {
+                console.log('Googleログインボタンがクリックされました');
+                alert('Google認証は準備中です。デモモードをお使いください。');
+            });
+        }
+
+        if (btnDemo) {
+            btnDemo.addEventListener('click', function () {
+                console.log('デモログインボタンがクリックされました');
+                const name = prompt('ハンドルネームを入力してください:', 'ゲスト');
+                console.log('入力された名前:', name);
+                if (name) {
+                    localStorage.setItem('community_login', JSON.stringify({
+                        name: name,
+                        timestamp: Date.now()
+                    }));
+                    loginSuccess(name);
+                }
+            });
+        }
+
+        // ===== ナビゲーション =====
+        document.querySelectorAll('.nav-item').forEach(item => {
+            item.addEventListener('click', () => {
+                document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
+                item.classList.add('active');
+
+                const section = item.dataset.section;
+                document.querySelectorAll('.page-section').forEach(s => s.classList.remove('active'));
+                document.getElementById(`section-${section}`).classList.add('active');
+            });
+        });
+
+        // ===== 都道府県カード =====
+        document.querySelectorAll('.prefecture-card').forEach(card => {
+            card.addEventListener('click', () => {
+                document.querySelectorAll('.prefecture-card').forEach(c => c.classList.remove('active'));
+                card.classList.add('active');
+                currentFilters.prefecture = card.dataset.pref;
+                applyFilters();
+            });
+        });
+
+        // ===== フィルタリングロジック（サイドバー） =====
+
+        // サイドバー検索ボックス
+        document.getElementById('sidebarSearch').addEventListener('input', (e) => {
+            currentFilters.search = e.target.value.trim().toLowerCase();
+            applyFilters();
+        });
+
+        // タグチェックボックス動的生成
+        function updateTagCheckboxes() {
+            const tagCounts = {};
+            allExperiences.forEach(exp => {
+                exp.tags.forEach(tag => {
+                    tagCounts[tag] = (tagCounts[tag] || 0) + 1;
+                });
+            });
+
+            const container = document.getElementById('tagCheckboxes');
+            container.innerHTML = '';
+
+            // タグを名前順にソート（または件数順）
+            const sortedTags = Object.keys(tagCounts).sort();
+
+            sortedTags.forEach(tag => {
+                const count = tagCounts[tag];
+                const label = document.createElement('label');
+                label.className = 'checkbox-item';
+                label.innerHTML = `
+                    <input type="checkbox" name="tag-filter" value="${tag}">
+                    ${tag} <span style="color: #9ca3af; font-size: 0.8rem;">(${count})</span>
+                `;
+
+                // チェンジイベント
+                label.querySelector('input').addEventListener('change', () => {
+                    applyFilters();
+                });
+
+                container.appendChild(label);
+            });
+        }
+
+        // ===== タグチップ（投稿フォーム用） =====
+        document.querySelectorAll('.tag-chip').forEach(chip => {
+            chip.addEventListener('click', () => {
+                chip.classList.toggle('selected');
+            });
+        });
+
+        // ===== 体験談データ管理 =====
+        let allExperiences = [];
+        let currentFilters = {
+            prefecture: '全国',
+            search: ''
+        };
+
+        // アイコン選択（フェーズに応じて）
+        function getPhaseIcon(phase) {
+            const icons = {
+                '準備中': '📋',
+                '調停中': '⚖️',
+                '訴訟中': '🏛️',
+                '解決済み': '✅'
+            };
+            return icons[phase] || '📝';
+        }
+
+        // 体験談を表示
+        function renderExperiences(experiences) {
+            const container = document.getElementById('experienceList');
+            const countEl = document.getElementById('experienceCount');
+
+            if (experiences.length === 0) {
+                container.innerHTML = `
+                    <div style="text-align: center; padding: 2rem; color: var(--text-light);">
+                        該当する体験談がありません
+                    </div>
+                `;
+                countEl.textContent = '(0件)';
+                return;
+            }
+
+            countEl.textContent = `(${experiences.length}件)`;
+
+            container.innerHTML = experiences.map(exp => `
+                <div class="experience-item" data-id="${exp.id}">
+                    <div class="experience-icon">${getPhaseIcon(exp.phase)}</div>
+                    <div class="experience-content">
+                        <div class="experience-header">
+                            <span class="experience-name">${exp.author}</span>
+                            <span class="experience-meta">${exp.prefecture} / ${exp.phase}</span>
+                        </div>
+                        <h4 class="experience-title">${exp.title}</h4>
+                        <p class="experience-summary">${exp.excerpt}</p>
+                        <div class="experience-tags">
+                            ${exp.tags.map(tag => `<span class="tag-mini">${tag}</span>`).join('')}
+                        </div>
+                        <div class="experience-footer">
+                            <button class="action-btn" onclick="toggleComment('${exp.id}')">
+                                💬 <span id="comment-count-${exp.id}">${exp.comments}</span>コメント
+                            </button>
+                            <button class="action-btn" onclick="toggleLike('${exp.id}')">
+                                👍 <span id="like-count-${exp.id}">${exp.likes}</span> 参考になった
+                            </button>
+                            <span style="margin-left: auto;">📅 ${exp.date}</span>
+                        </div>
+                        <!-- コメント入力エリア（初期は非表示） -->
+                        <div id="comment-area-${exp.id}" class="comment-area" style="display: none; margin-top: 1rem; padding-top: 1rem; border-top: 1px solid #eee;">
+                             <div class="comment-list" id="comment-list-${exp.id}" style="margin-bottom: 0.5rem; background: #f9fafb; padding: 0.5rem; border-radius: 8px;">
+                                <p style="font-size: 0.85rem; color: #666;">（まだコメントはありません）</p>
+                             </div>
+                             <div style="display: flex; gap: 0.5rem;">
+                                 <input type="text" class="form-input" id="comment-input-${exp.id}" placeholder="コメントを入力..." style="padding: 0.5rem; font-size: 0.9rem;">
+                                 <button class="btn btn-primary" onclick="submitComment('${exp.id}')" style="min-height: auto; padding: 0.5rem 1rem; font-size: 0.9rem;">送信</button>
+                             </div>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // ===== インタラクション機能（モック） =====
+        function toggleLike(id) {
+            if (!isLoggedIn) {
+                alert('「参考になった」を押すにはログインが必要です');
+                return;
+            }
+            const countEl = document.getElementById(`like-count-${id}`);
+            let count = parseInt(countEl.textContent);
+            count++;
+            countEl.textContent = count;
+            // 視覚的フィードバック（簡単なアニメーション代わり）
+            countEl.parentElement.style.color = 'var(--primary-color)';
+            countEl.parentElement.innerHTML = `👍 <strong>${count}</strong> 参考になった（送信済）`;
+        }
+
+        function toggleComment(id) {
+            const area = document.getElementById(`comment-area-${id}`);
+            if (area.style.display === 'none') {
+                area.style.display = 'block';
+            } else {
+                area.style.display = 'none';
+            }
+        }
+
+        function submitComment(id) {
+            if (!isLoggedIn) {
+                alert('コメントするにはログインが必要です');
+                return;
+            }
+            const input = document.getElementById(`comment-input-${id}`);
+            const text = input.value.trim();
+            if (!text) return;
+
+            // コメントリストに追加（モック）
+            const list = document.getElementById(`comment-list-${id}`);
+            // "まだコメントはありません" をクリア（初回のみ）
+            if (list.querySelector('p')?.textContent.includes('まだコメント')) {
+                list.innerHTML = '';
+            }
+
+            const newComment = document.createElement('div');
+            newComment.style.padding = '0.5rem 0';
+            newComment.style.borderBottom = '1px solid #eee';
+            newComment.innerHTML = `
+                <span style="font-weight: bold; font-size: 0.85rem;">${currentUser || 'ゲスト'}</span>: 
+                <span style="font-size: 0.9rem;">${text}</span>
+            `;
+            list.appendChild(newComment);
+
+            // カウント更新
+            const countEl = document.getElementById(`comment-count-${id}`);
+            countEl.textContent = parseInt(countEl.textContent) + 1;
+
+            input.value = '';
+        }
+
+        // フィルタ適用
+        function applyFilters() {
+            let filtered = [...allExperiences];
+
+            // 都道府県フィルタ
+            if (currentFilters.prefecture && currentFilters.prefecture !== '全国') {
+                filtered = filtered.filter(exp => exp.prefecture === currentFilters.prefecture);
+            }
+
+            // タグフィルタ（チェックボックス：一つでもマッチすれば表示 OR条件）
+            const checkedTags = Array.from(document.querySelectorAll('input[name="tag-filter"]:checked'))
+                .map(input => input.value);
+
+            if (checkedTags.length > 0) {
+                filtered = filtered.filter(exp =>
+                    // checkedTagsのいずれかがexp.tagsに含まれているか
+                    checkedTags.some(checkedTag => exp.tags.includes(checkedTag))
+                );
+            }
+
+            // キーワード検索
+            if (currentFilters.search) {
+                const searchTerm = currentFilters.search;
+                filtered = filtered.filter(exp =>
+                    exp.title.toLowerCase().includes(searchTerm) ||
+                    exp.excerpt.toLowerCase().includes(searchTerm) ||
+                    exp.author.toLowerCase().includes(searchTerm) ||
+                    exp.tags.some(tag => tag.toLowerCase().includes(searchTerm))
+                );
+            }
+
+            renderExperiences(filtered);
+            updatePrefectureCounts();
+        }
+
+        // 都道府県カードの件数を更新
+        function updatePrefectureCounts() {
+            document.querySelectorAll('.prefecture-card').forEach(card => {
+                const pref = card.dataset.pref;
+                let count;
+                if (pref === '全国') {
+                    count = allExperiences.length;
+                } else {
+                    count = allExperiences.filter(exp => exp.prefecture === pref).length;
+                }
+                card.querySelector('.prefecture-count').textContent = `${count}件`;
+            });
+        }
+
+        // タグオプション動的生成
+        function updateTagOptions() {
+            const tagSet = new Set();
+            allExperiences.forEach(exp => {
+                exp.tags.forEach(tag => tagSet.add(tag));
+            });
+
+            const select = document.getElementById('tagFilter');
+            select.innerHTML = '<option value="">全タグ</option>';
+            [...tagSet].sort().forEach(tag => {
+                select.innerHTML += `<option value="${tag}">${tag}</option>`;
+            });
+        }
+
+        // 体験談読み込み（Supabaseから承認済み投稿を取得、フォールバックでローカルJSON）
+        async function loadExperiences() {
+            const container = document.getElementById('experienceList');
+            try {
+                // まずSupabaseから承認済み投稿を取得
+                const { data: supabasePosts, error } = await supabase
+                    .from('posts')
+                    .select('*')
+                    .eq('status', 'approved')
+                    .order('created_at', { ascending: false });
+
+                if (!error && supabasePosts && supabasePosts.length > 0) {
+                    // Supabaseデータを表示用フォーマットに変換
+                    allExperiences = supabasePosts.map(post => ({
+                        id: post.id,
+                        title: post.title,
+                        author: post.author_name,
+                        prefecture: post.prefecture || '未設定',
+                        phase: post.phase || '進行中',
+                        excerpt: post.content.substring(0, 150) + (post.content.length > 150 ? '...' : ''),
+                        tags: post.tags || [],
+                        comments: 0,
+                        likes: 0,
+                        date: new Date(post.created_at).toLocaleDateString('ja-JP')
+                    }));
+                    console.log(`Supabaseから${allExperiences.length}件の承認済み投稿を読み込みました`);
+                } else {
+                    // フォールバック: ローカルJSONから読み込み
+                    console.log('Supabaseから取得できないため、ローカルJSONを使用します');
+                    const response = await fetch('data/experiences.json');
+                    allExperiences = await response.json();
+                    allExperiences.sort((a, b) => new Date(b.date) - new Date(a.date));
+                }
+
+                updateTagCheckboxes();
+                updatePrefectureCounts();
+                renderExperiences(allExperiences);
+                console.log(`体験談を${allExperiences.length}件読み込みました`);
+            } catch (error) {
+                console.error('体験談読み込みエラー:', error);
+                // 最終フォールバック
+                try {
+                    const response = await fetch('data/experiences.json');
+                    allExperiences = await response.json();
+                    updateTagCheckboxes();
+                    updatePrefectureCounts();
+                    renderExperiences(allExperiences);
+                } catch (e) {
+                    container.innerHTML = `
+                        <div style="text-align: center; padding: 2rem; color: #dc2626;">
+                            体験談を読み込めませんでした
+                        </div>
+                    `;
+                }
+            }
+        }
+
+        // ページ読み込み時
+        loadExperiences();
+
+        // ===== フォーム送信 =====
+        async function handleFormSubmit(event) {
+            event.preventDefault();
+
+            const form = document.getElementById('experience-form');
+            const submitBtn = form.querySelector('button[type="submit"]');
+            const originalBtnText = submitBtn.textContent;
+            submitBtn.textContent = '送信中...';
+            submitBtn.disabled = true;
+
+            try {
+                // ブロックチェック
+                const { data: blockedData } = await supabase
+                    .from('blocked_users')
+                    .select('fingerprint')
+                    .eq('fingerprint', userFingerprint)
+                    .single();
+
+                if (blockedData) {
+                    form.innerHTML = `
+                        <div style="text-align: center; padding: 2rem; background: #fef2f2; border-radius: 12px; border: 2px solid #ef4444;">
+                            <div style="font-size: 3rem; margin-bottom: 1rem;">🚫</div>
+                            <h3 style="color: #dc2626; margin-bottom: 1rem;">投稿できません</h3>
+                            <p style="color: #991b1b;">
+                                このアカウントは投稿が制限されています。
+                            </p>
+                        </div>
+                    `;
+                    return false;
+                }
+
+                const title = document.getElementById('experience-title').value;
+                const handleName = document.getElementById('handle-name').value;
+                const prefecture = document.getElementById('prefecture').value;
+                const phase = document.getElementById('phase')?.value || '';
+                const content = document.getElementById('experience-text').value;
+
+                // 選択されたタグを収集
+                const selectedTags = [];
+                document.querySelectorAll('.tag-chip.selected').forEach(chip => {
+                    selectedTags.push(chip.dataset.tag);
+                });
+
+                // Supabaseに保存
+                const { error } = await supabase
+                    .from('posts')
+                    .insert({
+                        title: title,
+                        author_name: handleName,
+                        prefecture: prefecture,
+                        phase: phase,
+                        content: content,
+                        tags: selectedTags,
+                        status: 'pending',
+                        user_fingerprint: userFingerprint
+                    });
+
+                if (error) throw error;
+
+                // 成功メッセージ
+                form.innerHTML = `
+                    <div style="text-align: center; padding: 2rem; background: #f0fdf4; border-radius: 12px; border: 2px solid #22c55e;">
+                        <div style="font-size: 3rem; margin-bottom: 1rem;">✅</div>
+                        <h3 style="color: #15803d; margin-bottom: 1rem;">投稿ありがとうございます！</h3>
+                        <p style="color: #166534; margin-bottom: 1rem;">
+                            <strong>${handleName}</strong> 様の体験談を受け付けました。<br>
+                            管理者の確認後、サイトに掲載されます。
+                        </p>
+                        <button class="btn btn-primary" onclick="location.reload()">続けて投稿・戻る</button>
+                    </div>
+                `;
+
+            } catch (error) {
+                console.error('投稿エラー:', error);
+                submitBtn.textContent = originalBtnText;
+                submitBtn.disabled = false;
+                alert('投稿に失敗しました。もう一度お試しください。\nエラー: ' + error.message);
+            }
+
+            return false;
+        }
+
+        // TODO: AIフィルター処理（将来実装）
+        // function checkCommentWithAI(comment, userId) {
+        //     // AIで不適切コメントをチェック
+        //     // 3回検知でブロック処理
+        // }
+
+        // ===== おすすめコンテンツ読み込み =====
+        async function loadRecommendations() {
+            const grid = document.getElementById('recommendGrid');
+            try {
+                const response = await fetch('data/recommendations.json');
+                const data = await response.json();
+
+                let html = '';
+
+                // 本
+                if (data.books && data.books.length > 0) {
+                    html += `
+                        <div class="recommend-card">
+                            <h4>📚 おすすめ本</h4>
+                            <ul class="recommend-list">
+                                ${data.books.map(book => `
+                                    <li><a href="${book.url}" target="_blank">${book.title}</a>
+                                        <small style="display: block; color: var(--text-light);">${book.author}</small>
+                                    </li>
+                                `).join('')}
+                            </ul>
+                        </div>
+                    `;
+                }
+
+                // YouTube
+                if (data.youtube && data.youtube.length > 0) {
+                    html += `
+                        <div class="recommend-card">
+                            <h4>🎬 おすすめYouTube</h4>
+                            <ul class="recommend-list">
+                                ${data.youtube.map(ch => `
+                                    <li><a href="${ch.url}" target="_blank">${ch.title}</a>
+                                        <small style="display: block; color: var(--text-light);">${ch.description}</small>
+                                    </li>
+                                `).join('')}
+                            </ul>
+                        </div>
+                    `;
+                }
+
+                // 音楽
+                if (data.music && data.music.length > 0) {
+                    html += `
+                        <div class="recommend-card">
+                            <h4>🎵 元気が出る音楽</h4>
+                            <ul class="recommend-list">
+                                ${data.music.map(m => `
+                                    <li><strong>${m.title}</strong>（${m.artist}）
+                                        <small style="display: block; color: var(--text-light);">${m.comment}</small>
+                                    </li>
+                                `).join('')}
+                            </ul>
+                        </div>
+                    `;
+                }
+
+                // 名言
+                if (data.quotes && data.quotes.length > 0) {
+                    html += `
+                        <div class="recommend-card">
+                            <h4>💬 元気が出る言葉</h4>
+                            <ul class="recommend-list">
+                                ${data.quotes.map(q => `
+                                    <li>「${q.text}」
+                                        <small style="display: block; color: var(--text-light);">— ${q.author}</small>
+                                    </li>
+                                `).join('')}
+                            </ul>
+                        </div>
+                    `;
+                }
+
+                grid.innerHTML = html;
+                console.log('おすすめコンテンツを読み込みました');
+            } catch (error) {
+                console.error('おすすめ読み込みエラー:', error);
+                grid.innerHTML = `
+                    <div style="text-align: center; padding: 2rem; color: #dc2626;">
+                        おすすめコンテンツを読み込めませんでした
+                    </div>
+                `;
+            }
+        }
+
+        // ページ読み込み時に実行
+        loadRecommendations();
+    </script>
+</body>
+
+</html>
