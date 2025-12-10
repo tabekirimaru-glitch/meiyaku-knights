@@ -8,52 +8,26 @@
     <title>判決・事例データベース | 片翼の盟約騎士団</title>
     <link rel="stylesheet" href="style.css">
     <style>
-        /* 判決データベース固有のスタイル */
+        /* 判決データベース固有のスタイル - コンパクトバナー */
         .db-header {
             position: relative;
             width: 100%;
-            cursor: pointer;
+            max-height: 120px;
             overflow: hidden;
+            border-radius: 0 0 16px 16px;
         }
 
         .db-header img {
             width: 100%;
             height: auto;
             display: block;
-            transition: transform 0.3s ease;
+            object-fit: cover;
+            object-position: top;
         }
 
-        .db-header:hover img {
-            transform: scale(1.02);
-        }
-
-        .tap-hint {
-            position: absolute;
-            bottom: 20px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: rgba(255, 255, 255, 0.95);
-            padding: 12px 30px;
-            border-radius: 30px;
-            font-size: 1.1rem;
-            font-weight: 700;
-            color: #b91c1c;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-            animation: pulse 2s infinite;
-        }
-
-        @keyframes pulse {
-
-            0%,
-            100% {
-                transform: translateX(-50%) scale(1);
-            }
-
-            50% {
-                transform: translateX(-50%) scale(1.05);
+        @media (max-width: 768px) {
+            .db-header {
+                max-height: 100px;
             }
         }
 
@@ -266,7 +240,6 @@
     <!-- DBヘッダー -->
     <div class="db-header" id="banner-header">
         <img src="images/judgments-banner.jpg" alt="判決データベース AIが週1で更新します">
-        <div class="tap-hint">👆 タップしてコンテンツを見る</div>
     </div>
 
     <!-- メインコンテンツ -->
