@@ -16,7 +16,15 @@ if not GEMINI_API_KEY:
     raise ValueError("GEMINI_API_KEY environment variable is not set")
 
 genai.configure(api_key=GEMINI_API_KEY)
-model = genai.GenerativeModel('gemini-1.5-flash-latest')
+
+# 利用可能なモデルを確認
+print("📋 利用可能なモデル:")
+for m in genai.list_models():
+    if 'generateContent' in m.supported_generation_methods:
+        print(f"  - {m.name}")
+
+# モデル設定
+model = genai.GenerativeModel('models/gemini-1.5-flash')
 
 # データファイルパス
 DATA_DIR = 'data'
