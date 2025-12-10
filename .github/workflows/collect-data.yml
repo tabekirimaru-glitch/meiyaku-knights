@@ -1,0 +1,40 @@
+name: Weekly Data Collection
+
+on:
+  schedule:
+    # 毎週日曜日 午前9時(JST) = 土曜日 24:00 UTC
+    - cron: '0 0 * * 0'
+  workflow_dispatch:  # 手動実行も可能
+
+permissions:
+  contents: write
+
+jobs:
+  collect-data:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          
+      - name: Install dependencies
+        run: |
+          pip install google-generativeai requests
+          
+      - name: Run data collection
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+        run: python scripts/collect_data.py
+        
+      - name: Commit and push changes
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git add data/
+          git diff --staged --quiet || git commit -m "🤖 Weekly data update $(date +'%Y-%m-%d')"
+          git push
