@@ -37,7 +37,11 @@ def google_search(query: str, num_results: int = 5) -> list:
         api_key = st.secrets.get("GOOGLE_API_KEY", "")
         cx = st.secrets.get("GOOGLE_CX", "")
         
-        if not api_key or not cx:
+        if not api_key:
+            st.error("❌ GOOGLE_API_KEY が設定されていません")
+            return []
+        if not cx:
+            st.error("❌ GOOGLE_CX が設定されていません")
             return []
         
         url = "https://www.googleapis.com/customsearch/v1"
@@ -46,22 +50,28 @@ def google_search(query: str, num_results: int = 5) -> list:
             "cx": cx,
             "q": query,
             "num": num_results,
-            "lr": "lang_ja"  # 日本語
+            "lr": "lang_ja"
         }
         
         response = requests.get(url, params=params, timeout=10)
-        if response.status_code == 200:
-            data = response.json()
-            results = []
-            for item in data.get("items", []):
-                results.append({
-                    "title": item.get("title", ""),
-                    "link": item.get("link", ""),
-                    "snippet": item.get("snippet", "")
-                })
-            return results
+        
+        if response.status_code != 200:
+            error_data = response.json()
+            error_msg = error_data.get("error", {}).get("message", "Unknown error")
+            st.error(f"❌ Google API エラー: {error_msg}")
+            return []
+        
+        data = response.json()
+        results = []
+        for item in data.get("items", []):
+            results.append({
+                "title": item.get("title", ""),
+                "link": item.get("link", ""),
+                "snippet": item.get("snippet", "")
+            })
+        return results
     except Exception as e:
-        st.warning(f"検索エラー: {str(e)[:50]}")
+        st.error(f"❌ 検索エラー: {str(e)}")
     return []
 
 # Supabase読み込み
