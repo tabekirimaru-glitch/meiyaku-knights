@@ -20,12 +20,22 @@ st.set_page_config(
 try:
     GEMINI_API_KEY = st.secrets["GEMINI_API_KEY"]
     genai.configure(api_key=GEMINI_API_KEY)
-    # gemini-pro を使用（より広くサポートされている）
-    model = genai.GenerativeModel('gemini-pro')
-    api_available = True
+    
+    # 利用可能なモデルを確認して選択
+    available_models = [m.name for m in genai.list_models() if 'generateContent' in [method.name for method in m.supported_generation_methods]]
+    
+    if available_models:
+        # gemini-1.5-flash または gemini-pro を優先
+        preferred = ['models/gemini-1.5-flash', 'models/gemini-1.5-pro', 'models/gemini-pro', 'models/gemini-1.0-pro']
+        model_name = next((m for m in preferred if m in available_models), available_models[0])
+        model = genai.GenerativeModel(model_name)
+        api_available = True
+    else:
+        api_available = False
+        st.warning("⚠️ 利用可能なGeminiモデルが見つかりません")
 except Exception as e:
     api_available = False
-    st.warning("⚠️ Gemini API キーが設定されていません。デモモードで動作します。")
+    st.warning(f"⚠️ Gemini API設定エラー: {str(e)[:100]}")
 
 # カスタムCSS
 st.markdown("""
