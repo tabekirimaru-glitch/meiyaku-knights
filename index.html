@@ -965,47 +965,86 @@
         </div>
     </section>
 
-    <!-- 初めての方へガイド -->
-    <section class="section-block" id="guide">
+    <!-- 初めての方へガイド - ビジュアルカードバナー -->
+    <section class="section-block" id="guide"
+        style="background: linear-gradient(135deg, #1e3a8a 0%, #2d1b69 100%); padding: 4rem 0;">
         <div class="container">
-            <div class="section-header">
-                <h2>📖 初めての方へ</h2>
-                <p>いま何をすべきか、3つのステップで解説します</p>
+            <div class="section-header" style="color: white; text-align: center; margin-bottom: 3rem;">
+                <h2 style="color: #d4af37; font-size: 2.2rem; margin-bottom: 0.5rem;">⚔️ 初めての方へ</h2>
+                <p style="color: rgba(255,255,255,0.9);">あなたの戦いを支える3つの道</p>
             </div>
-            <div class="action-grid">
-                <div class="action-step">
-                    <div class="step-number">STEP 1</div>
-                    <h3>まず、心を守る</h3>
-                    <p>連れ去り別居は精神的に大きなダメージを与えます。まずはメンタルケアから。</p>
-                    <ul class="action-list">
-                        <li>カウンセリング窓口に相談</li>
-                        <li>同じ境遇の仲間とつながる</li>
-                        <li>自分を責めない</li>
-                    </ul>
-                </div>
-                <div class="action-step">
-                    <div class="step-number">STEP 2</div>
-                    <h3>法律を知る</h3>
-                    <p>親権、養育費、面会交流。自分の権利を正しく理解しましょう。</p>
-                    <ul class="action-list">
-                        <li>無料法律相談を活用</li>
-                        <li>判決事例を調べる</li>
-                        <li>弁護士に相談</li>
-                    </ul>
-                </div>
-                <div class="action-step">
-                    <div class="step-number">STEP 3</div>
-                    <h3>声を上げる</h3>
-                    <p>一人では変えられない。でも、みんなの声が集まれば社会を動かせる。</p>
-                    <ul class="action-list">
-                        <li>体験談を共有する</li>
-                        <li>SNSで情報発信</li>
-                        <li>署名活動に参加</li>
-                    </ul>
-                </div>
+
+            <div class="guide-cards"
+                style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem;">
+                <!-- カード1: メンタル・仲間 -->
+                <a href="#hotlines" class="guide-card"
+                    style="display: block; position: relative; border-radius: 16px; overflow: hidden; text-decoration: none; transition: all 0.3s ease; box-shadow: 0 8px 30px rgba(0,0,0,0.3);">
+                    <img src="images/guide-shield.png" alt="心を守る盾"
+                        style="width: 100%; height: 220px; object-fit: cover; transition: transform 0.3s;">
+                    <div
+                        style="position: absolute; inset: 0; background: linear-gradient(to top, rgba(30,58,138,0.95) 0%, rgba(30,58,138,0.7) 50%, transparent 100%);">
+                    </div>
+                    <div style="position: absolute; bottom: 0; left: 0; right: 0; padding: 1.5rem; color: white;">
+                        <h3 style="font-size: 1.4rem; font-weight: 800; margin-bottom: 0.5rem; color: #d4af37;">
+                            まずは、心を守る盾を</h3>
+                        <p style="font-size: 0.95rem; opacity: 0.95; margin-bottom: 0.5rem;">精神的ケアと仲間の輪へ</p>
+                        <span
+                            style="display: inline-flex; align-items: center; gap: 0.3rem; font-size: 0.85rem; color: #d4af37; font-weight: 600;">
+                            詳しく見る →
+                        </span>
+                    </div>
+                </a>
+
+                <!-- カード2: 法律・知識 -->
+                <a href="judgments.html" class="guide-card"
+                    style="display: block; position: relative; border-radius: 16px; overflow: hidden; text-decoration: none; transition: all 0.3s ease; box-shadow: 0 8px 30px rgba(0,0,0,0.3);">
+                    <img src="images/guide-sword.png" alt="知識という剣"
+                        style="width: 100%; height: 220px; object-fit: cover; transition: transform 0.3s;">
+                    <div
+                        style="position: absolute; inset: 0; background: linear-gradient(to top, rgba(30,58,138,0.95) 0%, rgba(30,58,138,0.7) 50%, transparent 100%);">
+                    </div>
+                    <div style="position: absolute; bottom: 0; left: 0; right: 0; padding: 1.5rem; color: white;">
+                        <h3 style="font-size: 1.4rem; font-weight: 800; margin-bottom: 0.5rem; color: #d4af37;">
+                            知識という剣を取れ</h3>
+                        <p style="font-size: 0.95rem; opacity: 0.95; margin-bottom: 0.5rem;">判例・法律武装エリア</p>
+                        <span
+                            style="display: inline-flex; align-items: center; gap: 0.3rem; font-size: 0.85rem; color: #d4af37; font-weight: 600;">
+                            判例DBへ →
+                        </span>
+                    </div>
+                </a>
+
+                <!-- カード3: アクション -->
+                <a href="community.html" class="guide-card"
+                    style="display: block; position: relative; border-radius: 16px; overflow: hidden; text-decoration: none; transition: all 0.3s ease; box-shadow: 0 8px 30px rgba(0,0,0,0.3);">
+                    <img src="images/guide-unity.png" alt="声を上げ団結"
+                        style="width: 100%; height: 220px; object-fit: cover; transition: transform 0.3s;">
+                    <div
+                        style="position: absolute; inset: 0; background: linear-gradient(to top, rgba(30,58,138,0.95) 0%, rgba(30,58,138,0.7) 50%, transparent 100%);">
+                    </div>
+                    <div style="position: absolute; bottom: 0; left: 0; right: 0; padding: 1.5rem; color: white;">
+                        <h3 style="font-size: 1.4rem; font-weight: 800; margin-bottom: 0.5rem; color: #d4af37;">
+                            声を上げ、団結せよ</h3>
+                        <p style="font-size: 0.95rem; opacity: 0.95; margin-bottom: 0.5rem;">体験談の共有・発信</p>
+                        <span
+                            style="display: inline-flex; align-items: center; gap: 0.3rem; font-size: 0.85rem; color: #d4af37; font-weight: 600;">
+                            コミュニティへ →
+                        </span>
+                    </div>
+                </a>
             </div>
         </div>
     </section>
+    <style>
+        .guide-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 15px 40px rgba(212, 175, 55, 0.3);
+        }
+
+        .guide-card:hover img {
+            transform: scale(1.05);
+        }
+    </style>
 
     <!-- (B) 判例データベース - バナー -->
     <section class="section-block" id="judgments" style="padding: 2rem 0;">
@@ -1194,8 +1233,69 @@
         </div>
     </section>
 
+    <!-- (F-0) 運営者プロフィール -->
+    <section class="section-block" id="about-operator" style="background: white; padding: 4rem 0;">
+        <div class="container">
+            <div class="section-header" style="text-align: center; margin-bottom: 2.5rem;">
+                <h2 style="color: var(--primary-dark); font-size: 2rem;">👤 運営者：ヒロについて</h2>
+                <p style="color: var(--text-light);">このサイトを運営している人物をご紹介します</p>
+            </div>
+
+            <div style="display: flex; gap: 2.5rem; align-items: flex-start; flex-wrap: wrap;">
+                <!-- プロフィール画像 -->
+                <div style="flex: 0 0 200px; text-align: center;">
+                    <div
+                        style="width: 180px; height: 180px; border-radius: 50%; background: linear-gradient(135deg, #1e3a8a, #2d1b69); display: flex; align-items: center; justify-content: center; margin: 0 auto 1rem; box-shadow: 0 8px 30px rgba(30,58,138,0.3);">
+                        <span style="font-size: 5rem;">⚔️</span>
+                    </div>
+                    <h3 style="font-size: 1.5rem; font-weight: 800; color: var(--primary-dark); margin-bottom: 0.5rem;">
+                        ヒロ</h3>
+                    <p style="font-size: 0.9rem; color: var(--text-light);">片翼の盟約騎士団 代表</p>
+                </div>
+
+                <!-- プロフィール本文 -->
+                <div style="flex: 1; min-width: 280px;">
+                    <p style="font-size: 1.05rem; line-height: 1.8; color: var(--text-dark); margin-bottom: 1.5rem;">
+                        連れ去り別居を経験した当事者として、同じ苦しみを抱える親たちに向けて情報発信を続けています。
+                        法律知識の普及、精神的サポート、そして社会変革を目指し、日々活動しています。
+                    </p>
+
+                    <div
+                        style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 1rem; margin-bottom: 1.5rem;">
+                        <div
+                            style="background: var(--bg-light); padding: 1rem; border-radius: 12px; text-align: center;">
+                            <div style="font-size: 1.8rem; font-weight: 900; color: var(--primary-color);">3年+</div>
+                            <div style="font-size: 0.85rem; color: var(--text-light);">活動年数</div>
+                        </div>
+                        <div
+                            style="background: var(--bg-light); padding: 1rem; border-radius: 12px; text-align: center;">
+                            <div style="font-size: 1.8rem; font-weight: 900; color: var(--primary-color);">1,000+</div>
+                            <div style="font-size: 0.85rem; color: var(--text-light);">YouTube登録者</div>
+                        </div>
+                        <div
+                            style="background: var(--bg-light); padding: 1rem; border-radius: 12px; text-align: center;">
+                            <div style="font-size: 1.8rem; font-weight: 900; color: var(--primary-color);">100+</div>
+                            <div style="font-size: 0.85rem; color: var(--text-light);">判例収集数</div>
+                        </div>
+                    </div>
+
+                    <div style="display: flex; gap: 1rem; flex-wrap: wrap;">
+                        <a href="https://www.meiyaku-knights.jp/about" target="_blank" class="btn btn-primary"
+                            style="font-size: 0.95rem; padding: 0.75rem 1.5rem;">
+                            📖 詳細プロフィール
+                        </a>
+                        <a href="https://www.youtube.com/@meiyaku_knights" target="_blank" class="btn btn-outline"
+                            style="font-size: 0.95rem; padding: 0.75rem 1.5rem; color: var(--primary-color); border-color: var(--primary-color);">
+                            📺 YouTubeチャンネル
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
     <!-- (F) 相談先・フッター -->
-    <section class="section-block" style="background: linear-gradient(135deg, #f0fdf4, #dcfce7);">
+    <section class="section-block" id="hotlines" style="background: linear-gradient(135deg, #f0fdf4, #dcfce7);">
         <div class="container">
             <div class="section-header">
                 <h2>📞 困ったときの相談先</h2>
@@ -1254,6 +1354,14 @@
                         <li><a href="https://lit.link/meiyaku_knights" target="_blank">SNS一覧</a></li>
                         <li><a href="https://www.youtube.com/@meiyaku_knights" target="_blank">YouTube</a>
                         </li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>運営情報・規定</h4>
+                    <ul>
+                        <li><a href="privacy-policy.html">プライバシーポリシー</a></li>
+                        <li><a href="disclaimer.html">免責事項</a></li>
+                        <li><a href="https://forms.gle/XXXXXXXXXXXX" target="_blank">お問い合わせ</a></li>
                     </ul>
                 </div>
             </div>
