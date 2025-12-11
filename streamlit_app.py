@@ -1,7 +1,7 @@
 """
 学校リスク予報AI - Streamlit App
 Gemini AIが学校の安全性とリスク管理体制を分析します
-子ども事件DB連携 + Google検索リンク + Supabaseキャッシュ機能付き
+子ども事件DB連携 + Google検索リンク + Supabaseキャッシュ + レート制限
 """
 
 import streamlit as st
@@ -10,7 +10,6 @@ import requests
 import urllib.parse
 import hashlib
 from datetime import datetime
-from supabase import create_client, Client
 
 # ページ設定
 st.set_page_config(
@@ -18,6 +17,27 @@ st.set_page_config(
     page_icon="🏫",
     layout="centered"
 )
+
+# --- セッションベースのレート制限 ---
+MAX_SEARCHES_PER_SESSION = 10  # 1セッションあたりの最大検索回数
+
+if "search_count" not in st.session_state:
+    st.session_state.search_count = 0
+
+def check_rate_limit() -> bool:
+    """レート制限をチェック。制限内ならTrue、超えていればFalse"""
+    return st.session_state.search_count < MAX_SEARCHES_PER_SESSION
+
+def increment_search_count():
+    """検索回数をインクリメント"""
+    st.session_state.search_count += 1
+
+# Supabase読み込み（try-exceptでインポートエラーを回避）
+try:
+    from supabase import create_client, Client
+    supabase_available = True
+except ImportError:
+    supabase_available = False
 
 # --- Supabase設定 ---
 supabase: Client = None
@@ -302,99 +322,110 @@ def demo_analysis(school_name: str) -> str:
 
 # 検索実行
 if search_button and school_name:
-    search_key = generate_cache_key(school_name, prefecture)
-    from_cache = False
-    
-    # キャッシュ確認
-    cached_result = get_from_cache(search_key)
-    
-    if cached_result:
-        result = cached_result
-        from_cache = True
-        st.success(f"「{school_name}」の分析結果を表示")
-        st.markdown('<span class="cache-badge">⚡ キャッシュから取得</span>', unsafe_allow_html=True)
+    # レート制限チェック
+    if not check_rate_limit():
+        st.error(f"⚠️ 検索回数の上限（{MAX_SEARCHES_PER_SESSION}回）に達しました。ページを更新してください。")
+        st.info("荒らし対策のため、1セッションあたりの検索回数を制限しています。")
     else:
-        with st.spinner("🤖 AIが情報を収集・分析中..."):
-            if api_available:
-                result = analyze_school_with_gemini(school_name, prefecture)
-                # キャッシュに保存
-                if not result.startswith("⚠️"):
-                    save_to_cache(school_name, prefecture, search_key, result)
-            else:
-                import time
-                time.sleep(2)
-                result = demo_analysis(school_name)
+        search_key = generate_cache_key(school_name, prefecture)
+        from_cache = False
         
-        st.success(f"「{school_name}」の分析が完了しました")
-    
-    # 分析結果を表示
-    st.markdown(result)
-    
-    # --- 子ども事件DB連携 ---
-    st.divider()
-    st.subheader("📰 周辺の子ども関連事件")
-    
-    child_cases = load_child_cases()
-    related_cases = find_related_cases(child_cases, school_name, prefecture)
-    
-    if related_cases:
-        st.info(f"この地域に関連する事件が **{len(related_cases)}件** 見つかりました")
+        # キャッシュ確認
+        cached_result = get_from_cache(search_key)
         
-        for case in related_cases:
+        if cached_result:
+            result = cached_result
+            from_cache = True
+            st.success(f"「{school_name}」の分析結果を表示")
+            st.markdown('<span class="cache-badge">⚡ キャッシュから取得</span>', unsafe_allow_html=True)
+        else:
+            # 新規検索はカウント
+            increment_search_count()
+            remaining = MAX_SEARCHES_PER_SESSION - st.session_state.search_count
+            
+            with st.spinner("🤖 AIが情報を収集・分析中..."):
+                if api_available:
+                    result = analyze_school_with_gemini(school_name, prefecture)
+                    # キャッシュに保存
+                    if not result.startswith("⚠️"):
+                        save_to_cache(school_name, prefecture, search_key, result)
+                else:
+                    import time
+                    time.sleep(2)
+                    result = demo_analysis(school_name)
+            
+            st.success(f"「{school_name}」の分析が完了しました")
+            if remaining > 0:
+                st.caption(f"残り検索回数: {remaining}回")
+    
+        # 分析結果を表示
+        st.markdown(result)
+        
+        # --- 子ども事件DB連携 ---
+        st.divider()
+        st.subheader("📰 周辺の子ども関連事件")
+        
+        child_cases = load_child_cases()
+        related_cases = find_related_cases(child_cases, school_name, prefecture)
+        
+        if related_cases:
+            st.info(f"この地域に関連する事件が **{len(related_cases)}件** 見つかりました")
+            
+            for case in related_cases:
+                st.markdown(f"""
+                <div class="case-card">
+                    <strong>📅 {case.get('date', '日付不明')}</strong><br>
+                    {case.get('title', 'タイトルなし')[:80]}...
+                </div>
+                """, unsafe_allow_html=True)
+            
             st.markdown(f"""
-            <div class="case-card">
-                <strong>📅 {case.get('date', '日付不明')}</strong><br>
-                {case.get('title', 'タイトルなし')[:80]}...
-            </div>
+            <a href="https://tabekirimaru-glitch.github.io/meiyaku-knights/child-cases.html" target="_blank" 
+               style="display: inline-block; background: #7c3aed; color: white; padding: 0.5rem 1rem; border-radius: 8px; text-decoration: none; margin-top: 0.5rem;">
+                📊 子ども事件DBで詳しく見る →
+            </a>
+            """, unsafe_allow_html=True)
+        else:
+            st.info("この地域に関連する事件データは見つかりませんでした")
+        
+        # --- Google検索リンク ---
+        st.divider()
+        st.subheader("🔍 もっと調べる")
+        
+        search_query = urllib.parse.quote(f"{school_name} 事件 事故 いじめ")
+        google_url = f"https://www.google.com/search?q={search_query}"
+        
+        news_query = urllib.parse.quote(f"{school_name}")
+        news_url = f"https://www.google.com/search?q={news_query}&tbm=nws"
+        
+        col1, col2 = st.columns(2)
+        with col1:
+            st.markdown(f"""
+            <a href="{google_url}" target="_blank" 
+               style="display: block; background: #1e3a5f; color: white; padding: 0.75rem 1rem; border-radius: 8px; text-decoration: none; text-align: center;">
+                🔍 Googleで検索
+            </a>
+            """, unsafe_allow_html=True)
+        with col2:
+            st.markdown(f"""
+            <a href="{news_url}" target="_blank" 
+               style="display: block; background: #059669; color: white; padding: 0.75rem 1rem; border-radius: 8px; text-decoration: none; text-align: center;">
+                📰 ニュース検索
+            </a>
             """, unsafe_allow_html=True)
         
-        st.markdown(f"""
-        <a href="https://tabekirimaru-glitch.github.io/meiyaku-knights/child-cases.html" target="_blank" 
-           style="display: inline-block; background: #7c3aed; color: white; padding: 0.5rem 1rem; border-radius: 8px; text-decoration: none; margin-top: 0.5rem;">
-            📊 子ども事件DBで詳しく見る →
-        </a>
+        st.caption("※AIの分析で情報が見つからない場合は、上記リンクから直接検索してください")
+        
+        # 免責事項
+        st.divider()
+        st.markdown("""
+        <div class="warning-card">
+            <strong>⚠️ 重要な注意事項</strong><br>
+            この結果はAIによる公開情報の分析に基づく参考情報です。
+            実際の学校の安全性を保証するものではありません。
+            最終的な判断はご自身で行い、必要に応じて学校や教育委員会に直接お問い合わせください。
+        </div>
         """, unsafe_allow_html=True)
-    else:
-        st.info("この地域に関連する事件データは見つかりませんでした")
-    
-    # --- Google検索リンク ---
-    st.divider()
-    st.subheader("🔍 もっと調べる")
-    
-    search_query = urllib.parse.quote(f"{school_name} 事件 事故 いじめ")
-    google_url = f"https://www.google.com/search?q={search_query}"
-    
-    news_query = urllib.parse.quote(f"{school_name}")
-    news_url = f"https://www.google.com/search?q={news_query}&tbm=nws"
-    
-    col1, col2 = st.columns(2)
-    with col1:
-        st.markdown(f"""
-        <a href="{google_url}" target="_blank" 
-           style="display: block; background: #1e3a5f; color: white; padding: 0.75rem 1rem; border-radius: 8px; text-decoration: none; text-align: center;">
-            🔍 Googleで検索
-        </a>
-        """, unsafe_allow_html=True)
-    with col2:
-        st.markdown(f"""
-        <a href="{news_url}" target="_blank" 
-           style="display: block; background: #059669; color: white; padding: 0.75rem 1rem; border-radius: 8px; text-decoration: none; text-align: center;">
-            📰 ニュース検索
-        </a>
-        """, unsafe_allow_html=True)
-    
-    st.caption("※AIの分析で情報が見つからない場合は、上記リンクから直接検索してください")
-    
-    # 免責事項
-    st.divider()
-    st.markdown("""
-    <div class="warning-card">
-        <strong>⚠️ 重要な注意事項</strong><br>
-        この結果はAIによる公開情報の分析に基づく参考情報です。
-        実際の学校の安全性を保証するものではありません。
-        最終的な判断はご自身で行い、必要に応じて学校や教育委員会に直接お問い合わせください。
-    </div>
-    """, unsafe_allow_html=True)
 
 elif search_button and not school_name:
     st.warning("学校名を入力してください")
