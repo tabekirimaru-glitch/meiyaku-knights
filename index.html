@@ -1237,21 +1237,28 @@
     <section class="section-block" style="padding: 1.5rem 0;">
         <div class="container">
             <a href="school-risk.html"
-                style="display: block; background: linear-gradient(135deg, #1e3a5f, #0f172a); border-radius: 16px; padding: 1.5rem 2rem; text-decoration: none; transition: all 0.3s; box-shadow: 0 4px 20px rgba(0,0,0,0.15);">
+                style="display: block; position: relative; overflow: hidden; border-radius: 16px; box-shadow: 0 4px 20px rgba(0,0,0,0.15);">
+                <img src="images/school-risk-banner.jpg" alt="学校リスク予報AI"
+                    style="width: 100%; height: auto; display: block; transition: transform 0.3s;">
+                <!-- 半透明オーバーレイ -->
                 <div
-                    style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1rem;">
-                    <div style="display: flex; align-items: center; gap: 1rem;">
-                        <span style="font-size: 2.5rem;">🏫</span>
-                        <div>
-                            <div style="color: #22c55e; font-weight: 800; font-size: 1.3rem; margin-bottom: 0.25rem;">
-                                学校リスク予報</div>
-                            <div style="color: rgba(255,255,255,0.9); font-size: 0.95rem;">その学校は本当に安全？AIが過去の事件と隠蔽体質を徹底調査
-                            </div>
-                        </div>
-                    </div>
-                    <span
-                        style="color: white; font-weight: 700; background: #22c55e; padding: 0.75rem 1.5rem; border-radius: 25px; font-size: 1rem; white-space: nowrap;">今すぐ調べる
-                        →</span>
+                    style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: linear-gradient(135deg, rgba(30,58,95,0.6) 0%, rgba(0,0,0,0.3) 100%);">
+                </div>
+                <!-- 左上タイトル -->
+                <div
+                    style="position: absolute; top: 20px; left: 20px; font-family: 'Hiragino Kaku Gothic ProN', 'Noto Sans JP', sans-serif; font-weight: 900; font-size: 1.5rem; color: white; text-shadow: 2px 2px 8px rgba(0,0,0,0.5);">
+                    🏫 学校リスク予報AI
+                </div>
+                <!-- サブテキスト -->
+                <div
+                    style="position: absolute; bottom: 60px; left: 20px; right: 20px; color: white; text-shadow: 1px 1px 6px rgba(0,0,0,0.7);">
+                    <div style="font-size: 1.1rem; font-weight: 700; margin-bottom: 0.5rem;">その学校は本当に安全？</div>
+                    <div style="font-size: 0.9rem; opacity: 0.9;">AIが過去の事件と隠蔽体質を徹底調査</div>
+                </div>
+                <!-- CTAボタン -->
+                <div
+                    style="position: absolute; bottom: 20px; left: 50%; transform: translateX(-50%); background: #22c55e; padding: 12px 30px; border-radius: 30px; font-size: 1rem; font-weight: 700; color: white; box-shadow: 0 4px 15px rgba(0,0,0,0.3);">
+                    👆 今すぐ調べる
                 </div>
             </a>
         </div>
