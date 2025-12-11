@@ -1,11 +1,13 @@
 """
 学校リスク予報AI - Streamlit App
 Gemini AIが学校の安全性とリスク管理体制を分析します
+子ども事件DB連携 + Google検索リンク機能付き
 """
 
 import streamlit as st
 import google.generativeai as genai
-import os
+import requests
+import urllib.parse
 from datetime import datetime
 
 # ページ設定
@@ -15,8 +17,53 @@ st.set_page_config(
     layout="centered"
 )
 
+# 子ども事件データを読み込む
+@st.cache_data(ttl=3600)  # 1時間キャッシュ
+def load_child_cases():
+    """GitHub Pagesから子ども事件データを取得"""
+    try:
+        url = "https://tabekirimaru-glitch.github.io/meiyaku-knights/data/child-cases.json"
+        response = requests.get(url, timeout=10)
+        if response.status_code == 200:
+            return response.json()
+    except:
+        pass
+    return []
+
+# 地域に関連する事件を検索
+def find_related_cases(cases: list, search_term: str, prefecture: str, limit: int = 5):
+    """学校名や都道府県から関連する事件を検索"""
+    results = []
+    
+    # 検索キーワードを抽出（市区町村名など）
+    search_keywords = []
+    if prefecture != "指定なし":
+        search_keywords.append(prefecture.replace("県", "").replace("府", "").replace("都", ""))
+    
+    # 学校名から地名を抽出（例：「横浜市立○○小学校」→「横浜」）
+    for keyword in ["市", "区", "町", "村"]:
+        if keyword in search_term:
+            idx = search_term.find(keyword)
+            if idx > 0:
+                city_name = search_term[:idx]
+                search_keywords.append(city_name)
+                break
+    
+    # 学校名自体も検索
+    search_keywords.append(search_term)
+    
+    for case in cases:
+        title = case.get("title", "")
+        for keyword in search_keywords:
+            if keyword and len(keyword) >= 2 and keyword in title:
+                results.append(case)
+                break
+        if len(results) >= limit:
+            break
+    
+    return results
+
 # Gemini API設定
-# Streamlit Cloud の Secrets から API キーを取得
 model = None
 api_available = False
 
@@ -51,10 +98,10 @@ try:
         model = genai.GenerativeModel(selected_model)
         api_available = True
     else:
-        st.warning(f"⚠️ 利用可能なモデルがありません。利用可能: {available[:5]}")
+        st.warning(f"⚠️ 利用可能なモデルがありません")
         
 except Exception as e:
-    st.warning(f"⚠️ デモモードで動作中（{str(e)[:50]}）")
+    st.warning(f"⚠️ デモモードで動作中")
 
 # カスタムCSS
 st.markdown("""
@@ -103,6 +150,16 @@ st.markdown("""
         border-radius: 12px;
         border: 1px solid #bae6fd;
         line-height: 1.8;
+    }
+    .case-card {
+        background: white;
+        padding: 0.75rem;
+        border-radius: 8px;
+        border: 1px solid #e2e8f0;
+        margin-bottom: 0.5rem;
+    }
+    .case-card:hover {
+        border-color: #3b82f6;
     }
 </style>
 """, unsafe_allow_html=True)
@@ -226,7 +283,65 @@ if search_button and school_name:
     st.success(f"「{school_name}」の分析が完了しました")
     
     # 分析結果を表示
-    st.markdown(f'<div class="ai-response">{result}</div>', unsafe_allow_html=True)
+    st.markdown(result)
+    
+    # --- 子ども事件DB連携 ---
+    st.divider()
+    st.subheader("📰 周辺の子ども関連事件")
+    
+    child_cases = load_child_cases()
+    related_cases = find_related_cases(child_cases, school_name, prefecture)
+    
+    if related_cases:
+        st.info(f"この地域に関連する事件が **{len(related_cases)}件** 見つかりました")
+        
+        for case in related_cases:
+            with st.container():
+                st.markdown(f"""
+                <div class="case-card">
+                    <strong>📅 {case.get('date', '日付不明')}</strong><br>
+                    {case.get('title', 'タイトルなし')[:80]}...
+                </div>
+                """, unsafe_allow_html=True)
+        
+        # 子ども事件DBへのリンク
+        st.markdown(f"""
+        <a href="https://tabekirimaru-glitch.github.io/meiyaku-knights/child-cases.html" target="_blank" 
+           style="display: inline-block; background: #7c3aed; color: white; padding: 0.5rem 1rem; border-radius: 8px; text-decoration: none; margin-top: 0.5rem;">
+            📊 子ども事件DBで詳しく見る →
+        </a>
+        """, unsafe_allow_html=True)
+    else:
+        st.info("この地域に関連する事件データは見つかりませんでした")
+    
+    # --- Google検索リンク ---
+    st.divider()
+    st.subheader("🔍 もっと調べる")
+    
+    # Google検索クエリを生成
+    search_query = urllib.parse.quote(f"{school_name} 事件 事故 いじめ")
+    google_url = f"https://www.google.com/search?q={search_query}"
+    
+    news_query = urllib.parse.quote(f"{school_name}")
+    news_url = f"https://www.google.com/search?q={news_query}&tbm=nws"
+    
+    col1, col2 = st.columns(2)
+    with col1:
+        st.markdown(f"""
+        <a href="{google_url}" target="_blank" 
+           style="display: block; background: #1e3a5f; color: white; padding: 0.75rem 1rem; border-radius: 8px; text-decoration: none; text-align: center;">
+            🔍 Googleで検索
+        </a>
+        """, unsafe_allow_html=True)
+    with col2:
+        st.markdown(f"""
+        <a href="{news_url}" target="_blank" 
+           style="display: block; background: #059669; color: white; padding: 0.75rem 1rem; border-radius: 8px; text-decoration: none; text-align: center;">
+            📰 ニュース検索
+        </a>
+        """, unsafe_allow_html=True)
+    
+    st.caption("※AIの分析で情報が見つからない場合は、上記リンクから直接検索してください")
     
     # 免責事項
     st.divider()
