@@ -17,17 +17,44 @@ st.set_page_config(
 
 # Gemini API設定
 # Streamlit Cloud の Secrets から API キーを取得
+model = None
+api_available = False
+
 try:
     GEMINI_API_KEY = st.secrets["GEMINI_API_KEY"]
     genai.configure(api_key=GEMINI_API_KEY)
     
-    # シンプルにモデルを指定
-    model = genai.GenerativeModel('gemini-1.5-flash')
-    api_available = True
+    # 利用可能なモデルを取得
+    available = []
+    for m in genai.list_models():
+        if 'generateContent' in m.supported_generation_methods:
+            available.append(m.name)
+    
+    # 優先順位でモデルを選択
+    preferred_models = [
+        'models/gemini-1.5-flash',
+        'models/gemini-1.5-pro', 
+        'models/gemini-pro',
+        'models/gemini-1.0-pro'
+    ]
+    
+    selected_model = None
+    for pref in preferred_models:
+        if pref in available:
+            selected_model = pref
+            break
+    
+    if not selected_model and available:
+        selected_model = available[0]
+    
+    if selected_model:
+        model = genai.GenerativeModel(selected_model)
+        api_available = True
+    else:
+        st.warning(f"⚠️ 利用可能なモデルがありません。利用可能: {available[:5]}")
+        
 except Exception as e:
-    api_available = False
-    error_msg = str(e)
-    st.warning(f"⚠️ デモモードで動作中")
+    st.warning(f"⚠️ デモモードで動作中（{str(e)[:50]}）")
 
 # カスタムCSS
 st.markdown("""
