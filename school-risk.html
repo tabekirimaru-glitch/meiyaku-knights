@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="学校リスク予報 - AIが全国の学校の安全性とリスク管理体制を徹底調査。不審者情報から隠蔽体質まで、親目線で分析。">
+    <title>学校リスク予報 | 片翼の盟約騎士団</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        /* ヒーローセクション */
+        .risk-hero {
+            background: linear-gradient(135deg, #1e3a5f 0%, #0f172a 100%);
+            color: white;
+            padding: 4rem 20px;
+            text-align: center;
+        }
+
+        .risk-hero h1 {
+            font-size: 2rem;
+            font-weight: 800;
+            margin-bottom: 1rem;
+            line-height: 1.4;
+        }
+
+        .risk-hero h1 span {
+            color: #22c55e;
+        }
+
+        .risk-hero .subtitle {
+            font-size: 1.1rem;
+            color: rgba(255, 255, 255, 0.85);
+            max-width: 600px;
+            margin: 0 auto;
+            line-height: 1.7;
+        }
+
+        /* ツール埋め込みエリア */
+        .tool-container {
+            max-width: 900px;
+            margin: -2rem auto 3rem;
+            padding: 0 20px;
+        }
+
+        .tool-embed {
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 8px 40px rgba(0, 0, 0, 0.15);
+            overflow: hidden;
+            min-height: 800px;
+        }
+
+        .tool-embed iframe {
+            width: 100%;
+            height: 850px;
+            border: none;
+        }
+
+        .tool-placeholder {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 400px;
+            padding: 2rem;
+            text-align: center;
+            background: linear-gradient(135deg, #f8fafc, #e2e8f0);
+        }
+
+        .tool-placeholder .icon {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+        }
+
+        .tool-placeholder h3 {
+            color: var(--primary-dark);
+            margin-bottom: 1rem;
+        }
+
+        .tool-placeholder p {
+            color: var(--text-light);
+            max-width: 400px;
+        }
+
+        /* 特徴セクション */
+        .features-section {
+            padding: 4rem 20px;
+            background: white;
+        }
+
+        .features-section h2 {
+            text-align: center;
+            color: var(--primary-dark);
+            font-size: 1.8rem;
+            margin-bottom: 2.5rem;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2rem;
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .feature-card {
+            text-align: center;
+            padding: 2rem;
+            background: var(--bg-light);
+            border-radius: 16px;
+            transition: all 0.3s;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        .feature-card .icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+
+        .feature-card h3 {
+            color: var(--primary-color);
+            margin-bottom: 0.75rem;
+        }
+
+        .feature-card p {
+            color: var(--text-light);
+            font-size: 0.95rem;
+            line-height: 1.6;
+        }
+
+        /* 注意事項 */
+        .disclaimer-section {
+            background: #f1f5f9;
+            padding: 3rem 20px;
+        }
+
+        .disclaimer-box {
+            max-width: 800px;
+            margin: 0 auto;
+            text-align: center;
+        }
+
+        .disclaimer-box h4 {
+            color: var(--primary-dark);
+            margin-bottom: 1rem;
+        }
+
+        .disclaimer-box p {
+            color: #64748b;
+            font-size: 0.9rem;
+            line-height: 1.7;
+        }
+
+        /* 回遊リンク */
+        .cta-section {
+            padding: 3rem 20px;
+            background: white;
+        }
+
+        .cta-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .cta-card {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1.5rem;
+            background: var(--bg-light);
+            border-radius: 12px;
+            text-decoration: none;
+            transition: all 0.2s;
+            border: 2px solid transparent;
+        }
+
+        .cta-card:hover {
+            border-color: var(--primary-color);
+            transform: translateX(5px);
+        }
+
+        .cta-card .icon {
+            font-size: 2rem;
+            flex-shrink: 0;
+        }
+
+        .cta-card .text h4 {
+            color: var(--primary-dark);
+            margin-bottom: 0.25rem;
+        }
+
+        .cta-card .text p {
+            color: var(--text-light);
+            font-size: 0.85rem;
+        }
+
+        @media (max-width: 768px) {
+            .risk-hero h1 {
+                font-size: 1.5rem;
+            }
+
+            .risk-hero .subtitle {
+                font-size: 1rem;
+            }
+
+            .tool-embed iframe {
+                height: 700px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- ヘッダー -->
+    <header class="header">
+        <div class="container">
+            <div class="logo">
+                <img src="images/shield-emblem.png" alt="片翼の盟約騎士団" class="logo-emblem">
+                <div class="logo-text">
+                    <h1>片翼の盟約騎士団</h1>
+                    <p class="tagline">One-Winged Knights Covenant</p>
+                </div>
+            </div>
+            <nav class="header-nav">
+                <a href="index.html">ホーム</a>
+                <a href="judgments.html">判例DB</a>
+                <a href="child-cases.html">事件DB</a>
+            </nav>
+        </div>
+    </header>
+
+    <!-- ヒーローセクション -->
+    <section class="risk-hero">
+        <div class="container">
+            <h1>その学校は、<span>本当に安全</span>ですか？<br>AIが過去の事件と"隠蔽体質"を徹底調査</h1>
+            <p class="subtitle">
+                不審者情報だけでなく、学校の対応力や口コミまで分析。<br>
+                親目線のリスク予報をお届けします。
+            </p>
+        </div>
+    </section>
+
+    <!-- ツール埋め込みエリア -->
+    <div class="tool-container">
+        <div class="tool-embed">
+            <!--
+                ★★★ Streamlitアプリ埋め込み ★★★
+                デプロイ後、以下のURLを差し替えてください。
+                例: https://school-risk-app.streamlit.app/?embed=true
+            -->
+
+            <!-- プレースホルダー（Streamlit URL設定後に削除） -->
+            <div class="tool-placeholder" id="placeholder">
+                <div class="icon">🔍</div>
+                <h3>学校リスク検索ツール</h3>
+                <p>Streamlitアプリをデプロイ後、ここに検索ツールが表示されます。</p>
+                <p style="margin-top: 1rem; font-size: 0.85rem; color: #94a3b8;">
+                    設定方法：school-risk.html の iframe src を<br>
+                    Streamlit Cloud のURLに変更してください
+                </p>
+            </div>
+
+            <!--
+            <iframe
+                src="https://あなたのStreamlitアプリのURL/?embed=true"
+                title="学校リスク予報AI"
+                loading="lazy"
+            >
+                このブラウザはiframeをサポートしていません。
+            </iframe>
+            -->
+        </div>
+    </div>
+
+    <!-- 特徴セクション -->
+    <section class="features-section">
+        <h2>🛡️ このツールの特徴</h2>
+        <div class="features-grid">
+            <div class="feature-card">
+                <div class="icon">🤖</div>
+                <h3>AIによる深掘り調査</h3>
+                <p>ニュースからSNS、口コミまで網羅的に検索。過去の事件や対応を徹底調査します。</p>
+            </div>
+            <div class="feature-card">
+                <div class="icon">👁️</div>
+                <h3>親目線の辛口スコア</h3>
+                <p>学校の「事なかれ主義」や隠蔽体質を見逃さない。本音のリスク評価を提供。</p>
+            </div>
+            <div class="feature-card">
+                <div class="icon">🚨</div>
+                <h3>不審者情報も連携</h3>
+                <p>地域の治安情報も同時チェック。通学路の安全まで考慮した総合判定。</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- 注意事項 -->
+    <section class="disclaimer-section">
+        <div class="disclaimer-box">
+            <h4>⚠️ ご利用上の注意</h4>
+            <p>
+                本ツールの結果はAIによる自動生成です。必ず情報源を確認し、最終的な判断はご自身でお願いします。<br>
+                掲載情報の正確性を保証するものではありません。個別の学校への問い合わせは直接行ってください。
+            </p>
+        </div>
+    </section>
+
+    <!-- 回遊リンク -->
+    <section class="cta-section">
+        <div class="cta-grid">
+            <a href="child-cases.html" class="cta-card">
+                <div class="icon">📰</div>
+                <div class="text">
+                    <h4>子供関連事件DB</h4>
+                    <p>全国の子供に関わる事件を検索</p>
+                </div>
+            </a>
+            <a href="judgments.html" class="cta-card">
+                <div class="icon">⚖️</div>
+                <div class="text">
+                    <h4>判例データベース</h4>
+                    <p>親権・監護権の判例を調べる</p>
+                </div>
+            </a>
+            <a href="community.html" class="cta-card">
+                <div class="icon">🤝</div>
+                <div class="text">
+                    <h4>コミュニティ</h4>
+                    <p>同じ境遇の仲間と情報共有</p>
+                </div>
+            </a>
+        </div>
+    </section>
+
+    <!-- フッター -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-bottom">
+                <p>&copy; 2025 片翼の盟約騎士団. All rights reserved.</p>
+                <p style="margin-top: 0.5rem;">
+                    <a href="privacy-policy.html" style="color: inherit;">プライバシーポリシー</a> |
+                    <a href="disclaimer.html" style="color: inherit;">免責事項</a>
+                </p>
+            </div>
+        </div>
+    </footer>
+</body>
+
+</html>
