@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="片翼の盟約騎士団へのお問い合わせ。ご質問、ご意見、取材依頼などお気軽にどうぞ。">
+    <title>お問い合わせ | 片翼の盟約騎士団</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .contact-content {
+            max-width: 700px;
+            margin: 3rem auto;
+            padding: 0 20px;
+        }
+
+        .contact-content h1 {
+            font-size: 2rem;
+            color: var(--primary-dark);
+            margin-bottom: 1rem;
+            text-align: center;
+        }
+
+        .contact-intro {
+            text-align: center;
+            color: var(--text-light);
+            margin-bottom: 2rem;
+        }
+
+        .contact-form {
+            background: white;
+            padding: 2rem;
+            border-radius: 16px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: var(--text-dark);
+        }
+
+        .form-group .required {
+            color: #dc2626;
+            font-size: 0.85rem;
+        }
+
+        .form-group input,
+        .form-group textarea,
+        .form-group select {
+            width: 100%;
+            padding: 0.875rem;
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-family: inherit;
+            transition: border-color 0.2s;
+            box-sizing: border-box;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: var(--primary-color);
+        }
+
+        .form-group textarea {
+            min-height: 150px;
+            resize: vertical;
+        }
+
+        .submit-btn {
+            width: 100%;
+            padding: 1rem;
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .submit-btn:hover {
+            background: var(--primary-dark);
+            transform: translateY(-2px);
+        }
+
+        .note-box {
+            background: #f0f9ff;
+            border: 1px solid #bae6fd;
+            border-radius: 8px;
+            padding: 1rem;
+            margin-top: 1.5rem;
+            font-size: 0.9rem;
+            color: #0369a1;
+        }
+
+        .back-link {
+            display: inline-block;
+            margin-bottom: 2rem;
+            color: var(--primary-color);
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .back-link:hover {
+            text-decoration: underline;
+        }
+
+        .contact-methods {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .contact-method {
+            text-align: center;
+            padding: 1.5rem;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+        }
+
+        .contact-method .icon {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .contact-method h4 {
+            color: var(--primary-dark);
+            margin-bottom: 0.5rem;
+        }
+
+        .contact-method a {
+            color: var(--primary-color);
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .contact-method a:hover {
+            text-decoration: underline;
+        }
+
+        /* 送信完了メッセージ */
+        .success-message {
+            display: none;
+            text-align: center;
+            padding: 3rem 2rem;
+            background: #f0fdf4;
+            border-radius: 16px;
+            border: 2px solid #86efac;
+        }
+
+        .success-message .icon {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+        }
+
+        .success-message h2 {
+            color: #166534;
+            margin-bottom: 1rem;
+        }
+
+        .success-message p {
+            color: #15803d;
+        }
+    </style>
+</head>
+
+<body>
+    <header class="header">
+        <div class="container">
+            <div class="logo">
+                <img src="images/shield-emblem.png" alt="片翼の盟約騎士団" class="logo-emblem">
+                <div class="logo-text">
+                    <h1>片翼の盟約騎士団</h1>
+                    <p class="tagline">One-Winged Knights Covenant</p>
+                </div>
+            </div>
+            <nav class="header-nav">
+                <a href="index.html">ホーム</a>
+                <a href="judgments.html">判例DB</a>
+                <a href="community.html">コミュニティ</a>
+            </nav>
+        </div>
+    </header>
+
+    <main class="contact-content">
+        <a href="index.html" class="back-link">← ホームに戻る</a>
+
+        <h1>📩 お問い合わせ</h1>
+        <p class="contact-intro">ご質問、ご意見、コラボ・取材依頼などお気軽にどうぞ</p>
+
+        <!-- 他の連絡方法 -->
+        <div class="contact-methods">
+            <div class="contact-method">
+                <div class="icon">🐦</div>
+                <h4>X (Twitter)</h4>
+                <a href="https://x.com/meiyaku_knights" target="_blank">@meiyaku_knights</a>
+            </div>
+            <div class="contact-method">
+                <div class="icon">🍡</div>
+                <h4>マシュマロ</h4>
+                <a href="https://marshmallow-qa.com/ky8old04cnlnyzb" target="_blank">匿名質問</a>
+            </div>
+            <div class="contact-method">
+                <div class="icon">📺</div>
+                <h4>YouTube</h4>
+                <a href="https://www.youtube.com/@meiyaku_knights" target="_blank">コメント</a>
+            </div>
+        </div>
+
+        <!-- お問い合わせフォーム -->
+        <div class="contact-form" id="formContainer">
+            <!--
+                ★★★ Formspree設定手順 ★★★
+                1. https://formspree.io/ にアクセス
+                2. 無料アカウントを作成
+                3. 新しいフォームを作成
+                4. 発行されたエンドポイントURLを下のaction属性に設定
+                   例: action="https://formspree.io/f/xxxxxxxx"
+                5. 通知メールの設定は Formspree のダッシュボードで行う
+            -->
+            <form action="https://formspree.io/f/YOUR_FORM_ID" method="POST" id="contactForm">
+                <div class="form-group">
+                    <label for="name">お名前・ハンドルネーム <span class="required">*</span></label>
+                    <input type="text" id="name" name="name" required placeholder="例：匿名希望">
+                </div>
+
+                <div class="form-group">
+                    <label for="email">メールアドレス <span class="required">*</span></label>
+                    <input type="email" id="email" name="email" required placeholder="example@mail.com">
+                </div>
+
+                <div class="form-group">
+                    <label for="category">お問い合わせ種別</label>
+                    <select id="category" name="category">
+                        <option value="質問">質問・相談</option>
+                        <option value="要望">機能要望・改善提案</option>
+                        <option value="不具合">不具合報告</option>
+                        <option value="取材">取材・メディア関連</option>
+                        <option value="コラボ">コラボ依頼</option>
+                        <option value="その他">その他</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="message">メッセージ <span class="required">*</span></label>
+                    <textarea id="message" name="message" required placeholder="お問い合わせ内容をご記入ください"></textarea>
+                </div>
+
+                <!-- Formspreeのスパム対策（ハニーポット） -->
+                <input type="text" name="_gotcha" style="display:none">
+
+                <!-- 送信後のリダイレクト先 -->
+                <input type="hidden" name="_next"
+                    value="https://tabekirimaru-glitch.github.io/meiyaku-knights/contact.html?success=true">
+
+                <button type="submit" class="submit-btn">📨 送信する</button>
+            </form>
+
+            <div class="note-box">
+                <strong>💡 ご注意</strong><br>
+                ・ご返信までに数日かかる場合があります<br>
+                ・法律相談には対応できません（弁護士にご相談ください）<br>
+                ・いただいた個人情報はお問い合わせ対応以外には使用しません
+            </div>
+        </div>
+
+        <!-- 送信完了メッセージ -->
+        <div class="success-message" id="successMessage">
+            <div class="icon">✅</div>
+            <h2>送信完了しました！</h2>
+            <p>お問い合わせありがとうございます。<br>内容を確認の上、必要に応じてご連絡いたします。</p>
+            <a href="index.html" class="back-link" style="margin-top: 1.5rem;">← ホームに戻る</a>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-bottom">
+                <p>&copy; 2025 片翼の盟約騎士団. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // URL パラメータで送信完了を判定
+        const urlParams = new URLSearchParams(window.location.search);
+        if (urlParams.get('success') === 'true') {
+            document.getElementById('formContainer').style.display = 'none';
+            document.getElementById('successMessage').style.display = 'block';
+            // 完了メッセージが見えるようにスクロール
+            document.getElementById('successMessage').scrollIntoView({ behavior: 'smooth' });
+        }
+    </script>
+</body>
+
+</html>
