@@ -196,18 +196,20 @@ try:
 except:
     pass
 
-# カスタムCSS
+# カスタムCSS（ダークモード対応）
 st.markdown("""
 <style>
     .main-header { font-size: 1.8rem; font-weight: 800; color: #1e3a5f; text-align: center; margin-bottom: 0.5rem; }
     .sub-header { font-size: 1rem; color: #64748b; text-align: center; margin-bottom: 2rem; }
-    .search-result { background: white; padding: 0.75rem; border-radius: 8px; border: 1px solid #e2e8f0; margin-bottom: 0.5rem; }
-    .search-result a { color: #1e40af; text-decoration: none; font-weight: 600; }
+    .search-result { background: #1e293b; padding: 0.75rem; border-radius: 8px; border: 1px solid #334155; margin-bottom: 0.5rem; }
+    .search-result a { color: #60a5fa; text-decoration: none; font-weight: 600; }
     .search-result a:hover { text-decoration: underline; }
-    .search-result p { color: #64748b; font-size: 0.85rem; margin-top: 0.25rem; }
+    .search-result p { color: #94a3b8; font-size: 0.85rem; margin-top: 0.25rem; }
     .cache-badge { background: #22c55e; color: white; padding: 0.25rem 0.5rem; border-radius: 4px; font-size: 0.75rem; }
-    .warning-card { background: #fef2f2; padding: 1rem; border-radius: 8px; border-left: 4px solid #dc2626; margin: 0.5rem 0; }
-    .case-card { background: white; padding: 0.75rem; border-radius: 8px; border: 1px solid #e2e8f0; margin-bottom: 0.5rem; }
+    .warning-card { background: #7f1d1d; padding: 1rem; border-radius: 8px; border-left: 4px solid #f87171; margin: 0.5rem 0; color: #fecaca !important; }
+    .warning-card strong { color: #fca5a5 !important; }
+    .case-card { background: #1e293b; padding: 0.75rem; border-radius: 8px; border: 1px solid #334155; margin-bottom: 0.5rem; color: #e2e8f0 !important; }
+    .case-card strong { color: #93c5fd !important; }
 </style>
 """, unsafe_allow_html=True)
 
