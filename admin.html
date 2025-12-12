@@ -436,6 +436,11 @@
                             <input type="number" id="set-order" class="form-input" value="0" min="0"
                                 style="width: 100px;">
                         </div>
+                        <div class="form-group">
+                            <label>📅 公開日時（予約投稿）</label>
+                            <input type="datetime-local" id="set-publish-at" class="form-input">
+                            <small style="color: var(--text-light);">※空欄の場合は即時公開</small>
+                        </div>
                     </div>
                     <button type="submit" class="btn btn-primary">セットを追加</button>
                 </form>
@@ -815,12 +820,14 @@
         document.getElementById('media-set-form').addEventListener('submit', async (e) => {
             e.preventDefault();
 
+            const publishAtInput = document.getElementById('set-publish-at').value;
             const data = {
                 title: document.getElementById('set-title').value,
                 manga_image_url: document.getElementById('set-manga-image').value || null,
                 short_video_url: document.getElementById('set-short-url').value || null,
                 long_video_url: document.getElementById('set-long-url').value || null,
                 display_order: parseInt(document.getElementById('set-order').value) || 0,
+                publish_at: publishAtInput ? new Date(publishAtInput).toISOString() : new Date().toISOString(),
                 is_active: true
             };
 
@@ -874,6 +881,11 @@
                                         <div>⏱️ ショート: ${set.short_video_url ? `<a href="${set.short_video_url}" target="_blank">🔗</a>` : '❌未設定'}</div>
                                         <div>🎬 ロング: ${set.long_video_url ? `<a href="${set.long_video_url}" target="_blank">🔗</a>` : '❌未設定'}</div>
                                         <div>順序: ${set.display_order}</div>
+                                        <div style="margin-top: 0.5rem; padding: 0.25rem 0.5rem; border-radius: 4px; display: inline-block; ${set.publish_at && new Date(set.publish_at) > new Date() ? 'background: #fef3c7; color: #92400e;' : 'background: #dcfce7; color: #166534;'}">
+                                            ${set.publish_at && new Date(set.publish_at) > new Date()
+                            ? `⏰ 予約: ${new Date(set.publish_at).toLocaleString('ja-JP')}`
+                            : '✅ 公開中'}
+                                        </div>
                                     </div>
                                 </div>
                                 <div style="display: flex; flex-direction: column; gap: 0.5rem;">
