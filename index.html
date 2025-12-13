@@ -1453,7 +1453,7 @@
 
             <!-- 開始ボタン（初期表示） -->
             <div id="naviStartArea" style="text-align: center;">
-                <button id="naviStartBtn" class="navi-start-btn">
+                <button id="naviStartBtn" class="navi-start-btn" onclick="startSurvivalNavi()">
                     🧭 診断を始める
                 </button>
             </div>
@@ -2110,194 +2110,119 @@
         // }
 
         // ===== サバイバル・ナビ =====
-        (function () {
-            console.log('サバイバル・ナビ初期化開始');
-            let naviData = null;
-            let currentPath = [];
-            const timeline = document.getElementById('naviTimeline');
-            const startArea = document.getElementById('naviStartArea');
-            const startBtn = document.getElementById('naviStartBtn');
+        var survivalNaviData = null;
+        var survivalNaviPath = [];
 
-            if (!timeline || !startBtn) {
-                console.error('サバイバル・ナビ要素が見つかりません');
-                return;
-            }
+        // グローバル関数：診断開始
+        function startSurvivalNavi() {
+            console.log('診断開始ボタンクリック');
+            var startArea = document.getElementById('naviStartArea');
+            var timeline = document.getElementById('naviTimeline');
 
-            // 開始ボタンクリックで診断開始
-            startBtn.addEventListener('click', function () {
-                console.log('診断開始ボタンクリック');
-                startArea.style.display = 'none';
-                timeline.style.display = 'block';
+            startArea.style.display = 'none';
+            timeline.style.display = 'block';
 
-                // JSONデータ読み込み
-                if (!naviData) {
-                    fetch('data/survival-navi.json')
-                        .then(res => res.json())
-                        .then(data => {
-                            console.log('JSONデータ読み込み成功');
-                            naviData = data;
-                            renderQuestion('Q1');
-                        })
-                        .catch(err => {
-                            console.error('データ読み込みエラー:', err);
-                            timeline.innerHTML = '<div style="text-align:center;color:#fca5a5;">データの読み込みに失敗しました</div>';
-                        });
-                } else {
-                    renderQuestion('Q1');
-                }
-            });
-
-            // 質問表示
-            function renderQuestion(qId) {
-                const q = naviData.questions[qId];
-                if (!q) return;
-
-                const stepIndex = currentPath.length + 1;
-                const stepDiv = document.createElement('div');
-                stepDiv.className = 'navi-step';
-                stepDiv.dataset.qid = qId;
-                stepDiv.innerHTML = `
-                    <div class="navi-question">
-                        <span class="q-icon">Q${stepIndex}</span>
-                        ${q.text}
-                    </div>
-                    <div class="navi-options">
-                        ${q.options.map((opt, i) => `
-                            <button class="navi-option" data-next="${opt.next}" data-index="${i}">
-                                ${opt.label}
-                            </button>
-                        `).join('')}
-                    </div>
-                `;
-
-                // 最初の質問なら置換、それ以外は追加
-                if (currentPath.length === 0) {
-                    timeline.innerHTML = '';
-                }
-                timeline.appendChild(stepDiv);
-
-                // スムーズスクロール
-                stepDiv.scrollIntoView({ behavior: 'smooth', block: 'center' });
-
-                // 選択肢クリックイベント
-                stepDiv.querySelectorAll('.navi-option').forEach(btn => {
-                    btn.addEventListener('click', function () {
-                        const next = this.dataset.next;
-                        const optIndex = this.dataset.index;
-
-                        // 選択状態をセット
-                        stepDiv.querySelectorAll('.navi-option').forEach(b => b.classList.remove('selected'));
-                        this.classList.add('selected');
-                        stepDiv.classList.add('answered');
-
-                        // パスに記録
-                        currentPath.push({ qId, optIndex, next });
-
-                        // 過去の選択を変更可能に
-                        stepDiv.classList.add('clickable');
-                        stepDiv.addEventListener('click', function stepClick() {
-                            resetFromStep(qId);
-                        });
-
-                        // 次の質問または結果表示
-                        if (next.startsWith('End_')) {
-                            renderResult(next);
-                        } else {
-                            renderQuestion(next);
-                        }
+            if (!survivalNaviData) {
+                fetch('data/survival-navi.json')
+                    .then(function (res) { return res.json(); })
+                    .then(function (data) {
+                        survivalNaviData = data;
+                        renderNaviQuestion('Q1');
+                    })
+                    .catch(function (err) {
+                        console.error('データ読み込みエラー:', err);
+                        timeline.innerHTML = '<div style="text-align:center;color:#fca5a5;">読み込みに失敗しました</div>';
                     });
-                });
+            } else {
+                survivalNaviPath = [];
+                renderNaviQuestion('Q1');
+            }
+        }
+
+        // 質問表示
+        function renderNaviQuestion(qId) {
+            var timeline = document.getElementById('naviTimeline');
+            var q = survivalNaviData.questions[qId];
+            if (!q) return;
+
+            var stepIndex = survivalNaviPath.length + 1;
+            var stepDiv = document.createElement('div');
+            stepDiv.className = 'navi-step';
+            stepDiv.dataset.qid = qId;
+
+            var optionsHtml = '';
+            for (var i = 0; i < q.options.length; i++) {
+                optionsHtml += '<button class="navi-option" data-next="' + q.options[i].next + '" data-index="' + i + '">' + q.options[i].label + '</button>';
             }
 
-            // 過去の質問からやり直し
-            function resetFromStep(qId) {
-                const index = currentPath.findIndex(p => p.qId === qId);
-                if (index === -1) return;
+            stepDiv.innerHTML = '<div class="navi-question"><span class="q-icon">Q' + stepIndex + '</span>' + q.text + '</div><div class="navi-options">' + optionsHtml + '</div>';
 
-                // パスをリセット
-                currentPath = currentPath.slice(0, index);
+            if (survivalNaviPath.length === 0) {
+                timeline.innerHTML = '';
+            }
+            timeline.appendChild(stepDiv);
+            stepDiv.scrollIntoView({ behavior: 'smooth', block: 'center' });
 
-                // DOM更新
-                const steps = timeline.querySelectorAll('.navi-step');
-                let found = false;
-                steps.forEach(step => {
-                    if (step.dataset.qid === qId) found = true;
-                    if (found) {
-                        step.remove();
+            // 選択肢クリックイベント
+            var buttons = stepDiv.querySelectorAll('.navi-option');
+            buttons.forEach(function (btn) {
+                btn.addEventListener('click', function () {
+                    var next = this.dataset.next;
+                    var optIndex = this.dataset.index;
+
+                    stepDiv.querySelectorAll('.navi-option').forEach(function (b) { b.classList.remove('selected'); });
+                    this.classList.add('selected');
+                    stepDiv.classList.add('answered');
+
+                    survivalNaviPath.push({ qId: qId, optIndex: optIndex, next: next });
+
+                    if (next.startsWith('End_')) {
+                        renderNaviResult(next);
+                    } else {
+                        renderNaviQuestion(next);
                     }
                 });
+            });
+        }
 
-                // 結果カードも削除
-                const resultDiv = timeline.querySelector('.navi-result');
-                if (resultDiv) resultDiv.remove();
-                const restartDiv = timeline.querySelector('.navi-restart');
-                if (restartDiv) restartDiv.remove();
+        // 診断結果表示
+        function renderNaviResult(resultId) {
+            var timeline = document.getElementById('naviTimeline');
+            var result = survivalNaviData.results[resultId];
+            if (!result) return;
 
-                // 質問を再表示
-                renderQuestion(qId);
+            var videosHtml = '';
+            for (var i = 0; i < result.videos.length; i++) {
+                var v = result.videos[i];
+                videosHtml += '<a href="' + v.url + '" target="_blank" class="navi-video-card"><div class="play-icon">▶</div><div class="video-title">' + v.title + '</div></a>';
             }
 
-            // 診断結果表示
-            function renderResult(resultId) {
-                const result = naviData.results[resultId];
-                if (!result) return;
-
-                const resultDiv = document.createElement('div');
-                resultDiv.className = 'navi-result';
-                resultDiv.innerHTML = `
-                    <div class="navi-result-header ${result.phaseLevel}">
-                        <h3>🔬 AI診断レポート</h3>
-                        <div class="phase-label">現在のフェーズ: <strong>${result.phase}</strong></div>
-                    </div>
-                    <div class="navi-result-body">
-                        <div class="navi-advice">${result.advice}</div>
-                        
-                        <div class="navi-videos">
-                            <h4>📺 今見るべき動画</h4>
-                            ${result.videos.map(v => `
-                                <a href="${v.url}" target="_blank" class="navi-video-card">
-                                    <div class="play-icon">▶</div>
-                                    <div class="video-title">${v.title}</div>
-                                </a>
-                            `).join('')}
-                        </div>
-
-                        <div class="navi-tools">
-                            ${result.tools.includes('judgments') ? `
-                                <a href="judgments.html" class="navi-tool-btn judgments">📚 判例DBを見る</a>
-                            ` : ''}
-                            ${result.tools.includes('community') ? `
-                                <a href="community.html" class="navi-tool-btn community">👥 コミュニティへ</a>
-                            ` : ''}
-                        </div>
-
-                        <a href="${naviData.marshmallowUrl}" target="_blank" class="navi-marshmallow">
-                            ✉️ 誰にも頼れない時はヒロに相談（マシュマロ）
-                        </a>
-
-                        <div class="navi-footer-note">
-                            ⚠️ 情報は常にアップデートされます。必ずYouTubeチャンネルで最新情報をチェックしてください
-                        </div>
-                    </div>
-                `;
-
-                timeline.appendChild(resultDiv);
-
-                // リスタートボタン
-                const restartBtn = document.createElement('div');
-                restartBtn.className = 'navi-restart';
-                restartBtn.textContent = '🔄 最初からやり直す';
-                restartBtn.addEventListener('click', function () {
-                    currentPath = [];
-                    timeline.innerHTML = '';
-                    renderQuestion('Q1');
-                });
-                timeline.appendChild(restartBtn);
-
-                // スクロール
-                resultDiv.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            var toolsHtml = '';
+            if (result.tools.indexOf('judgments') !== -1) {
+                toolsHtml += '<a href="judgments.html" class="navi-tool-btn judgments">📚 判例DBを見る</a>';
             }
-        })();
+            if (result.tools.indexOf('community') !== -1) {
+                toolsHtml += '<a href="community.html" class="navi-tool-btn community">👥 コミュニティへ</a>';
+            }
+
+            var resultDiv = document.createElement('div');
+            resultDiv.className = 'navi-result';
+            resultDiv.innerHTML = '<div class="navi-result-header ' + result.phaseLevel + '"><h3>🔬 AI診断レポート</h3><div class="phase-label">現在のフェーズ: <strong>' + result.phase + '</strong></div></div><div class="navi-result-body"><div class="navi-advice">' + result.advice + '</div><div class="navi-videos"><h4>📺 今見るべき動画</h4>' + videosHtml + '</div><div class="navi-tools">' + toolsHtml + '</div><a href="' + survivalNaviData.marshmallowUrl + '" target="_blank" class="navi-marshmallow">✉️ 誰にも頼れない時はヒロに相談（マシュマロ）</a><div class="navi-footer-note">⚠️ 情報は常にアップデートされます。必ずYouTubeチャンネルで最新情報をチェックしてください</div></div>';
+
+            timeline.appendChild(resultDiv);
+
+            // リスタートボタン
+            var restartBtn = document.createElement('div');
+            restartBtn.className = 'navi-restart';
+            restartBtn.textContent = '🔄 最初からやり直す';
+            restartBtn.addEventListener('click', function () {
+                survivalNaviPath = [];
+                timeline.innerHTML = '';
+                renderNaviQuestion('Q1');
+            });
+            timeline.appendChild(restartBtn);
+            resultDiv.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
     </script>
 </body>
 
