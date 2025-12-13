@@ -745,6 +745,16 @@
             .prefecture-grid {
                 grid-template-columns: repeat(3, 1fr);
             }
+
+            /* スマホ版ナビゲーションを2/3サイズに縮小・左寄せ */
+            .nav-items {
+                justify-content: flex-start;
+            }
+
+            .nav-item {
+                padding: 0.5rem 0.75rem;
+                font-size: 0.8rem;
+            }
         }
     </style>
 </head>
@@ -755,6 +765,18 @@
         <div class="login-modal">
             <h2>🔐 会員コミュニティ</h2>
             <p>体験談の投稿・閲覧にはログインが必要です</p>
+
+            <!-- メールアドレスログイン -->
+            <div style="margin-bottom: 1rem;">
+                <input type="email" id="loginEmail" class="form-input" placeholder="メールアドレスを入力"
+                    style="margin-bottom: 0.5rem; padding: 0.875rem; border: 2px solid #e5e7eb; border-radius: 8px; width: 100%; box-sizing: border-box;">
+                <button class="login-btn" id="btnLoginEmail"
+                    style="background: linear-gradient(135deg, #1e40af, #3b82f6); color: white;">
+                    📧 メールアドレスでログイン
+                </button>
+            </div>
+
+            <p style="color: #9ca3af; font-size: 0.85rem; margin: 0.5rem 0;">または</p>
 
             <button class="login-btn google" id="btnLoginGoogle">
                 <svg width="20" height="20" viewBox="0 0 24 24">
@@ -770,7 +792,7 @@
                 Googleでログイン
             </button>
 
-            <button class="login-btn demo" id="btnLoginDemo" onclick="alert('クリックされました！'); window.loginDemo();">
+            <button class="login-btn demo" id="btnLoginDemo">
                 👤 デモモードで閲覧
             </button>
 
@@ -1262,7 +1284,11 @@
                         
                         <p style="color: #94a3b8; font-size: 0.85rem;">
                             間違ってブロックされていると思われる場合は、<br>
-                            管理者までご連絡ください。
+                            以下の連絡先にご連絡ください。<br><br>
+                            <a href="https://x.com/meiyaku_knights" target="_blank" 
+                               style="color: #60a5fa; text-decoration: none; display: inline-flex; align-items: center; gap: 0.5rem;">
+                                📱 X（Twitter）: @meiyaku_knights
+                            </a>
                         </p>
                     </div>
                 </div>
@@ -1341,6 +1367,39 @@
                     }));
                     loginSuccess(name);
                 }
+            });
+        }
+
+        // メールアドレスログインボタン
+        const btnEmail = document.getElementById('btnLoginEmail');
+        if (btnEmail) {
+            btnEmail.addEventListener('click', function () {
+                const email = document.getElementById('loginEmail').value.trim();
+
+                if (!email) {
+                    alert('メールアドレスを入力してください');
+                    return;
+                }
+
+                // 簡易メール形式チェック
+                const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                if (!emailRegex.test(email)) {
+                    alert('有効なメールアドレスを入力してください');
+                    return;
+                }
+
+                console.log('メールログイン:', email);
+
+                // メールアドレスを名前として保存（ドメイン部分を除去）
+                const displayName = email.split('@')[0];
+
+                localStorage.setItem('community_login', JSON.stringify({
+                    name: displayName,
+                    email: email,
+                    timestamp: Date.now()
+                }));
+
+                loginSuccess(displayName);
             });
         }
 
@@ -1775,7 +1834,11 @@
                                 
                                 <p style="color: #94a3b8; font-size: 0.85rem;">
                                     間違ってブロックされていると思われる場合は、<br>
-                                    管理者までご連絡ください。
+                                    以下の連絡先にご連絡ください。<br><br>
+                                    <a href="https://x.com/meiyaku_knights" target="_blank" 
+                                       style="color: #60a5fa; text-decoration: none;">
+                                        📱 X（Twitter）: @meiyaku_knights
+                                    </a>
                                 </p>
                             </div>
                         </div>

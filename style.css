@@ -1027,4 +1027,32 @@ body {
         width: 100%;
         min-width: auto;
     }
+
+    /* スマホ版：ヘッダーを縮小 */
+    .header {
+        padding: 0.75rem 0;
+    }
+
+    .logo-emblem {
+        height: 40px;
+    }
+
+    .logo-text h1 {
+        font-size: 1.1rem;
+    }
+
+    .tagline {
+        font-size: 0.65rem;
+    }
+
+    /* スマホ版：バナーカード縮小 */
+    .learn-card,
+    .content-card {
+        padding: 0.75rem;
+    }
+
+    .learn-card img,
+    .content-card img {
+        max-height: 120px;
+    }
 }

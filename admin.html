@@ -232,6 +232,27 @@
             display: flex;
             gap: 0.5rem;
             flex-wrap: wrap;
+            align-items: center;
+        }
+
+        /* 横一列レイアウト用 */
+        .post-item-horizontal {
+            display: flex;
+            gap: 1rem;
+            align-items: flex-start;
+            flex-wrap: wrap;
+        }
+
+        .post-item-horizontal .post-main {
+            flex: 1;
+            min-width: 300px;
+        }
+
+        .post-item-horizontal .post-actions-vertical {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            min-width: 120px;
         }
 
         .status-badge {
@@ -333,7 +354,8 @@
             <div class="tabs">
                 <button class="tab active" data-status="pending">⏳ 承認待ち</button>
                 <button class="tab" data-status="approved">✅ 承認済み</button>
-                <button class="tab" data-status="rejected">❌ 非承認</button>
+                <button class="tab" data-status="flagged">🚨 不快コンテンツ</button>
+                <button class="tab" data-status="rejected">🚫 非承認(永久BAN)</button>
             </div>
 
             <div id="posts-list">
@@ -490,6 +512,15 @@
                 <div class="empty-state">読み込み中...</div>
             </div>
         </div>
+
+        <!-- ブロックユーザー管理 -->
+        <div class="posts-section" style="margin-top: 2rem;">
+            <h2>🚫 ブロックユーザー管理</h2>
+            <p style="color: var(--text-light); margin-bottom: 1rem;">ブロック中のユーザーを管理できます。解除すると再度アクセス可能になります。</p>
+            <div id="blocked-users-list">
+                <div class="empty-state">読み込み中...</div>
+            </div>
+        </div>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -579,34 +610,53 @@
                     return;
                 }
 
+                // ステータス表示名
+                const statusLabels = {
+                    pending: '⏳ 承認待ち',
+                    approved: '✅ 承認済み',
+                    flagged: '🚨 不快コンテンツ',
+                    rejected: '🚫 非承認(永久BAN)'
+                };
+
                 container.innerHTML = posts.map(post => `
-                    <div class="post-item" data-id="${post.id}">
-                        <div class="post-header">
-                            <div>
-                                <span class="post-meta">
-                                    ${post.author_name} / ${post.prefecture || '未設定'} / ${post.phase || '未設定'}
-                                </span>
-                                <span class="status-badge status-${post.status}">
-                                    ${post.status === 'pending' ? '⏳ 承認待ち' : post.status === 'approved' ? '✅ 承認済み' : '❌ 非承認'}
-                                </span>
+                    <div class="post-item post-item-horizontal" data-id="${post.id}">
+                        <div class="post-main">
+                            <div class="post-header">
+                                <div>
+                                    <span class="post-meta">
+                                        ${post.author_name} / ${post.prefecture || '未設定'} / ${post.phase || '未設定'}
+                                    </span>
+                                    <span class="status-badge status-${post.status}">
+                                        ${statusLabels[post.status] || post.status}
+                                    </span>
+                                </div>
+                                <div class="post-meta">${new Date(post.created_at).toLocaleString('ja-JP')}</div>
                             </div>
-                            <div class="post-meta">${new Date(post.created_at).toLocaleString('ja-JP')}</div>
+                            <h3 class="post-title">${escapeHtml(post.title)}</h3>
+                            <p class="post-content">${escapeHtml(post.content).substring(0, 200)}${post.content.length > 200 ? '...' : ''}</p>
+                            <div class="post-tags">
+                                ${(post.tags || []).map(tag => `<span class="tag">${escapeHtml(tag)}</span>`).join('')}
+                            </div>
+                            <div class="fingerprint">ID: ${post.user_fingerprint || '不明'}</div>
                         </div>
-                        <h3 class="post-title">${escapeHtml(post.title)}</h3>
-                        <p class="post-content">${escapeHtml(post.content).substring(0, 300)}${post.content.length > 300 ? '...' : ''}</p>
-                        <div class="post-tags">
-                            ${(post.tags || []).map(tag => `<span class="tag">${escapeHtml(tag)}</span>`).join('')}
-                        </div>
-                        <div class="fingerprint">ID: ${post.user_fingerprint || '不明'}</div>
-                        <div class="post-actions">
+                        <div class="post-actions-vertical">
                             ${post.status === 'pending' ? `
                                 <button class="btn btn-success btn-sm" onclick="updateStatus('${post.id}', 'approved')">✅ 承認</button>
-                                <button class="btn btn-danger btn-sm" onclick="updateStatus('${post.id}', 'rejected')">❌ 非承認</button>
+                                <button class="btn btn-warning btn-sm" onclick="updateStatus('${post.id}', 'flagged')">🚨 不快</button>
+                                <button class="btn btn-danger btn-sm" onclick="updateStatus('${post.id}', 'rejected')">🚫 非承認</button>
                             ` : ''}
-                            ${post.status !== 'approved' ? `
-                                <button class="btn btn-success btn-sm" onclick="updateStatus('${post.id}', 'approved')">✅ 承認に変更</button>
+                            ${post.status === 'flagged' ? `
+                                <button class="btn btn-success btn-sm" onclick="updateStatus('${post.id}', 'approved')">✅ 承認</button>
+                                <button class="btn btn-danger btn-sm" onclick="updateStatus('${post.id}', 'rejected')">🚫 永久BAN</button>
                             ` : ''}
-                            <button class="btn btn-warning btn-sm" onclick="blockUser('${post.user_fingerprint}', '${post.id}')">🚫 この投稿者をブロック</button>
+                            ${post.status === 'approved' ? `
+                                <button class="btn btn-warning btn-sm" onclick="updateStatus('${post.id}', 'flagged')">🚨 不快</button>
+                            ` : ''}
+                            ${post.status === 'rejected' ? `
+                                <button class="btn btn-success btn-sm" onclick="updateStatus('${post.id}', 'approved')">✅ 復活</button>
+                            ` : ''}
+                            <button class="btn btn-warning btn-sm" onclick="blockUser('${post.user_fingerprint}', '${post.id}')">🚷 投稿者BAN</button>
+                            <button class="btn btn-danger btn-sm" onclick="deletePost('${post.id}')">🗑️ 削除</button>
                         </div>
                     </div>
                 `).join('');
@@ -629,6 +679,25 @@
                 await loadDashboard();
             } catch (error) {
                 alert('更新エラー: ' + error.message);
+            }
+        }
+
+        // ===== 投稿削除 =====
+        async function deletePost(postId) {
+            if (!confirm('この投稿を完全に削除しますか？\n※この操作は取り消せません')) return;
+
+            try {
+                const { error } = await supabase
+                    .from('posts')
+                    .delete()
+                    .eq('id', postId);
+
+                if (error) throw error;
+
+                alert('投稿を削除しました');
+                await loadDashboard();
+            } catch (error) {
+                alert('削除エラー: ' + error.message);
             }
         }
 
@@ -888,12 +957,74 @@
             }
         }
 
+        // ===== ブロックユーザー管理 =====
+        async function loadBlockedUsers() {
+            const container = document.getElementById('blocked-users-list');
+
+            try {
+                const { data, error } = await supabase
+                    .from('blocked_users')
+                    .select('*')
+                    .order('created_at', { ascending: false });
+
+                if (error) throw error;
+
+                if (!data || data.length === 0) {
+                    container.innerHTML = '<div class="empty-state">ブロック中のユーザーはいません</div>';
+                    return;
+                }
+
+                container.innerHTML = data.map(user => `
+                    <div class="post-item" style="margin-bottom: 0.75rem;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
+                            <div>
+                                <div class="fingerprint" style="font-size: 1rem; margin-bottom: 0.25rem;">
+                                    🆔 ${user.fingerprint}
+                                </div>
+                                <div style="font-size: 0.85rem; color: var(--text-light);">
+                                    理由: ${user.reason || '未記入'} | 
+                                    登録日: ${new Date(user.created_at).toLocaleString('ja-JP')}
+                                </div>
+                            </div>
+                            <button class="btn btn-success btn-sm" onclick="unblockUser('${user.fingerprint}')">
+                                ✅ ブロック解除
+                            </button>
+                        </div>
+                    </div>
+                `).join('');
+            } catch (error) {
+                console.error('ブロックユーザー読み込みエラー:', error);
+                container.innerHTML = `<div class="empty-state" style="color: var(--danger);">エラー: ${error.message}</div>`;
+            }
+        }
+
+        // ブロック解除
+        async function unblockUser(fingerprint) {
+            if (!confirm(`このユーザーのブロックを解除しますか？\nID: ${fingerprint}`)) return;
+
+            try {
+                const { error } = await supabase
+                    .from('blocked_users')
+                    .delete()
+                    .eq('fingerprint', fingerprint);
+
+                if (error) throw error;
+
+                alert('ブロックを解除しました');
+                await loadBlockedUsers();
+                await loadStats();
+            } catch (error) {
+                alert('解除エラー: ' + error.message);
+            }
+        }
+
         // ダッシュボード読み込み時におすすめも読み込む
         const originalLoadDashboard = loadDashboard;
         loadDashboard = async function () {
             await originalLoadDashboard();
             await loadRecommendationsV2();
             await loadMediaSets();
+            await loadBlockedUsers();
         };
 
         // ===== メディアセット管理 =====
