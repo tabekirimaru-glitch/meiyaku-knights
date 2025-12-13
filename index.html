@@ -93,12 +93,30 @@
                 bottom: 10px !important;
             }
 
-            /* スマホ版:バナー画像の高さを統一（180px） */
+            /* スマホ版:バナー画像の高さを統一（160px）、ユリちゃんは大きめ（200px） */
             .banner-img-uniform {
-                height: 180px !important;
+                height: 160px !important;
                 width: 100% !important;
                 object-fit: cover !important;
                 object-position: center !important;
+            }
+
+            /* ユリちゃんバナーは大きめに */
+            #media-feed .banner-img-uniform {
+                height: 200px !important;
+            }
+
+            /* コミュニティセクションをコンパクトに */
+            #community .content-card {
+                padding: 1.5rem !important;
+            }
+
+            #community h3 {
+                font-size: 1.1rem !important;
+            }
+
+            #community p {
+                font-size: 0.85rem !important;
             }
         }
 
