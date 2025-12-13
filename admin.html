@@ -341,55 +341,93 @@
             </div>
         </div>
 
-        <!-- おすすめコンテンツ管理 -->
+        <!-- おすすめコンテンツ管理 v2 -->
         <div class="posts-section" style="margin-top: 2rem;">
             <h2>📌 おすすめコンテンツ管理</h2>
 
             <!-- 追加フォーム -->
-            <div style="background: #f8fafc; padding: 1rem; border-radius: 8px; margin-bottom: 1.5rem;">
+            <div
+                style="background: #f0fdf4; padding: 1.5rem; border-radius: 8px; margin-bottom: 1.5rem; border: 1px solid #86efac;">
                 <h3 style="font-size: 1rem; margin-bottom: 1rem;">➕ 新規追加</h3>
-                <form id="recommend-form"
-                    style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem;">
-                    <div class="form-group">
+                <form id="recommend-form-v2">
+                    <!-- カテゴリ選択 -->
+                    <div class="form-group" style="margin-bottom: 1rem;">
                         <label>カテゴリ</label>
-                        <select id="rec-category" class="form-input" required>
+                        <select id="rec-category-v2" class="form-input" required onchange="toggleFormFields()">
                             <option value="book">📚 本</option>
                             <option value="youtube">🎬 YouTube</option>
                             <option value="music">🎵 音楽</option>
-                            <option value="quote">💬 名言</option>
+                            <option value="encouragement">💪 励ましのお言葉</option>
                         </select>
                     </div>
-                    <div class="form-group">
-                        <label>タイトル</label>
-                        <input type="text" id="rec-title" class="form-input" placeholder="例：離婚調停マニュアル" required>
+
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem;">
+                        <!-- 共通: タイトル -->
+                        <div class="form-group">
+                            <label>タイトル</label>
+                            <input type="text" id="rec-title-v2" class="form-input" placeholder="タイトル" required>
+                        </div>
+
+                        <!-- 共通: URL -->
+                        <div class="form-group" id="field-url">
+                            <label>URL</label>
+                            <input type="url" id="rec-url-v2" class="form-input" placeholder="https://...">
+                        </div>
+
+                        <!-- 共通: 画像 -->
+                        <div class="form-group" id="field-image">
+                            <label>🖼️ 画像アップロード</label>
+                            <input type="file" id="rec-image-file" class="form-input" accept="image/*"
+                                style="padding: 0.5rem;">
+                            <input type="hidden" id="rec-image-url">
+                            <div id="rec-upload-status" style="font-size: 0.85rem; margin-top: 0.25rem;"></div>
+                        </div>
+
+                        <!-- 本専用: 要約 -->
+                        <div class="form-group" id="field-summary" style="grid-column: 1 / -1;">
+                            <label>📝 要約</label>
+                            <textarea id="rec-summary" class="form-input" rows="3" placeholder="本の要約を記入"></textarea>
+                        </div>
+
+                        <!-- 本専用: 対象者 -->
+                        <div class="form-group" id="field-target">
+                            <label>👤 どういった人に読んで欲しいか</label>
+                            <input type="text" id="rec-target" class="form-input" placeholder="例：離婚調停中の父親">
+                        </div>
+
+                        <!-- YouTube/音楽: コメント -->
+                        <div class="form-group" id="field-comment" style="grid-column: 1 / -1; display: none;">
+                            <label>💬 コメント</label>
+                            <textarea id="rec-comment" class="form-input" rows="2" placeholder="動画についてのコメント"></textarea>
+                        </div>
+
+                        <!-- 励まし専用: メッセージ -->
+                        <div class="form-group" id="field-message" style="grid-column: 1 / -1; display: none;">
+                            <label>💪 励ましの言葉</label>
+                            <textarea id="rec-message" class="form-input" rows="3"
+                                placeholder="励ましのメッセージを記入"></textarea>
+                        </div>
+
+                        <!-- 共通: タグ -->
+                        <div class="form-group" style="grid-column: 1 / -1;">
+                            <label>🏷️ タグ（カンマ区切り）</label>
+                            <input type="text" id="rec-tags" class="form-input" placeholder="例：離婚,親権,調停">
+                        </div>
                     </div>
-                    <div class="form-group">
-                        <label>著者/チャンネル名</label>
-                        <input type="text" id="rec-author" class="form-input" placeholder="例：山田太郎">
-                    </div>
-                    <div class="form-group">
-                        <label>URL（任意）</label>
-                        <input type="url" id="rec-url" class="form-input" placeholder="https://...">
-                    </div>
-                    <div class="form-group" style="grid-column: 1 / -1;">
-                        <label>説明・コメント</label>
-                        <input type="text" id="rec-description" class="form-input" placeholder="おすすめポイント">
-                    </div>
-                    <div>
-                        <button type="submit" class="btn btn-primary">追加</button>
-                    </div>
+
+                    <button type="submit" class="btn btn-primary" style="margin-top: 1rem;">追加</button>
                 </form>
             </div>
 
             <!-- カテゴリタブ -->
-            <div class="tabs" id="recommend-tabs">
+            <div class="tabs" id="recommend-tabs-v2">
                 <button class="tab active" data-category="book">📚 本</button>
                 <button class="tab" data-category="youtube">🎬 YouTube</button>
                 <button class="tab" data-category="music">🎵 音楽</button>
-                <button class="tab" data-category="quote">💬 名言</button>
+                <button class="tab" data-category="encouragement">💪 励まし</button>
             </div>
 
-            <div id="recommend-list">
+            <div id="recommend-list-v2">
                 <div class="empty-state">読み込み中...</div>
             </div>
         </div>
@@ -629,62 +667,147 @@
             return div.innerHTML;
         }
 
-        // ===== おすすめコンテンツ管理 =====
-        let currentRecCategory = 'book';
+        // ===== おすすめコンテンツ管理 v2 =====
+        let currentRecCategoryV2 = 'book';
 
-        // カテゴリタブ
-        document.querySelectorAll('#recommend-tabs .tab').forEach(tab => {
+        // フォームフィールド表示切り替え
+        function toggleFormFields() {
+            const category = document.getElementById('rec-category-v2').value;
+
+            // 本専用フィールド
+            document.getElementById('field-summary').style.display = (category === 'book') ? 'block' : 'none';
+            document.getElementById('field-target').style.display = (category === 'book') ? 'block' : 'none';
+
+            // YouTube/音楽専用
+            document.getElementById('field-comment').style.display = (category === 'youtube' || category === 'music') ? 'block' : 'none';
+
+            // 励まし専用
+            document.getElementById('field-message').style.display = (category === 'encouragement') ? 'block' : 'none';
+
+            // 画像は本と励ましで表示
+            document.getElementById('field-image').style.display = (category === 'book' || category === 'encouragement') ? 'block' : 'none';
+        }
+
+        // 初期表示
+        toggleFormFields();
+
+        // カテゴリタブ v2
+        document.querySelectorAll('#recommend-tabs-v2 .tab').forEach(tab => {
             tab.addEventListener('click', () => {
-                document.querySelectorAll('#recommend-tabs .tab').forEach(t => t.classList.remove('active'));
+                document.querySelectorAll('#recommend-tabs-v2 .tab').forEach(t => t.classList.remove('active'));
                 tab.classList.add('active');
-                currentRecCategory = tab.dataset.category;
-                loadRecommendations();
+                currentRecCategoryV2 = tab.dataset.category;
+                loadRecommendationsV2();
             });
         });
 
-        // おすすめ追加フォーム
-        document.getElementById('recommend-form').addEventListener('submit', async (e) => {
+        // 画像アップロード（おすすめコンテンツ用）
+        document.getElementById('rec-image-file').addEventListener('change', async (e) => {
+            const file = e.target.files[0];
+            if (!file) return;
+
+            const status = document.getElementById('rec-upload-status');
+            const hiddenInput = document.getElementById('rec-image-url');
+
+            status.textContent = '⏳ アップロード中...';
+            status.style.color = 'var(--warning)';
+
+            try {
+                const ext = file.name.split('.').pop().toLowerCase();
+                const fileName = `rec_${Date.now()}.${ext}`;
+
+                const { data, error } = await supabase.storage
+                    .from('media-images')
+                    .upload(fileName, file, { cacheControl: '3600', upsert: false });
+
+                if (error) throw error;
+
+                const { data: urlData } = supabase.storage
+                    .from('media-images')
+                    .getPublicUrl(fileName);
+
+                hiddenInput.value = urlData.publicUrl;
+                status.textContent = '✅ アップロード完了！';
+                status.style.color = 'var(--success)';
+            } catch (error) {
+                status.textContent = '❌ エラー: ' + error.message;
+                status.style.color = 'var(--danger)';
+            }
+        });
+
+        // YouTube ID抽出・サムネ取得
+        function extractYouTubeIdFromUrl(url) {
+            if (!url) return null;
+            const match = url.match(/(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|watch\?v=|shorts\/))([^&?\s]+)/);
+            return match ? match[1] : null;
+        }
+
+        // おすすめ追加フォーム v2
+        document.getElementById('recommend-form-v2').addEventListener('submit', async (e) => {
             e.preventDefault();
 
+            const category = document.getElementById('rec-category-v2').value;
+            const url = document.getElementById('rec-url-v2').value || null;
+            const tagsInput = document.getElementById('rec-tags').value;
+            const tags = tagsInput ? tagsInput.split(',').map(t => t.trim()).filter(t => t) : [];
+
+            // YouTubeの場合はサムネイルを自動取得
+            let thumbnailUrl = null;
+            let videoId = null;
+            if ((category === 'youtube' || category === 'music') && url) {
+                videoId = extractYouTubeIdFromUrl(url);
+                if (videoId) {
+                    thumbnailUrl = `https://i.ytimg.com/vi/${videoId}/hqdefault.jpg`;
+                }
+            }
+
             const data = {
-                category: document.getElementById('rec-category').value,
-                title: document.getElementById('rec-title').value,
-                author: document.getElementById('rec-author').value || null,
-                url: document.getElementById('rec-url').value || null,
-                description: document.getElementById('rec-description').value || null,
+                category: category,
+                title: document.getElementById('rec-title-v2').value,
+                url: url,
+                image_url: document.getElementById('rec-image-url').value || null,
+                tags: tags,
+                summary: category === 'book' ? document.getElementById('rec-summary').value || null : null,
+                target_audience: category === 'book' ? document.getElementById('rec-target').value || null : null,
+                description: (category === 'youtube' || category === 'music') ? document.getElementById('rec-comment').value || null : null,
+                message: category === 'encouragement' ? document.getElementById('rec-message').value || null : null,
+                thumbnail_url: thumbnailUrl,
+                video_id: videoId,
                 is_active: true
             };
 
             try {
                 const { error } = await supabase
-                    .from('recommendations')
+                    .from('recommendations_v2')
                     .insert(data);
 
                 if (error) throw error;
 
                 alert('追加しました！');
-                document.getElementById('recommend-form').reset();
-                // タブを追加したカテゴリに切り替え
-                currentRecCategory = data.category;
-                document.querySelectorAll('#recommend-tabs .tab').forEach(t => {
-                    t.classList.toggle('active', t.dataset.category === data.category);
+                document.getElementById('recommend-form-v2').reset();
+                document.getElementById('rec-image-url').value = '';
+                document.getElementById('rec-upload-status').textContent = '';
+
+                currentRecCategoryV2 = category;
+                document.querySelectorAll('#recommend-tabs-v2 .tab').forEach(t => {
+                    t.classList.toggle('active', t.dataset.category === category);
                 });
-                await loadRecommendations();
+                await loadRecommendationsV2();
             } catch (error) {
                 alert('追加エラー: ' + error.message);
             }
         });
 
-        // おすすめ一覧読み込み
-        async function loadRecommendations() {
-            const container = document.getElementById('recommend-list');
+        // おすすめ一覧読み込み v2
+        async function loadRecommendationsV2() {
+            const container = document.getElementById('recommend-list-v2');
 
             try {
                 const { data, error } = await supabase
-                    .from('recommendations')
+                    .from('recommendations_v2')
                     .select('*')
-                    .eq('category', currentRecCategory)
-                    .order('display_order', { ascending: true });
+                    .eq('category', currentRecCategoryV2)
+                    .order('created_at', { ascending: false });
 
                 if (error) throw error;
 
@@ -697,58 +820,69 @@
                     book: '📚',
                     youtube: '🎬',
                     music: '🎵',
-                    quote: '💬'
+                    encouragement: '💪'
                 };
 
-                container.innerHTML = data.map(item => `
-                    <div class="post-item" style="display: flex; justify-content: space-between; align-items: center;">
-                        <div>
-                            <strong>${categoryIcons[item.category]} ${escapeHtml(item.title)}</strong>
-                            ${item.author ? `<span style="color: var(--text-light);"> / ${escapeHtml(item.author)}</span>` : ''}
-                            ${item.description ? `<p style="margin: 0.25rem 0; font-size: 0.9rem; color: var(--text-light);">${escapeHtml(item.description)}</p>` : ''}
-                            ${item.url ? `<a href="${item.url}" target="_blank" style="font-size: 0.85rem;">🔗 リンク</a>` : ''}
+                container.innerHTML = data.map(item => {
+                    const tagsHtml = (item.tags || []).map(t => `<span class="tag">${escapeHtml(t)}</span>`).join('');
+                    const thumbnail = item.thumbnail_url || item.image_url;
+
+                    return `
+                        <div class="post-item" style="margin-bottom: 1rem;">
+                            <div style="display: flex; gap: 1rem; align-items: flex-start;">
+                                ${thumbnail ? `<img src="${thumbnail}" alt="" style="width: 80px; height: 80px; object-fit: cover; border-radius: 8px;" onerror="this.style.display='none'">` : ''}
+                                <div style="flex: 1;">
+                                    <strong>${categoryIcons[item.category]} ${escapeHtml(item.title)}</strong>
+                                    ${item.target_audience ? `<div style="font-size: 0.85rem; color: var(--text-light);">👤 ${escapeHtml(item.target_audience)}</div>` : ''}
+                                    ${item.summary ? `<p style="font-size: 0.9rem; color: var(--text-light); margin: 0.25rem 0;">${escapeHtml(item.summary).substring(0, 100)}...</p>` : ''}
+                                    ${item.message ? `<p style="font-size: 0.9rem; color: var(--text-light); margin: 0.25rem 0;">💪 ${escapeHtml(item.message).substring(0, 100)}...</p>` : ''}
+                                    ${item.description ? `<p style="font-size: 0.9rem; color: var(--text-light); margin: 0.25rem 0;">💬 ${escapeHtml(item.description)}</p>` : ''}
+                                    ${item.url ? `<a href="${item.url}" target="_blank" style="font-size: 0.85rem;">🔗 リンク</a>` : ''}
+                                    <div style="margin-top: 0.5rem;">${tagsHtml}</div>
+                                </div>
+                                <div style="display: flex; flex-direction: column; gap: 0.5rem;">
+                                    <button class="btn btn-sm ${item.is_active ? 'btn-warning' : 'btn-success'}" onclick="toggleRecommendationV2('${item.id}', ${!item.is_active})">
+                                        ${item.is_active ? '非表示' : '表示'}
+                                    </button>
+                                    <button class="btn btn-danger btn-sm" onclick="deleteRecommendationV2('${item.id}')">削除</button>
+                                </div>
+                            </div>
                         </div>
-                        <div style="display: flex; gap: 0.5rem;">
-                            <button class="btn btn-sm ${item.is_active ? 'btn-warning' : 'btn-success'}" onclick="toggleRecommendation('${item.id}', ${!item.is_active})">
-                                ${item.is_active ? '非表示' : '表示'}
-                            </button>
-                            <button class="btn btn-danger btn-sm" onclick="deleteRecommendation('${item.id}')">削除</button>
-                        </div>
-                    </div>
-                `).join('');
+                    `;
+                }).join('');
             } catch (error) {
                 console.error('おすすめ読み込みエラー:', error);
                 container.innerHTML = `<div class="empty-state" style="color: var(--danger);">エラー: ${error.message}</div>`;
             }
         }
 
-        // おすすめ表示切り替え
-        async function toggleRecommendation(id, isActive) {
+        // おすすめ表示切り替え v2
+        async function toggleRecommendationV2(id, isActive) {
             try {
                 const { error } = await supabase
-                    .from('recommendations')
+                    .from('recommendations_v2')
                     .update({ is_active: isActive })
                     .eq('id', id);
 
                 if (error) throw error;
-                await loadRecommendations();
+                await loadRecommendationsV2();
             } catch (error) {
                 alert('更新エラー: ' + error.message);
             }
         }
 
-        // おすすめ削除
-        async function deleteRecommendation(id) {
+        // おすすめ削除 v2
+        async function deleteRecommendationV2(id) {
             if (!confirm('本当に削除しますか？')) return;
 
             try {
                 const { error } = await supabase
-                    .from('recommendations')
+                    .from('recommendations_v2')
                     .delete()
                     .eq('id', id);
 
                 if (error) throw error;
-                await loadRecommendations();
+                await loadRecommendationsV2();
             } catch (error) {
                 alert('削除エラー: ' + error.message);
             }
@@ -758,7 +892,7 @@
         const originalLoadDashboard = loadDashboard;
         loadDashboard = async function () {
             await originalLoadDashboard();
-            await loadRecommendations();
+            await loadRecommendationsV2();
             await loadMediaSets();
         };
 

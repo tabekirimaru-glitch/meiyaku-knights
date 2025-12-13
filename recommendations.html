@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>おすすめコンテンツ - 片翼の盟約騎士団</title>
+    <meta name="description" content="離婚・親権問題に悩む方へのおすすめ本、動画、音楽、励ましの言葉">
+    <style>
+        :root {
+            --primary-color: #2563eb;
+            --primary-dark: #1e40af;
+            --bg-light: #f8fafc;
+            --text-dark: #1e293b;
+            --text-light: #64748b;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', 'Hiragino Sans', sans-serif;
+            background: var(--bg-light);
+            min-height: 100vh;
+            color: var(--text-dark);
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 1rem;
+        }
+
+        .page-header {
+            text-align: center;
+            padding: 2rem 1rem;
+        }
+
+        .page-header h1 {
+            font-size: 1.8rem;
+            color: var(--primary-dark);
+            margin-bottom: 0.5rem;
+        }
+
+        .page-header p {
+            color: var(--text-light);
+        }
+
+        .back-link {
+            display: inline-block;
+            margin-bottom: 1rem;
+            color: var(--primary-color);
+            text-decoration: none;
+        }
+
+        .back-link:hover {
+            text-decoration: underline;
+        }
+
+        /* カテゴリタブ */
+        .tabs {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .tab {
+            padding: 0.75rem 1.5rem;
+            background: white;
+            border: 2px solid #e5e7eb;
+            border-radius: 50px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 600;
+            transition: all 0.2s;
+        }
+
+        .tab:hover {
+            border-color: var(--primary-color);
+        }
+
+        .tab.active {
+            background: var(--primary-color);
+            border-color: var(--primary-color);
+            color: white;
+        }
+
+        /* タグフィルター */
+        .tag-filter {
+            margin-bottom: 1.5rem;
+            text-align: center;
+        }
+
+        .tag-filter input {
+            padding: 0.75rem 1rem;
+            border: 1px solid #d1d5db;
+            border-radius: 8px;
+            width: 100%;
+            max-width: 400px;
+            font-size: 1rem;
+        }
+
+        /* カードグリッド - スマホで2列 */
+        .card-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1rem;
+        }
+
+        @media (min-width: 768px) {
+            .card-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+
+        @media (min-width: 1024px) {
+            .card-grid {
+                grid-template-columns: repeat(4, 1fr);
+            }
+        }
+
+        /* コンテンツカード */
+        .content-card {
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+            overflow: hidden;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .content-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+        }
+
+        .card-image {
+            width: 100%;
+            height: 150px;
+            object-fit: cover;
+            background: #e5e7eb;
+        }
+
+        .card-body {
+            padding: 1rem;
+        }
+
+        .card-title {
+            font-size: 0.95rem;
+            font-weight: 700;
+            color: var(--primary-dark);
+            margin-bottom: 0.5rem;
+            line-height: 1.4;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .card-meta {
+            font-size: 0.8rem;
+            color: var(--text-light);
+            margin-bottom: 0.5rem;
+        }
+
+        .card-description {
+            font-size: 0.85rem;
+            color: var(--text-light);
+            line-height: 1.5;
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .card-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.25rem;
+            margin-top: 0.75rem;
+        }
+
+        .tag {
+            background: #e0e7ff;
+            color: var(--primary-dark);
+            padding: 0.2rem 0.5rem;
+            border-radius: 12px;
+            font-size: 0.7rem;
+            cursor: pointer;
+        }
+
+        .tag:hover {
+            background: var(--primary-color);
+            color: white;
+        }
+
+        .card-link {
+            display: block;
+            text-align: center;
+            padding: 0.75rem;
+            background: var(--bg-light);
+            color: var(--primary-color);
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.9rem;
+            margin-top: 0.75rem;
+            border-radius: 8px;
+            transition: background 0.2s;
+        }
+
+        .card-link:hover {
+            background: #e0e7ff;
+        }
+
+        /* 励まし専用スタイル */
+        .encouragement-card {
+            background: linear-gradient(135deg, #fef3c7, #fde68a);
+        }
+
+        .encouragement-card .card-body {
+            text-align: center;
+        }
+
+        .encouragement-message {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--text-dark);
+            line-height: 1.6;
+        }
+
+        /* 空状態 */
+        .empty-state {
+            text-align: center;
+            padding: 3rem;
+            color: var(--text-light);
+            grid-column: 1 / -1;
+        }
+
+        .empty-state .icon {
+            font-size: 4rem;
+            opacity: 0.5;
+            margin-bottom: 1rem;
+        }
+
+        /* フッター */
+        .footer {
+            text-align: center;
+            padding: 2rem;
+            margin-top: 2rem;
+            color: var(--text-light);
+            font-size: 0.9rem;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <a href="index.html" class="back-link">← トップに戻る</a>
+
+        <div class="page-header">
+            <h1>📚 おすすめコンテンツ</h1>
+            <p>同じ境遇を乗り越えた先輩たちのおすすめ</p>
+        </div>
+
+        <!-- カテゴリタブ -->
+        <div class="tabs" id="category-tabs">
+            <button class="tab active" data-category="book">📚 本</button>
+            <button class="tab" data-category="youtube">🎬 YouTube</button>
+            <button class="tab" data-category="music">🎵 音楽</button>
+            <button class="tab" data-category="encouragement">💪 励まし</button>
+        </div>
+
+        <!-- タグ検索 -->
+        <div class="tag-filter">
+            <input type="text" id="tag-search" placeholder="🔍 タグで検索（例：離婚、親権）">
+        </div>
+
+        <!-- コンテンツグリッド -->
+        <div class="card-grid" id="content-grid">
+            <div class="empty-state">
+                <div class="icon">📚</div>
+                <p>読み込み中...</p>
+            </div>
+        </div>
+    </div>
+
+    <footer class="footer">
+        <a href="community.html">コミュニティに戻る</a> |
+        <a href="index.html">トップページ</a>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script>
+        const SUPABASE_URL = 'https://neyhxbdgcqtnyxpuuiqx.supabase.co';
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5leWh4YmRnY3F0bnl4cHV1aXF4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjUzMzE1NDcsImV4cCI6MjA4MDkwNzU0N30.5hfxRgrPI4QKZtC2UWMYOSniiaWaLMuXOFxQfN8_H7E';
+        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+        let currentCategory = 'book';
+        let currentTagFilter = '';
+
+        // カテゴリタブ
+        document.querySelectorAll('#category-tabs .tab').forEach(tab => {
+            tab.addEventListener('click', () => {
+                document.querySelectorAll('#category-tabs .tab').forEach(t => t.classList.remove('active'));
+                tab.classList.add('active');
+                currentCategory = tab.dataset.category;
+                loadContent();
+            });
+        });
+
+        // タグ検索
+        document.getElementById('tag-search').addEventListener('input', (e) => {
+            currentTagFilter = e.target.value.trim();
+            loadContent();
+        });
+
+        // タグクリックでフィルター
+        function filterByTag(tag) {
+            document.getElementById('tag-search').value = tag;
+            currentTagFilter = tag;
+            loadContent();
+        }
+
+        // コンテンツ読み込み
+        async function loadContent() {
+            const container = document.getElementById('content-grid');
+
+            try {
+                let query = supabase
+                    .from('recommendations_v2')
+                    .select('*')
+                    .eq('category', currentCategory)
+                    .eq('is_active', true)
+                    .order('created_at', { ascending: false });
+
+                // タグフィルター
+                if (currentTagFilter) {
+                    query = query.contains('tags', [currentTagFilter]);
+                }
+
+                const { data, error } = await query;
+
+                if (error) throw error;
+
+                if (!data || data.length === 0) {
+                    container.innerHTML = `
+                        <div class="empty-state">
+                            <div class="icon">📭</div>
+                            <p>このカテゴリにはまだコンテンツがありません</p>
+                        </div>
+                    `;
+                    return;
+                }
+
+                container.innerHTML = data.map(item => renderCard(item)).join('');
+
+            } catch (err) {
+                console.error('Error:', err);
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <div class="icon">⚠️</div>
+                        <p>読み込みエラー</p>
+                    </div>
+                `;
+            }
+        }
+
+        // カード描画
+        function renderCard(item) {
+            const thumbnail = item.thumbnail_url || item.image_url;
+            const tagsHtml = (item.tags || []).map(t =>
+                `<span class="tag" onclick="filterByTag('${escapeHtml(t)}')">${escapeHtml(t)}</span>`
+            ).join('');
+
+            // 励まし専用
+            if (item.category === 'encouragement') {
+                return `
+                    <div class="content-card encouragement-card">
+                        ${thumbnail ? `<img src="${thumbnail}" alt="" class="card-image" onerror="this.style.display='none'">` : ''}
+                        <div class="card-body">
+                            <p class="encouragement-message">${escapeHtml(item.message || item.title)}</p>
+                            <div class="card-tags">${tagsHtml}</div>
+                        </div>
+                    </div>
+                `;
+            }
+
+            // 本
+            if (item.category === 'book') {
+                return `
+                    <div class="content-card">
+                        ${thumbnail ? `<img src="${thumbnail}" alt="${escapeHtml(item.title)}" class="card-image" onerror="this.src='https://via.placeholder.com/300x150?text=No+Image'">` : '<div class="card-image" style="display:flex;align-items:center;justify-content:center;font-size:3rem;">📚</div>'}
+                        <div class="card-body">
+                            <h3 class="card-title">${escapeHtml(item.title)}</h3>
+                            ${item.target_audience ? `<p class="card-meta">👤 ${escapeHtml(item.target_audience)}</p>` : ''}
+                            ${item.summary ? `<p class="card-description">${escapeHtml(item.summary)}</p>` : ''}
+                            <div class="card-tags">${tagsHtml}</div>
+                            ${item.url ? `<a href="${item.url}" target="_blank" class="card-link">詳細を見る →</a>` : ''}
+                        </div>
+                    </div>
+                `;
+            }
+
+            // YouTube / 音楽
+            return `
+                <div class="content-card">
+                    ${thumbnail ? `<img src="${thumbnail}" alt="${escapeHtml(item.title)}" class="card-image" onerror="this.src='https://via.placeholder.com/300x150?text=No+Image'">` : '<div class="card-image" style="display:flex;align-items:center;justify-content:center;font-size:3rem;">${item.category === "youtube" ? "🎬" : "🎵"}</div>'}
+                    <div class="card-body">
+                        <h3 class="card-title">${escapeHtml(item.title)}</h3>
+                        ${item.description ? `<p class="card-description">${escapeHtml(item.description)}</p>` : ''}
+                        <div class="card-tags">${tagsHtml}</div>
+                        ${item.url ? `<a href="${item.url}" target="_blank" class="card-link">▶ 動画を見る</a>` : ''}
+                    </div>
+                </div>
+            `;
+        }
+
+        // HTMLエスケープ
+        function escapeHtml(text) {
+            if (!text) return '';
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        // 初期読み込み
+        loadContent();
+    </script>
+</body>
+
+</html>
