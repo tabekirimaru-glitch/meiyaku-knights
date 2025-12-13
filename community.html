@@ -755,6 +755,178 @@
                 padding: 0.5rem 0.75rem;
                 font-size: 0.8rem;
             }
+
+            /* スマホ版: 支援バナーを1列に */
+            .support-banner-grid {
+                grid-template-columns: 1fr !important;
+            }
+        }
+
+        /* ===== 活動支援セクション ===== */
+        .support-banner-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .support-banner-card {
+            position: relative;
+            border-radius: 16px;
+            overflow: hidden;
+            cursor: pointer;
+            text-decoration: none;
+            display: block;
+            /* 金色ボーダー */
+            border: 3px solid #d4af37;
+            box-shadow: 0 8px 25px rgba(212, 175, 55, 0.3);
+            transition: all 0.3s ease;
+        }
+
+        .support-banner-card:hover {
+            transform: translateY(-8px) scale(1.02);
+            box-shadow: 0 15px 40px rgba(212, 175, 55, 0.5);
+            border-color: #ffd700;
+        }
+
+        .support-banner-img {
+            width: 100%;
+            height: 180px;
+            background-size: cover;
+            background-position: center;
+            display: flex;
+            align-items: flex-end;
+            justify-content: center;
+        }
+
+        .support-banner-overlay {
+            width: 100%;
+            padding: 1.5rem 1rem;
+            background: linear-gradient(transparent, rgba(0, 0, 0, 0.8));
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .support-banner-icon {
+            font-size: 2.5rem;
+            filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
+        }
+
+        .support-banner-title {
+            color: white;
+            font-size: 1.1rem;
+            font-weight: 700;
+            text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.5);
+            text-align: center;
+        }
+
+        /* ===== 支援モーダル ===== */
+        .support-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 10000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .support-modal-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(5px);
+        }
+
+        .support-modal-content {
+            position: relative;
+            background: white;
+            border-radius: 20px;
+            padding: 2rem;
+            max-width: 450px;
+            width: 90%;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
+            border: 3px solid #d4af37;
+        }
+
+        .support-modal-close {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            width: 36px;
+            height: 36px;
+            border: none;
+            background: #f3f4f6;
+            border-radius: 50%;
+            font-size: 1.5rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+        }
+
+        .support-modal-close:hover {
+            background: #e5e7eb;
+            transform: scale(1.1);
+        }
+
+        .support-modal-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .support-modal-buttons.donate-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1rem;
+        }
+
+        .support-modal-btn {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1.25rem;
+            border-radius: 12px;
+            text-decoration: none;
+            color: white;
+            font-weight: 600;
+            transition: all 0.2s;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .support-modal-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+        }
+
+        .support-modal-btn.donate-btn {
+            flex-direction: column;
+            text-align: center;
+            gap: 0.5rem;
+            padding: 1.5rem 1rem;
+        }
+
+        .support-modal-btn-icon {
+            font-size: 2rem;
+        }
+
+        .support-modal-btn-text {
+            font-size: 0.95rem;
+            line-height: 1.4;
+        }
+
+        .support-modal-btn-text small {
+            opacity: 0.8;
+            font-size: 0.8rem;
         }
     </style>
 </head>
@@ -823,6 +995,7 @@
                 <button class="nav-item active" data-section="experiences">📋 みんなの体験談</button>
                 <button class="nav-item" data-section="post">📝 体験談を投稿</button>
                 <button class="nav-item" data-section="recommend">💡 おすすめ</button>
+                <button class="nav-item" data-section="support">💎 ヒロの活動支援</button>
             </div>
         </div>
     </nav>
@@ -1127,8 +1300,127 @@
                     </div>
                 </div>
             </section>
+
+            <!-- ヒロの活動支援 -->
+            <section id="section-support" class="page-section">
+                <h2 style="margin-bottom: 1rem; text-align: center;">💎 ヒロの活動支援</h2>
+                <p style="text-align: center; margin-bottom: 1.5rem; color: var(--text-light);">
+                    楽しみながらヒロの活動を応援してください！
+                </p>
+
+                <!-- 4つの支援バナーグリッド -->
+                <div class="support-banner-grid">
+                    <!-- (A) Twitchサブスク -->
+                    <a href="https://www.twitch.tv/meiyaku_knights" target="_blank" class="support-banner-card"
+                        id="banner-twitch">
+                        <div class="support-banner-img"
+                            style="background-image: url('images/support-twitch.jpg'); background-color: #9146ff;">
+                            <div class="support-banner-overlay">
+                                <span class="support-banner-icon">🟣</span>
+                                <span class="support-banner-title">Twitchサブスク支援</span>
+                            </div>
+                        </div>
+                    </a>
+
+                    <!-- (B) OFUSE -->
+                    <a href="https://ofuse.me/meiyaku_knights" target="_blank" class="support-banner-card"
+                        id="banner-ofuse">
+                        <div class="support-banner-img"
+                            style="background-image: url('images/support-ofuse.jpg'); background-color: #ff6b6b;">
+                            <div class="support-banner-overlay">
+                                <span class="support-banner-icon">💌</span>
+                                <span class="support-banner-title">OFUSEメッセージ支援</span>
+                            </div>
+                        </div>
+                    </a>
+
+                    <!-- (C) Amazon（モーダル） -->
+                    <div class="support-banner-card" onclick="openAmazonModal()">
+                        <div class="support-banner-img"
+                            style="background-image: url('images/support-amazon.jpg'); background-color: #ff9900;">
+                            <div class="support-banner-overlay">
+                                <span class="support-banner-icon">🛒</span>
+                                <span class="support-banner-title">Amazonで支援する</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- (D) 配信投げ銭（モーダル） -->
+                    <div class="support-banner-card" onclick="openDonateModal()">
+                        <div class="support-banner-img"
+                            style="background-image: url('images/support-donate.jpg'); background-color: #e91e63;">
+                            <div class="support-banner-overlay">
+                                <span class="support-banner-icon">🎁</span>
+                                <span class="support-banner-title">配信中投げ銭</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- マイクロコピー -->
+                <p
+                    style="text-align: center; margin-top: 2rem; padding: 1rem; background: var(--bg-light); border-radius: 8px; font-size: 0.9rem; color: var(--text-light);">
+                    いただいたご支援は、サイト運営費および子供たちの未来を守る活動に大切に使わせていただきます。
+                </p>
+            </section>
         </div>
     </main>
+
+    <!-- Amazon選択モーダル -->
+    <div id="amazonModal" class="support-modal" style="display: none;">
+        <div class="support-modal-overlay" onclick="closeAmazonModal()"></div>
+        <div class="support-modal-content">
+            <button class="support-modal-close" onclick="closeAmazonModal()">×</button>
+            <h3 style="text-align: center; margin-bottom: 1.5rem; color: var(--primary-dark);">
+                🛒 Amazonで支援する方法を選ぶ
+            </h3>
+            <div class="support-modal-buttons">
+                <a href="https://www.amazon.co.jp/?tag=meiyaku-22" target="_blank" class="support-modal-btn"
+                    style="background: linear-gradient(135deg, #ff9900, #ffb84d);">
+                    <span class="support-modal-btn-icon">🛒</span>
+                    <span class="support-modal-btn-text">いつものお買い物で支援<br><small>（Amazonトップへ）</small></span>
+                </a>
+                <a href="https://www.amazon.co.jp/hz/wishlist/ls/meiyaku" target="_blank" class="support-modal-btn"
+                    style="background: linear-gradient(135deg, #e91e63, #f48fb1);">
+                    <span class="support-modal-btn-icon">🎁</span>
+                    <span class="support-modal-btn-text">ほしい物リストから差し入れする</span>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- 配信投げ銭モーダル -->
+    <div id="donateModal" class="support-modal" style="display: none;">
+        <div class="support-modal-overlay" onclick="closeDonateModal()"></div>
+        <div class="support-modal-content">
+            <button class="support-modal-close" onclick="closeDonateModal()">×</button>
+            <h3 style="text-align: center; margin-bottom: 1.5rem; color: var(--primary-dark);">
+                🎁 各配信サイトで応援する
+            </h3>
+            <div class="support-modal-buttons donate-grid">
+                <a href="https://www.tiktok.com/@meiyaku_knights" target="_blank" class="support-modal-btn donate-btn"
+                    style="background: #000000;">
+                    <span class="support-modal-btn-icon">🎵</span>
+                    <span class="support-modal-btn-text">TikTok</span>
+                </a>
+                <a href="https://twitcasting.tv/meiyaku_knight" target="_blank" class="support-modal-btn donate-btn"
+                    style="background: #35a6cf;">
+                    <span class="support-modal-btn-icon">🐤</span>
+                    <span class="support-modal-btn-text">ツイキャス</span>
+                </a>
+                <a href="https://www.twitch.tv/meiyaku_knights" target="_blank" class="support-modal-btn donate-btn"
+                    style="background: #9146ff;">
+                    <span class="support-modal-btn-icon">🟣</span>
+                    <span class="support-modal-btn-text">Twitch</span>
+                </a>
+                <a href="https://www.youtube.com/@meiyaku_knights" target="_blank" class="support-modal-btn donate-btn"
+                    style="background: #ff0000;">
+                    <span class="support-modal-btn-icon">🔴</span>
+                    <span class="support-modal-btn-text">YouTube</span>
+                </a>
+            </div>
+        </div>
+    </div>
 
     <script>
         // ===== Supabase設定 =====
@@ -2022,6 +2314,35 @@
 
         // ページ読み込み時に実行
         loadRecommendations();
+
+        // ===== 活動支援モーダル =====
+        function openAmazonModal() {
+            document.getElementById('amazonModal').style.display = 'flex';
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeAmazonModal() {
+            document.getElementById('amazonModal').style.display = 'none';
+            document.body.style.overflow = '';
+        }
+
+        function openDonateModal() {
+            document.getElementById('donateModal').style.display = 'flex';
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeDonateModal() {
+            document.getElementById('donateModal').style.display = 'none';
+            document.body.style.overflow = '';
+        }
+
+        // ESCキーでモーダルを閉じる
+        document.addEventListener('keydown', function (e) {
+            if (e.key === 'Escape') {
+                closeAmazonModal();
+                closeDonateModal();
+            }
+        });
     </script>
 
     <!-- 免責マイクロコピー -->
