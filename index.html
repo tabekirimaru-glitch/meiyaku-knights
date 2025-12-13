@@ -84,6 +84,14 @@
             .menu-overlay.active {
                 display: block;
             }
+
+            /* スマホ版:タップヒントを半分サイズに */
+            .tap-hint-sm {
+                padding: 6px 15px !important;
+                font-size: 0.7rem !important;
+                border-radius: 20px !important;
+                bottom: 10px !important;
+            }
         }
 
         /* カード型デザイン */
@@ -1053,7 +1061,7 @@
                 style="display: block; position: relative; overflow: hidden; border-radius: 16px; box-shadow: 0 4px 20px rgba(0,0,0,0.15);">
                 <img src="images/judgments-banner.jpg" alt="判決データベース"
                     style="width: 100%; height: auto; display: block; transition: transform 0.3s;">
-                <div
+                <div class="tap-hint-sm"
                     style="position: absolute; bottom: 20px; left: 50%; transform: translateX(-50%); background: rgba(255,255,255,0.95); padding: 12px 30px; border-radius: 30px; font-size: 1.1rem; font-weight: 700; color: #b91c1c; box-shadow: 0 4px 15px rgba(0,0,0,0.2);">
                     👆 タップしてコンテンツを見る
                 </div>
@@ -1153,7 +1161,7 @@
                 <!-- オーバーレイ -->
                 <div
                     style="position: absolute; bottom: 0; left: 0; right: 0; background: linear-gradient(transparent, rgba(0,0,0,0.7)); padding: 1.5rem 1rem 1rem; text-align: center;">
-                    <span
+                    <span class="tap-hint-sm"
                         style="display: inline-flex; align-items: center; gap: 0.5rem; background: white; color: #ec4899; font-weight: 700; font-size: 1.1rem; padding: 0.75rem 1.5rem; border-radius: 50px; box-shadow: 0 4px 15px rgba(0,0,0,0.2);">
                         <span style="font-size: 1.5rem; animation: bounce 1s infinite;">👆</span>
                         タップしてコンテンツを見る
@@ -1225,7 +1233,7 @@
                 style="display: block; position: relative; overflow: hidden; border-radius: 16px; box-shadow: 0 4px 20px rgba(0,0,0,0.15);">
                 <img src="images/child-cases-banner.jpg" alt="子供関連ニュース 事件アーカイブ"
                     style="width: 100%; height: auto; display: block; transition: transform 0.3s;">
-                <div
+                <div class="tap-hint-sm"
                     style="position: absolute; bottom: 20px; left: 50%; transform: translateX(-50%); background: rgba(255,255,255,0.95); padding: 12px 30px; border-radius: 30px; font-size: 1.1rem; font-weight: 700; color: #7c3aed; box-shadow: 0 4px 15px rgba(0,0,0,0.2);">
                     👆 タップしてコンテンツを見る
                 </div>
