@@ -1277,6 +1277,32 @@
             .navi-restart:hover {
                 color: white;
             }
+
+            /* 開始ボタン */
+            .navi-start-btn {
+                display: inline-block;
+                background: linear-gradient(135deg, #d4af37, #f4d03f);
+                color: #1a1a2e;
+                border: none;
+                padding: 1.25rem 3rem;
+                font-size: 1.3rem;
+                font-weight: 800;
+                border-radius: 50px;
+                cursor: pointer;
+                box-shadow: 0 8px 30px rgba(212, 175, 55, 0.4);
+                transition: all 0.3s;
+                text-transform: uppercase;
+                letter-spacing: 0.05em;
+            }
+
+            .navi-start-btn:hover {
+                transform: translateY(-3px) scale(1.05);
+                box-shadow: 0 12px 40px rgba(212, 175, 55, 0.6);
+            }
+
+            .navi-start-btn:active {
+                transform: translateY(0);
+            }
     </style>
 </head>
 
@@ -1423,9 +1449,17 @@
                     <strong>今、何をするべきか</strong>診断します
                 </p>
             </div>
-            <div class="navi-timeline" id="naviTimeline">
+
+            <!-- 開始ボタン（初期表示） -->
+            <div id="naviStartArea" style="text-align: center;">
+                <button id="naviStartBtn" class="navi-start-btn">
+                    🧭 診断を始める
+                </button>
+            </div>
+
+            <!-- 縦ツリー（非表示、開始後に表示） -->
+            <div class="navi-timeline" id="naviTimeline" style="display: none;">
                 <!-- JavaScriptで動的生成 -->
-                <div style="text-align: center; color: rgba(255,255,255,0.7);">読み込み中...</div>
             </div>
         </div>
     </section>
@@ -2080,28 +2114,37 @@
             let naviData = null;
             let currentPath = [];
             const timeline = document.getElementById('naviTimeline');
+            const startArea = document.getElementById('naviStartArea');
+            const startBtn = document.getElementById('naviStartBtn');
 
-            if (!timeline) {
-                console.error('naviTimeline要素が見つかりません');
+            if (!timeline || !startBtn) {
+                console.error('サバイバル・ナビ要素が見つかりません');
                 return;
             }
-            console.log('timeline要素取得成功:', timeline);
 
-            // JSONデータ読み込み
-            fetch('data/survival-navi.json')
-                .then(res => {
-                    console.log('fetch応答:', res.status);
-                    return res.json();
-                })
-                .then(data => {
-                    console.log('JSONデータ読み込み成功:', data.questions.Q1.text);
-                    naviData = data;
+            // 開始ボタンクリックで診断開始
+            startBtn.addEventListener('click', function () {
+                console.log('診断開始ボタンクリック');
+                startArea.style.display = 'none';
+                timeline.style.display = 'block';
+
+                // JSONデータ読み込み
+                if (!naviData) {
+                    fetch('data/survival-navi.json')
+                        .then(res => res.json())
+                        .then(data => {
+                            console.log('JSONデータ読み込み成功');
+                            naviData = data;
+                            renderQuestion('Q1');
+                        })
+                        .catch(err => {
+                            console.error('データ読み込みエラー:', err);
+                            timeline.innerHTML = '<div style="text-align:center;color:#fca5a5;">データの読み込みに失敗しました</div>';
+                        });
+                } else {
                     renderQuestion('Q1');
-                })
-                .catch(err => {
-                    console.error('サバイバル・ナビデータ読み込みエラー:', err);
-                    timeline.innerHTML = '<div style="text-align: center; color: #fca5a5;">データの読み込みに失敗しました</div>';
-                });
+                }
+            });
 
             // 質問表示
             function renderQuestion(qId) {
