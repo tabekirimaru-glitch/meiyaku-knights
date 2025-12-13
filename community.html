@@ -1149,8 +1149,24 @@
         let isLoggedIn = false;
         let currentUser = null;
 
-        function checkLoginStatus() {
-            // TODO: Firebase認証でログイン状態を確認
+        async function checkLoginStatus() {
+            // ブロックチェック（最優先）
+            try {
+                const { data: blockedData } = await supabase
+                    .from('blocked_users')
+                    .select('fingerprint')
+                    .eq('fingerprint', userFingerprint)
+                    .single();
+
+                if (blockedData) {
+                    showBlockedScreen();
+                    return;
+                }
+            } catch (e) {
+                // ブロックされていない場合はエラーになるので無視
+            }
+
+            // 通常のログインチェック
             const savedLogin = localStorage.getItem('community_login');
             if (savedLogin) {
                 const loginData = JSON.parse(savedLogin);
@@ -1160,6 +1176,103 @@
                 }
             }
             document.getElementById('loginGate').classList.remove('hidden');
+        }
+
+        // ブロック警告画面
+        function showBlockedScreen() {
+            document.body.innerHTML = `
+                <div style="
+                    position: fixed;
+                    top: 0;
+                    left: 0;
+                    width: 100%;
+                    height: 100%;
+                    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f0f23 100%);
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    z-index: 99999;
+                ">
+                    <div style="
+                        max-width: 600px;
+                        padding: 3rem;
+                        text-align: center;
+                        color: white;
+                    ">
+                        <div style="
+                            font-size: 6rem;
+                            margin-bottom: 1rem;
+                            animation: pulse 2s infinite;
+                        ">🚨</div>
+                        
+                        <h1 style="
+                            color: #ef4444;
+                            font-size: 2rem;
+                            margin-bottom: 1.5rem;
+                            text-shadow: 0 0 20px rgba(239, 68, 68, 0.5);
+                        ">⚠️ アクセスがブロックされています ⚠️</h1>
+                        
+                        <div style="
+                            background: rgba(255, 255, 255, 0.1);
+                            border: 2px solid #ef4444;
+                            border-radius: 12px;
+                            padding: 1.5rem;
+                            margin-bottom: 1.5rem;
+                        ">
+                            <p style="font-size: 1rem; color: #fca5a5; margin-bottom: 1rem;">
+                                あなたの端末ID:
+                            </p>
+                            <p style="
+                                font-family: monospace;
+                                font-size: 1.2rem;
+                                color: #f87171;
+                                background: rgba(0,0,0,0.3);
+                                padding: 0.75rem;
+                                border-radius: 8px;
+                                word-break: break-all;
+                            ">${userFingerprint}</p>
+                        </div>
+                        
+                        <p style="
+                            font-size: 1.1rem;
+                            color: #fecaca;
+                            margin-bottom: 1.5rem;
+                            line-height: 1.8;
+                        ">
+                            このサイトへのアクセスが制限されています。<br>
+                            不正行為が検出されました。
+                        </p>
+                        
+                        <div style="
+                            background: rgba(220, 38, 38, 0.2);
+                            border-left: 4px solid #dc2626;
+                            padding: 1rem;
+                            text-align: left;
+                            margin-bottom: 1.5rem;
+                            border-radius: 4px;
+                        ">
+                            <p style="color: #fca5a5; font-size: 0.95rem; margin-bottom: 0.5rem;">
+                                ⚖️ <strong>法的警告</strong>
+                            </p>
+                            <p style="color: #fed7aa; font-size: 0.9rem; line-height: 1.6;">
+                                このサイトを荒らす行為は、威力業務妨害罪等の違法行為に該当する可能性があります。
+                                悪質な場合は、<strong>発信者情報開示請求</strong>および<strong>法的措置</strong>を検討いたします。
+                            </p>
+                        </div>
+                        
+                        <p style="color: #94a3b8; font-size: 0.85rem;">
+                            間違ってブロックされていると思われる場合は、<br>
+                            管理者までご連絡ください。
+                        </p>
+                    </div>
+                </div>
+                <style>
+                    @keyframes pulse {
+                        0%, 100% { transform: scale(1); }
+                        50% { transform: scale(1.1); }
+                    }
+                </style>
+            `;
         }
 
         function loginSuccess(name) {
@@ -1579,14 +1692,99 @@
                     .single();
 
                 if (blockedData) {
-                    form.innerHTML = `
-                        <div style="text-align: center; padding: 2rem; background: #fef2f2; border-radius: 12px; border: 2px solid #ef4444;">
-                            <div style="font-size: 3rem; margin-bottom: 1rem;">🚫</div>
-                            <h3 style="color: #dc2626; margin-bottom: 1rem;">投稿できません</h3>
-                            <p style="color: #991b1b;">
-                                このアカウントは投稿が制限されています。
-                            </p>
+                    // ブロックされたユーザー用の警告画面（全画面）
+                    document.body.innerHTML = `
+                        <div style="
+                            position: fixed;
+                            top: 0;
+                            left: 0;
+                            width: 100%;
+                            height: 100%;
+                            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f0f23 100%);
+                            display: flex;
+                            align-items: center;
+                            justify-content: center;
+                            z-index: 99999;
+                        ">
+                            <div style="
+                                max-width: 600px;
+                                padding: 3rem;
+                                text-align: center;
+                                color: white;
+                            ">
+                                <div style="
+                                    font-size: 6rem;
+                                    margin-bottom: 1rem;
+                                    animation: pulse 2s infinite;
+                                ">🚨</div>
+                                
+                                <h1 style="
+                                    color: #ef4444;
+                                    font-size: 2rem;
+                                    margin-bottom: 1.5rem;
+                                    text-shadow: 0 0 20px rgba(239, 68, 68, 0.5);
+                                ">⚠️ アクセスがブロックされています ⚠️</h1>
+                                
+                                <div style="
+                                    background: rgba(255, 255, 255, 0.1);
+                                    border: 2px solid #ef4444;
+                                    border-radius: 12px;
+                                    padding: 1.5rem;
+                                    margin-bottom: 1.5rem;
+                                ">
+                                    <p style="font-size: 1rem; color: #fca5a5; margin-bottom: 1rem;">
+                                        あなたの端末ID:
+                                    </p>
+                                    <p style="
+                                        font-family: monospace;
+                                        font-size: 1.2rem;
+                                        color: #f87171;
+                                        background: rgba(0,0,0,0.3);
+                                        padding: 0.75rem;
+                                        border-radius: 8px;
+                                        word-break: break-all;
+                                    ">${userFingerprint}</p>
+                                </div>
+                                
+                                <p style="
+                                    font-size: 1.1rem;
+                                    color: #fecaca;
+                                    margin-bottom: 1.5rem;
+                                    line-height: 1.8;
+                                ">
+                                    このサイトへのアクセスが制限されています。<br>
+                                    不正行為が検出されました。
+                                </p>
+                                
+                                <div style="
+                                    background: rgba(220, 38, 38, 0.2);
+                                    border-left: 4px solid #dc2626;
+                                    padding: 1rem;
+                                    text-align: left;
+                                    margin-bottom: 1.5rem;
+                                    border-radius: 4px;
+                                ">
+                                    <p style="color: #fca5a5; font-size: 0.95rem; margin-bottom: 0.5rem;">
+                                        ⚖️ <strong>法的警告</strong>
+                                    </p>
+                                    <p style="color: #fed7aa; font-size: 0.9rem; line-height: 1.6;">
+                                        このサイトを荒らす行為は、威力業務妨害罪等の違法行為に該当する可能性があります。
+                                        悪質な場合は、<strong>発信者情報開示請求</strong>および<strong>法的措置</strong>を検討いたします。
+                                    </p>
+                                </div>
+                                
+                                <p style="color: #94a3b8; font-size: 0.85rem;">
+                                    間違ってブロックされていると思われる場合は、<br>
+                                    管理者までご連絡ください。
+                                </p>
+                            </div>
                         </div>
+                        <style>
+                            @keyframes pulse {
+                                0%, 100% { transform: scale(1); }
+                                50% { transform: scale(1.1); }
+                            }
+                        </style>
                     `;
                     return false;
                 }
