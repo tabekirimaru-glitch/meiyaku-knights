@@ -1477,49 +1477,6 @@
         let currentUser = null;
 
         async function checkLoginStatus() {
-            // ★ Supabase Auth セッションチェック（Google OAuth コールバック処理）★
-            try {
-                const { data: { session } } = await supabase.auth.getSession();
-                if (session && session.user) {
-                    const user = session.user;
-                    const email = user.email;
-                    const displayName = user.user_metadata?.full_name || user.user_metadata?.name || email.split('@')[0];
-
-                    console.log('Supabase Auth セッション検出:', email);
-
-                    // メールアドレスでのブロックチェック
-                    try {
-                        const { data: blockedByEmail } = await supabase
-                            .from('blocked_users')
-                            .select('blocked_email')
-                            .eq('blocked_email', email)
-                            .single();
-
-                        if (blockedByEmail) {
-                            // ブロックされている場合はログアウトして警告
-                            await supabase.auth.signOut();
-                            showBlockedScreen(email);
-                            return;
-                        }
-                    } catch (e) {
-                        // ブロックされていない場合は続行
-                    }
-
-                    // ローカルストレージに保存してログイン
-                    localStorage.setItem('community_login', JSON.stringify({
-                        name: displayName,
-                        email: email,
-                        provider: 'google',
-                        timestamp: Date.now()
-                    }));
-
-                    loginSuccess(displayName);
-                    return;
-                }
-            } catch (e) {
-                console.log('Supabase Auth セッションなし');
-            }
-
             // ブロックチェック（最優先）- fingerprint
             try {
                 const { data: blockedByFp } = await supabase
@@ -1570,7 +1527,7 @@
         }
 
         // ブロック警告画面
-        function showBlockedScreen(blockedEmail = null) {
+        function showBlockedScreen() {
             document.body.innerHTML = `
                 <div style="
                     position: fixed;
@@ -1704,13 +1661,7 @@
             loginSuccess(name);
         };
 
-        window.logout = async function () {
-            // Supabase Auth からもサインアウト
-            try {
-                await supabase.auth.signOut();
-            } catch (e) {
-                console.log('Supabase signOut error:', e);
-            }
+        window.logout = function () {
             localStorage.removeItem('community_login');
             location.reload();
         };
@@ -1723,26 +1674,9 @@
         console.log('btnDemo:', btnDemo);
 
         if (btnGoogle) {
-            btnGoogle.addEventListener('click', async function () {
+            btnGoogle.addEventListener('click', function () {
                 console.log('Googleログインボタンがクリックされました');
-
-                try {
-                    // Supabase Auth Google OAuth
-                    const { data, error } = await supabase.auth.signInWithOAuth({
-                        provider: 'google',
-                        options: {
-                            redirectTo: window.location.origin + '/community.html'
-                        }
-                    });
-
-                    if (error) {
-                        console.error('Google認証エラー:', error);
-                        alert('Google認証に失敗しました: ' + error.message);
-                    }
-                } catch (e) {
-                    console.error('Google認証例外:', e);
-                    alert('Google認証に失敗しました。しばらく待ってから再度お試しください。');
-                }
+                alert('Google認証は準備中です。デモモードをお使いください。');
             });
         }
 
@@ -1818,7 +1752,7 @@
 
                 const section = item.dataset.section;
                 document.querySelectorAll('.page-section').forEach(s => s.classList.remove('active'));
-                document.getElementById(`section - ${section}`).classList.add('active');
+                document.getElementById(`section-${section}`).classList.add('active');
             });
         });
 
@@ -1860,9 +1794,9 @@
                 const label = document.createElement('label');
                 label.className = 'checkbox-item';
                 label.innerHTML = `
-            < input type = "checkbox" name = "tag-filter" value = "${tag}" >
-            ${tag} < span style = "color: #9ca3af; font-size: 0.8rem;" > (${count})</span >
-            `;
+                    <input type="checkbox" name="tag-filter" value="${tag}">
+                    ${tag} <span style="color: #9ca3af; font-size: 0.8rem;">(${count})</span>
+                `;
 
                 // チェンジイベント
                 label.querySelector('input').addEventListener('change', () => {
@@ -1905,9 +1839,9 @@
 
             if (experiences.length === 0) {
                 container.innerHTML = `
-            < div style = "text-align: center; padding: 2rem; color: var(--text-light);" >
-            該当する体験談がありません
-                    </div >
+                    <div style="text-align: center; padding: 2rem; color: var(--text-light);">
+                        該当する体験談がありません
+                    </div>
                 `;
                 countEl.textContent = '(0件)';
                 return;
@@ -1916,7 +1850,7 @@
             countEl.textContent = `(${experiences.length}件)`;
 
             container.innerHTML = experiences.map(exp => `
-                < div class= "experience-item" data - id="${exp.id}" >
+                <div class="experience-item" data-id="${exp.id}">
                     <div class="experience-icon">${getPhaseIcon(exp.phase)}</div>
                     <div class="experience-content">
                         <div class="experience-header">
@@ -1948,8 +1882,8 @@
                              </div>
                         </div>
                     </div>
-                </div >
-                `).join('');
+                </div>
+            `).join('');
         }
 
         // ===== インタラクション機能（モック） =====
@@ -1958,7 +1892,7 @@
                 alert('「参考になった」を押すにはログインが必要です');
                 return;
             }
-            const countEl = document.getElementById(`like - count - ${id}`);
+            const countEl = document.getElementById(`like-count-${id}`);
             let count = parseInt(countEl.textContent);
             count++;
             countEl.textContent = count;
@@ -1968,7 +1902,7 @@
         }
 
         function toggleComment(id) {
-            const area = document.getElementById(`comment - area - ${id}`);
+            const area = document.getElementById(`comment-area-${id}`);
             if (area.style.display === 'none') {
                 area.style.display = 'block';
             } else {
@@ -1981,12 +1915,12 @@
                 alert('コメントするにはログインが必要です');
                 return;
             }
-            const input = document.getElementById(`comment - input - ${id}`);
+            const input = document.getElementById(`comment-input-${id}`);
             const text = input.value.trim();
             if (!text) return;
 
             // コメントリストに追加（モック）
-            const list = document.getElementById(`comment - list - ${id}`);
+            const list = document.getElementById(`comment-list-${id}`);
             // "まだコメントはありません" をクリア（初回のみ）
             if (list.querySelector('p')?.textContent.includes('まだコメント')) {
                 list.innerHTML = '';
@@ -1996,13 +1930,13 @@
             newComment.style.padding = '0.5rem 0';
             newComment.style.borderBottom = '1px solid #eee';
             newComment.innerHTML = `
-            < span style = "font-weight: bold; font-size: 0.85rem;" > ${currentUser || 'ゲスト'}</span >:
-        <span style="font-size: 0.9rem;">${text}</span>
-        `;
+                <span style="font-weight: bold; font-size: 0.85rem;">${currentUser || 'ゲスト'}</span>: 
+                <span style="font-size: 0.9rem;">${text}</span>
+            `;
             list.appendChild(newComment);
 
             // カウント更新
-            const countEl = document.getElementById(`comment - count - ${id} `);
+            const countEl = document.getElementById(`comment-count-${id}`);
             countEl.textContent = parseInt(countEl.textContent) + 1;
 
             input.value = '';
@@ -2053,7 +1987,7 @@
                 } else {
                     count = allExperiences.filter(exp => exp.prefecture === pref).length;
                 }
-                card.querySelector('.prefecture-count').textContent = `${count} 件`;
+                card.querySelector('.prefecture-count').textContent = `${count}件`;
             });
         }
 
@@ -2067,7 +2001,7 @@
             const select = document.getElementById('tagFilter');
             select.innerHTML = '<option value="">全タグ</option>';
             [...tagSet].sort().forEach(tag => {
-                select.innerHTML += `< option value = "${tag}" > ${tag}</option > `;
+                select.innerHTML += `<option value="${tag}">${tag}</option>`;
             });
         }
 
@@ -2096,7 +2030,7 @@
                         likes: 0,
                         date: new Date(post.created_at).toLocaleDateString('ja-JP')
                     }));
-                    console.log(`Supabaseから${allExperiences.length} 件の承認済み投稿を読み込みました`);
+                    console.log(`Supabaseから${allExperiences.length}件の承認済み投稿を読み込みました`);
                 } else {
                     // フォールバック: ローカルJSONから読み込み
                     console.log('Supabaseから取得できないため、ローカルJSONを使用します');
@@ -2108,7 +2042,7 @@
                 updateTagCheckboxes();
                 updatePrefectureCounts();
                 renderExperiences(allExperiences);
-                console.log(`体験談を${allExperiences.length} 件読み込みました`);
+                console.log(`体験談を${allExperiences.length}件読み込みました`);
             } catch (error) {
                 console.error('体験談読み込みエラー:', error);
                 // 最終フォールバック
@@ -2120,10 +2054,10 @@
                     renderExperiences(allExperiences);
                 } catch (e) {
                     container.innerHTML = `
-            < div style = "text-align: center; padding: 2rem; color: #dc2626;" >
-                体験談を読み込めませんでした
-                        </div >
-            `;
+                        <div style="text-align: center; padding: 2rem; color: #dc2626;">
+                            体験談を読み込めませんでした
+                        </div>
+                    `;
                 }
             }
         }
@@ -2176,48 +2110,48 @@
                 if (blockedByFp || blockedByEmail) {
                     // ブロックされたユーザー用の警告画面（全画面）
                     document.body.innerHTML = `
-            < div style = "
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100 %;
-        height: 100 %;
-        background: linear - gradient(135deg, #1a1a2e 0 %, #16213e 50 %, #0f0f23 100 %);
-        display: flex;
-        align - items: center;
-        justify - content: center;
-        z - index: 99999;
-        ">
-            < div style = "
-        max - width: 600px;
-        padding: 3rem;
-        text - align: center;
-        color: white;
-        ">
-            < div style = "
-        font - size: 6rem;
-        margin - bottom: 1rem;
-        animation: pulse 2s infinite;
-        ">🚨</div>
-
-            < h1 style = "
-        color: #ef4444;
-        font - size: 2rem;
-        margin - bottom: 1.5rem;
-        text - shadow: 0 0 20px rgba(239, 68, 68, 0.5);
-        ">⚠️ アクセスがブロックされています ⚠️</h1>
-
-            < div style = "
-        background: rgba(255, 255, 255, 0.1);
-        border: 2px solid #ef4444;
-        border - radius: 12px;
-        padding: 1.5rem;
-        margin - bottom: 1.5rem;
-        ">
-            < p style = "font-size: 1rem; color: #fca5a5; margin-bottom: 1rem;" >
-                あなたの端末ID:
-                                    </p >
-            <p style="
+                        <div style="
+                            position: fixed;
+                            top: 0;
+                            left: 0;
+                            width: 100%;
+                            height: 100%;
+                            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f0f23 100%);
+                            display: flex;
+                            align-items: center;
+                            justify-content: center;
+                            z-index: 99999;
+                        ">
+                            <div style="
+                                max-width: 600px;
+                                padding: 3rem;
+                                text-align: center;
+                                color: white;
+                            ">
+                                <div style="
+                                    font-size: 6rem;
+                                    margin-bottom: 1rem;
+                                    animation: pulse 2s infinite;
+                                ">🚨</div>
+                                
+                                <h1 style="
+                                    color: #ef4444;
+                                    font-size: 2rem;
+                                    margin-bottom: 1.5rem;
+                                    text-shadow: 0 0 20px rgba(239, 68, 68, 0.5);
+                                ">⚠️ アクセスがブロックされています ⚠️</h1>
+                                
+                                <div style="
+                                    background: rgba(255, 255, 255, 0.1);
+                                    border: 2px solid #ef4444;
+                                    border-radius: 12px;
+                                    padding: 1.5rem;
+                                    margin-bottom: 1.5rem;
+                                ">
+                                    <p style="font-size: 1rem; color: #fca5a5; margin-bottom: 1rem;">
+                                        あなたの端末ID:
+                                    </p>
+                                    <p style="
                                         font-family: monospace;
                                         font-size: 1.2rem;
                                         color: #f87171;
@@ -2226,7 +2160,7 @@
                                         border-radius: 8px;
                                         word-break: break-all;
                                     ">${userFingerprint}</p>
-                                </div >
+                                </div>
                                 
                                 <p style="
                                     font-size: 1.1rem;
