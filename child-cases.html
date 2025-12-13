@@ -343,21 +343,33 @@
                 tagCounts[tag] = (tagCounts[tag] || 0) + 1;
             }));
 
-            // 都道府県カウント（locationから抽出）
-            const locationCounts = {};
+            // 都道府県リスト（完全版）
+            const prefectures = [
+                '北海道', '青森', '岩手', '宮城', '秋田', '山形', '福島',
+                '茨城', '栃木', '群馬', '埼玉', '千葉', '東京', '神奈川',
+                '新潟', '富山', '石川', '福井', '山梨', '長野', '岐阜', '静岡', '愛知',
+                '三重', '滋賀', '京都', '大阪', '兵庫', '奈良', '和歌山',
+                '鳥取', '島根', '岡山', '広島', '山口',
+                '徳島', '香川', '愛媛', '高知',
+                '福岡', '佐賀', '長崎', '熊本', '大分', '宮崎', '鹿児島', '沖縄'
+            ];
+
+            // タイトルから都道府県を抽出してカウント
+            const prefCounts = {};
             data.forEach(item => {
-                if (item.location) {
-                    // "〇〇県"や"東京都"などから都道府県名を抽出
-                    const pref = item.location.replace(/県|府|都|道/g, '');
-                    locationCounts[pref] = (locationCounts[pref] || 0) + 1;
-                }
+                const title = item.title || '';
+                const location = item.location || '';
+                prefectures.forEach(pref => {
+                    if (title.includes(pref) || location.includes(pref)) {
+                        prefCounts[pref] = (prefCounts[pref] || 0) + 1;
+                    }
+                });
             });
 
-            // 都道府県フィルター（データに存在するもの）
-            const prefList = tagCategories["📍 都道府県"];
-            const existingPrefs = prefList.filter(pref => locationCounts[pref] && locationCounts[pref] > 0);
+            // 都道府県フィルター（データに存在するもののみ）
+            const existingPrefs = Object.keys(prefCounts).filter(pref => prefCounts[pref] > 0);
             if (existingPrefs.length > 0) {
-                container.innerHTML += createFilterGroupHtml("📍 都道府県", existingPrefs, "location");
+                container.innerHTML += createFilterGroupHtml("📍 都道府県", existingPrefs.sort(), "location");
             }
 
             // 他のタグカテゴリ
@@ -394,8 +406,10 @@
 
             filteredCases = cases.filter(item => {
                 const tagMatch = selectedTags.length === 0 || selectedTags.some(tag => item.tags.includes(tag));
+                // 都道府県はタイトルとlocationの両方から検索
                 const locationMatch = selectedLocations.length === 0 || selectedLocations.some(loc =>
-                    item.location && item.location.includes(loc)
+                    (item.location && item.location.includes(loc)) ||
+                    (item.title && item.title.includes(loc))
                 );
                 return tagMatch && locationMatch;
             });
@@ -440,23 +454,38 @@
                 return;
             }
 
+            // HTMLタグを除去する関数
+            function stripHtml(html) {
+                if (!html) return '';
+                const tmp = document.createElement('div');
+                tmp.innerHTML = html;
+                return tmp.textContent || tmp.innerText || '';
+            }
+
             data.forEach(item => {
                 const tagsHtml = item.tags.map(tag => {
                     const isDanger = ['虐待', 'ネグレクト', '死亡事件', '心中', '暴行', '傷害', '性的虐待'].includes(tag);
-                    return `<span class="tag ${isDanger ? 'tag-danger' : ''}" onclick="searchByTag('${tag}')" style="cursor: pointer;" title="このタグで検索">${tag}</span>`;
+                    // タグにシングルクオート等の特殊文字がある場合に備えてエスケープ
+                    const escapedTag = tag.replace(/'/g, "\\'").replace(/"/g, '\\"');
+                    return `<span class="tag ${isDanger ? 'tag-danger' : ''}" onclick="searchByTag('${escapedTag}')" style="cursor: pointer;" title="このタグで検索">${tag}</span>`;
                 }).join('');
+
+                // summaryからHTMLを除去
+                const cleanSummary = stripHtml(item.summary);
+                // タイトルの特殊文字をエスケープ
+                const searchTitle = encodeURIComponent(item.title || '');
 
                 list.innerHTML += `
                     <div class="case-card">
                         <div class="case-meta">
-                            <span>📅 ${item.date}</span>
-                            <span>📍 ${item.location || '不明'}</span>
+                            <span>📅 ${item.date || '不明'}</span>
+                            <span>📍 ${item.location || '全国'}</span>
                             ${item.source ? `<span>📰 ${item.source}</span>` : ''}
                         </div>
-                        <h3 class="case-title">${item.title}</h3>
+                        <h3 class="case-title">${item.title || 'タイトルなし'}</h3>
                         <div class="case-tags">${tagsHtml}</div>
-                        <div class="case-summary"><p>${item.summary}</p></div>
-                        <a href="https://www.google.com/search?q=${encodeURIComponent(item.title)}" target="_blank" class="case-link">🔍 記事を検索 ↗</a>
+                        <div class="case-summary"><p>${cleanSummary || '詳細情報なし'}</p></div>
+                        <a href="https://www.google.com/search?q=${searchTitle}" target="_blank" class="case-link">🔍 記事を検索 ↗</a>
                     </div>
                 `;
             });
