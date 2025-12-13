@@ -1477,15 +1477,15 @@
         let currentUser = null;
 
         async function checkLoginStatus() {
-            // ブロックチェック（最優先）
+            // ブロックチェック（最優先）- fingerprint
             try {
-                const { data: blockedData } = await supabase
+                const { data: blockedByFp } = await supabase
                     .from('blocked_users')
                     .select('fingerprint')
                     .eq('fingerprint', userFingerprint)
                     .single();
 
-                if (blockedData) {
+                if (blockedByFp) {
                     showBlockedScreen();
                     return;
                 }
@@ -1498,6 +1498,27 @@
             if (savedLogin) {
                 const loginData = JSON.parse(savedLogin);
                 if (Date.now() - loginData.timestamp < 24 * 60 * 60 * 1000) { // 24時間有効
+
+                    // メールアドレスでのブロックチェック（重要！）
+                    if (loginData.email) {
+                        try {
+                            const { data: blockedByEmail } = await supabase
+                                .from('blocked_users')
+                                .select('blocked_email')
+                                .eq('blocked_email', loginData.email)
+                                .single();
+
+                            if (blockedByEmail) {
+                                // ブロックされたメールアドレスの場合、ログイン情報を削除して警告表示
+                                localStorage.removeItem('community_login');
+                                showBlockedScreen(loginData.email);
+                                return;
+                            }
+                        } catch (e) {
+                            // ブロックされていない場合はエラーになるので無視
+                        }
+                    }
+
                     loginSuccess(loginData.name);
                     return;
                 }
@@ -1545,19 +1566,18 @@
                             border-radius: 12px;
                             padding: 1.5rem;
                             margin-bottom: 1.5rem;
-                        ">
-                            <p style="font-size: 1rem; color: #fca5a5; margin-bottom: 1rem;">
-                                あなたの端末ID:
+                            "><p style="font-size: 1rem; color: #fca5a5; margin-bottom: 1rem;">
+                                ブロック対象情報:
                             </p>
                             <p style="
                                 font-family: monospace;
-                                font-size: 1.2rem;
+                                font-size: 1rem;
                                 color: #f87171;
                                 background: rgba(0,0,0,0.3);
                                 padding: 0.75rem;
                                 border-radius: 8px;
                                 word-break: break-all;
-                            ">${userFingerprint}</p>
+                            ">${blockedEmail ? '📧 ' + blockedEmail : '🔒 端末ID: ' + userFingerprint}</p>
                         </div>
                         
                         <p style="
@@ -1678,7 +1698,7 @@
         // メールアドレスログインボタン
         const btnEmail = document.getElementById('btnLoginEmail');
         if (btnEmail) {
-            btnEmail.addEventListener('click', function () {
+            btnEmail.addEventListener('click', async function () {
                 const email = document.getElementById('loginEmail').value.trim();
 
                 if (!email) {
@@ -1694,6 +1714,22 @@
                 }
 
                 console.log('メールログイン:', email);
+
+                // ★ ログイン前にブロックチェック ★
+                try {
+                    const { data: blockedByEmail } = await supabase
+                        .from('blocked_users')
+                        .select('blocked_email')
+                        .eq('blocked_email', email)
+                        .single();
+
+                    if (blockedByEmail) {
+                        showBlockedScreen(email);
+                        return;
+                    }
+                } catch (e) {
+                    // ブロックされていない場合はエラーになるので続行
+                }
 
                 // メールアドレスを名前として保存（ドメイン部分を除去）
                 const displayName = email.split('@')[0];
@@ -2048,14 +2084,30 @@
                 } catch (recaptchaError) {
                     console.warn('reCAPTCHA failed, continuing anyway:', recaptchaError);
                 }
-                // ブロックチェック
-                const { data: blockedData } = await supabase
+                // ブロックチェック（fingerprint）
+                const { data: blockedByFp } = await supabase
                     .from('blocked_users')
                     .select('fingerprint')
                     .eq('fingerprint', userFingerprint)
                     .single();
 
-                if (blockedData) {
+                // ログイン中のメールアドレスを取得
+                const savedLogin = localStorage.getItem('community_login');
+                const loginData = savedLogin ? JSON.parse(savedLogin) : null;
+                const userEmail = loginData?.email || null;
+
+                // メールアドレスでのブロックチェック
+                let blockedByEmail = null;
+                if (userEmail) {
+                    const { data } = await supabase
+                        .from('blocked_users')
+                        .select('blocked_email')
+                        .eq('blocked_email', userEmail)
+                        .single();
+                    blockedByEmail = data;
+                }
+
+                if (blockedByFp || blockedByEmail) {
                     // ブロックされたユーザー用の警告画面（全画面）
                     document.body.innerHTML = `
                         <div style="
@@ -2169,7 +2221,7 @@
                     selectedTags.push(chip.dataset.tag);
                 });
 
-                // Supabaseに保存
+                // Supabaseに保存（メールアドレスも保存）
                 const { error } = await supabase
                     .from('posts')
                     .insert({
@@ -2181,6 +2233,7 @@
                         tags: selectedTags,
                         status: 'pending',
                         user_fingerprint: userFingerprint,
+                        user_email: userEmail,
                         recaptcha_token: recaptchaToken
                     });
 
