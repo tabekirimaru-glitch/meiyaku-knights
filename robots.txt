@@ -1,0 +1,15 @@
+# robots.txt for 片翼の盟約騎士団
+# https://tabekirimaru-glitch.github.io/meiyaku-knights/
+
+User-agent: *
+Allow: /
+
+# Sitemap location
+Sitemap: https://tabekirimaru-glitch.github.io/meiyaku-knights/sitemap.xml
+
+# Disallow admin and internal pages
+Disallow: /admin.html
+Disallow: /opal-collector.html
+Disallow: /*.sql
+Disallow: /*.js
+Disallow: /scripts/
