@@ -1,0 +1,232 @@
+{
+    "questions": {
+        "Q1": {
+            "text": "今、どのような状況ですか？",
+            "options": [
+                {
+                    "label": "連れ去り直後で混乱中",
+                    "next": "Q2"
+                },
+                {
+                    "label": "調停の準備をしたい",
+                    "next": "Q3"
+                },
+                {
+                    "label": "調停中で戦っている",
+                    "next": "Q4"
+                },
+                {
+                    "label": "この問題について深く知りたい",
+                    "next": "Q5"
+                }
+            ]
+        },
+        "Q2": {
+            "text": "一番の悩みは？",
+            "options": [
+                {
+                    "label": "法的にどうなってるの？",
+                    "next": "End_A"
+                },
+                {
+                    "label": "辛くてたまらない",
+                    "next": "End_B"
+                }
+            ]
+        },
+        "Q3": {
+            "text": "知りたい手続きは？",
+            "options": [
+                {
+                    "label": "まずやるべき手続き",
+                    "next": "End_C"
+                },
+                {
+                    "label": "書類の書き方",
+                    "next": "End_D"
+                }
+            ]
+        },
+        "Q4": {
+            "text": "直面している壁は？",
+            "options": [
+                {
+                    "label": "調停の雰囲気が不安",
+                    "next": "End_E"
+                },
+                {
+                    "label": "相手が会わせない・拒否",
+                    "next": "End_F"
+                }
+            ]
+        },
+        "Q5": {
+            "text": "興味があるトピックは？",
+            "options": [
+                {
+                    "label": "共同親権・反対派の主張",
+                    "next": "End_G"
+                },
+                {
+                    "label": "裁判所の実態・心理",
+                    "next": "End_H"
+                },
+                {
+                    "label": "息抜き・自己防衛グッズ",
+                    "next": "End_I"
+                }
+            ]
+        }
+    },
+    "results": {
+        "End_A": {
+            "phase": "緊急防衛段階",
+            "phaseLevel": "emergency",
+            "advice": "⚠️ **沈黙は死です。大声で騒いでください**\n\n警察は『民事不介入』で逃げますが、『子供がいなくなって心配だ、探して欲しい』と**捜索願**として受理させてください。\n\nそれだけではありません。保育園、病院、役所…すべてに電話し『連れ去られて探している』と伝えてください。第三者の記憶と記録に残すことだけが、あなたを守る武器になります。",
+            "videos": [
+                {
+                    "title": "連れ去りの違法性 / 家裁の闇",
+                    "url": "https://youtu.be/Hd3mtGC6PO0"
+                }
+            ],
+            "tools": [
+                "judgments",
+                "community"
+            ]
+        },
+        "End_B": {
+            "phase": "心理サポート段階",
+            "phaseLevel": "support",
+            "advice": "あなたは一人ではありません。8割の人が同じように会えなくなるのが今の日本の現状です。\n\nどうしても辛くて、周りがすべて敵に見えるなら、下のボタンから私（ヒロ）にメッセージをください。まずは心を休めて、味方がここにいることを知ってください。",
+            "videos": [
+                {
+                    "title": "父親ができなくなること9選",
+                    "url": "https://youtu.be/W8EHjvjn-VY"
+                }
+            ],
+            "tools": [
+                "community"
+            ]
+        },
+        "End_C": {
+            "phase": "準備段階",
+            "phaseLevel": "preparation",
+            "advice": "🛑 **その弁護士依頼、ちょっと待った！**\n\n『絶対取り返せます』と即答する弁護士は危険です。8割の人が『金だけ取られた』と後悔しています。\n\nあえて弁護士をつけず**『本人訴訟』**で挑み、相手弁護士を油断させる戦術もあります。焦って契約せず、まずはこの動画を見てください。",
+            "videos": [
+                {
+                    "title": "面会交流調停すぐやって / 婚姻費用と養育費の違い",
+                    "url": "https://youtu.be/SnH048RAkms"
+                }
+            ],
+            "tools": [
+                "judgments"
+            ]
+        },
+        "End_D": {
+            "phase": "準備段階",
+            "phaseLevel": "preparation",
+            "advice": "調停委員を味方につけるには、感情論ではなく『論理的な書類』が必要です。この『3点セット』だけは完璧に仕上げてください。",
+            "videos": [
+                {
+                    "title": "3点セット提出の説明【前半】",
+                    "url": "https://youtu.be/RfPHI4a6xqY"
+                },
+                {
+                    "title": "3点セット提出の説明【後半】",
+                    "url": "https://youtu.be/vMr062otWpk"
+                }
+            ],
+            "tools": [
+                "judgments"
+            ]
+        },
+        "End_E": {
+            "phase": "戦闘段階",
+            "phaseLevel": "battle",
+            "advice": "敵を知れば怖くありません。第1回調停で何が起きるか、シミュレーションしておきましょう。",
+            "videos": [
+                {
+                    "title": "離婚調停シミュレーション",
+                    "url": "https://youtu.be/My3ZH14vp8g"
+                }
+            ],
+            "tools": [
+                "judgments",
+                "community"
+            ]
+        },
+        "End_F": {
+            "phase": "戦闘段階",
+            "phaseLevel": "battle",
+            "advice": "📸 **証拠の質を変えてください**\n\n相手の悪口は逆効果です。最強の武器は『あなたが子供と笑顔で過ごした写真』と『家事育児の実績』です。『相手がいなくても育てられる』という事実を淡々と積み上げてください。",
+            "videos": [
+                {
+                    "title": "面会拒否で100万判例 / 月2回会える希望の判例",
+                    "url": "https://youtu.be/SnH048RAkms"
+                }
+            ],
+            "tools": [
+                "judgments"
+            ]
+        },
+        "End_G": {
+            "phase": "知識武装段階",
+            "phaseLevel": "knowledge",
+            "advice": "敵の論理を知ることが最大の防御です。",
+            "videos": [
+                {
+                    "title": "共同親権の闇",
+                    "url": "https://youtu.be/fKqf1crhLZg"
+                },
+                {
+                    "title": "反対派の主張",
+                    "url": "https://youtu.be/G7-GuBideWA"
+                }
+            ],
+            "tools": [
+                "judgments"
+            ]
+        },
+        "End_H": {
+            "phase": "知識武装段階",
+            "phaseLevel": "knowledge",
+            "advice": "🔪 **『抜かずの刀』を持つ覚悟**\n\n刑事告訴で相手を犯罪者にすることは可能かもしれませんが、それは子供の母親に前科をつけること。あえてその刀を抜かない選択も、親の強さです。",
+            "videos": [
+                {
+                    "title": "裁判所の運営について",
+                    "url": "https://youtu.be/ZXT39r2t0V0"
+                },
+                {
+                    "title": "加害者の心境",
+                    "url": "https://youtu.be/ws26nMACG2M"
+                },
+                {
+                    "title": "裁判所の闘",
+                    "url": "https://youtu.be/Hd3mtGC6PO0"
+                }
+            ],
+            "tools": [
+                "judgments"
+            ]
+        },
+        "End_I": {
+            "phase": "メンタルケア段階",
+            "phaseLevel": "support",
+            "advice": "戦いには休息と装備も必要です。調停所の雑音を消すイヤホンは、メンタルを守る盾になります。",
+            "videos": [
+                {
+                    "title": "ネタ枠",
+                    "url": "https://youtu.be/3okt6aK5cIQ"
+                },
+                {
+                    "title": "身を守るイヤホン紹介",
+                    "url": "https://youtu.be/PmAQYuM8Mms"
+                }
+            ],
+            "tools": [
+                "community"
+            ]
+        }
+    },
+    "marshmallowUrl": "https://marshmallow-qa.com/meiyakunights"
+}

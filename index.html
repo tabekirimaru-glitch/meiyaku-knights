@@ -925,7 +925,337 @@
             .shorts-grid {
                 grid-template-columns: repeat(4, 1fr);
             }
-        }
+
+            /* ===== サバイバル・ナビ ===== */
+            .survival-navi-section {
+                background: linear-gradient(135deg, #1e3a5f 0%, #0f2847 100%);
+                padding: 3rem 0;
+            }
+
+            .survival-navi-header {
+                text-align: center;
+                margin-bottom: 2rem;
+            }
+
+            .survival-navi-header h2 {
+                color: #d4af37;
+                font-size: 1.8rem;
+                margin-bottom: 0.5rem;
+            }
+
+            .survival-navi-header p {
+                color: rgba(255, 255, 255, 0.85);
+                font-size: 1rem;
+            }
+
+            .navi-timeline {
+                max-width: 600px;
+                margin: 0 auto;
+                position: relative;
+            }
+
+            .navi-step {
+                background: rgba(255, 255, 255, 0.95);
+                border-radius: 16px;
+                padding: 1.5rem;
+                margin-bottom: 1rem;
+                box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+                animation: slideDown 0.4s ease-out;
+                position: relative;
+            }
+
+            .navi-step::before {
+                content: '';
+                position: absolute;
+                top: -1rem;
+                left: 50%;
+                transform: translateX(-50%);
+                width: 3px;
+                height: 1rem;
+                background: #d4af37;
+            }
+
+            .navi-step:first-child::before {
+                display: none;
+            }
+
+            @keyframes slideDown {
+                from {
+                    opacity: 0;
+                    transform: translateY(-20px);
+                }
+
+                to {
+                    opacity: 1;
+                    transform: translateY(0);
+                }
+            }
+
+            .navi-question {
+                font-size: 1.1rem;
+                font-weight: 700;
+                color: #1e3a5f;
+                margin-bottom: 1rem;
+                display: flex;
+                align-items: center;
+                gap: 0.5rem;
+            }
+
+            .navi-question .q-icon {
+                background: #d4af37;
+                color: white;
+                width: 28px;
+                height: 28px;
+                border-radius: 50%;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-size: 0.9rem;
+                font-weight: 700;
+            }
+
+            .navi-options {
+                display: flex;
+                flex-direction: column;
+                gap: 0.75rem;
+            }
+
+            .navi-option {
+                background: #f8fafc;
+                border: 2px solid #e2e8f0;
+                border-radius: 12px;
+                padding: 1rem;
+                font-size: 1rem;
+                font-weight: 600;
+                color: #334155;
+                cursor: pointer;
+                transition: all 0.2s;
+                text-align: left;
+            }
+
+            .navi-option:hover {
+                background: #eef2ff;
+                border-color: #6366f1;
+                color: #4f46e5;
+            }
+
+            .navi-option.selected {
+                background: #4f46e5;
+                border-color: #4f46e5;
+                color: white;
+            }
+
+            .navi-step.answered {
+                opacity: 0.7;
+                transform: scale(0.98);
+            }
+
+            .navi-step.answered .navi-option:not(.selected) {
+                display: none;
+            }
+
+            .navi-step.answered .navi-option.selected {
+                background: #10b981;
+                border-color: #10b981;
+                pointer-events: none;
+            }
+
+            .navi-step.clickable {
+                cursor: pointer;
+            }
+
+            .navi-step.clickable:hover {
+                opacity: 1;
+                transform: scale(1);
+            }
+
+            /* 診断結果カード */
+            .navi-result {
+                background: white;
+                border-radius: 20px;
+                overflow: hidden;
+                box-shadow: 0 8px 40px rgba(0, 0, 0, 0.3);
+                animation: slideDown 0.5s ease-out;
+            }
+
+            .navi-result-header {
+                padding: 1.5rem;
+                text-align: center;
+            }
+
+            .navi-result-header.emergency {
+                background: linear-gradient(135deg, #dc2626, #991b1b);
+            }
+
+            .navi-result-header.preparation {
+                background: linear-gradient(135deg, #f59e0b, #d97706);
+            }
+
+            .navi-result-header.battle {
+                background: linear-gradient(135deg, #2563eb, #1d4ed8);
+            }
+
+            .navi-result-header.knowledge {
+                background: linear-gradient(135deg, #7c3aed, #5b21b6);
+            }
+
+            .navi-result-header.support {
+                background: linear-gradient(135deg, #059669, #047857);
+            }
+
+            .navi-result-header h3 {
+                color: white;
+                font-size: 1.3rem;
+                margin-bottom: 0.3rem;
+            }
+
+            .navi-result-header .phase-label {
+                color: rgba(255, 255, 255, 0.9);
+                font-size: 0.9rem;
+            }
+
+            .navi-result-body {
+                padding: 1.5rem;
+            }
+
+            .navi-advice {
+                background: #f8fafc;
+                border-left: 4px solid #d4af37;
+                padding: 1rem;
+                margin-bottom: 1.5rem;
+                border-radius: 0 8px 8px 0;
+                white-space: pre-line;
+                line-height: 1.8;
+                font-size: 0.95rem;
+            }
+
+            .navi-videos {
+                margin-bottom: 1.5rem;
+            }
+
+            .navi-videos h4 {
+                font-size: 1rem;
+                color: #1e3a5f;
+                margin-bottom: 0.75rem;
+            }
+
+            .navi-video-card {
+                display: flex;
+                align-items: center;
+                gap: 0.75rem;
+                background: #f1f5f9;
+                padding: 0.75rem;
+                border-radius: 10px;
+                margin-bottom: 0.5rem;
+                text-decoration: none;
+                color: #334155;
+                transition: all 0.2s;
+            }
+
+            .navi-video-card:hover {
+                background: #e0e7ff;
+                color: #4f46e5;
+            }
+
+            .navi-video-card .play-icon {
+                background: #ef4444;
+                color: white;
+                width: 40px;
+                height: 40px;
+                border-radius: 8px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-size: 1.2rem;
+                flex-shrink: 0;
+            }
+
+            .navi-video-card .video-title {
+                font-weight: 600;
+                font-size: 0.9rem;
+            }
+
+            .navi-tools {
+                display: flex;
+                gap: 0.75rem;
+                margin-bottom: 1.5rem;
+                flex-wrap: wrap;
+            }
+
+            .navi-tool-btn {
+                flex: 1;
+                min-width: 120px;
+                padding: 0.75rem 1rem;
+                border-radius: 10px;
+                text-decoration: none;
+                text-align: center;
+                font-weight: 600;
+                font-size: 0.85rem;
+                transition: all 0.2s;
+            }
+
+            .navi-tool-btn.judgments {
+                background: #fef3c7;
+                color: #92400e;
+                border: 2px solid #fcd34d;
+            }
+
+            .navi-tool-btn.judgments:hover {
+                background: #fde68a;
+            }
+
+            .navi-tool-btn.community {
+                background: #dbeafe;
+                color: #1e40af;
+                border: 2px solid #93c5fd;
+            }
+
+            .navi-tool-btn.community:hover {
+                background: #bfdbfe;
+            }
+
+            .navi-marshmallow {
+                display: block;
+                background: linear-gradient(135deg, #ec4899, #db2777);
+                color: white;
+                text-align: center;
+                padding: 1rem;
+                border-radius: 12px;
+                font-weight: 700;
+                font-size: 1rem;
+                text-decoration: none;
+                margin-bottom: 1rem;
+                transition: all 0.2s;
+            }
+
+            .navi-marshmallow:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 4px 15px rgba(236, 72, 153, 0.4);
+            }
+
+            .navi-footer-note {
+                background: #fef3c7;
+                border: 1px solid #fcd34d;
+                border-radius: 8px;
+                padding: 0.75rem;
+                font-size: 0.8rem;
+                color: #92400e;
+                text-align: center;
+            }
+
+            .navi-restart {
+                display: block;
+                text-align: center;
+                margin-top: 1.5rem;
+                color: #d4af37;
+                font-weight: 600;
+                cursor: pointer;
+                text-decoration: underline;
+            }
+
+            .navi-restart:hover {
+                color: white;
+            }
     </style>
 </head>
 
@@ -1062,6 +1392,22 @@
             transform: scale(1.05);
         }
     </style>
+
+    <!-- サバイバル・ナビ セクション -->
+    <section class="survival-navi-section" id="survival-navi">
+        <div class="container">
+            <div class="survival-navi-header">
+                <h2>🧭 サバイバル・ナビ</h2>
+                <p>連れ去られて何をすべきかわからないあなたへ<br>
+                    <strong>今、何をするべきか</strong>診断します
+                </p>
+            </div>
+            <div class="navi-timeline" id="naviTimeline">
+                <!-- JavaScriptで動的生成 -->
+                <div style="text-align: center; color: rgba(255,255,255,0.7);">読み込み中...</div>
+            </div>
+        </div>
+    </section>
 
     <!-- (B) 判例データベース - バナー -->
     <section class="section-block" id="judgments" style="padding: 2rem 0;">
@@ -1706,6 +2052,176 @@
         //     //     blockUser(userId);
         //     // }
         // }
+
+        // ===== サバイバル・ナビ =====
+        (function () {
+            let naviData = null;
+            let currentPath = [];
+            const timeline = document.getElementById('naviTimeline');
+
+            // JSONデータ読み込み
+            fetch('data/survival-navi.json')
+                .then(res => res.json())
+                .then(data => {
+                    naviData = data;
+                    renderQuestion('Q1');
+                })
+                .catch(err => {
+                    console.error('サバイバル・ナビデータ読み込みエラー:', err);
+                    timeline.innerHTML = '<div style="text-align: center; color: #fca5a5;">データの読み込みに失敗しました</div>';
+                });
+
+            // 質問表示
+            function renderQuestion(qId) {
+                const q = naviData.questions[qId];
+                if (!q) return;
+
+                const stepIndex = currentPath.length + 1;
+                const stepDiv = document.createElement('div');
+                stepDiv.className = 'navi-step';
+                stepDiv.dataset.qid = qId;
+                stepDiv.innerHTML = `
+                    <div class="navi-question">
+                        <span class="q-icon">Q${stepIndex}</span>
+                        ${q.text}
+                    </div>
+                    <div class="navi-options">
+                        ${q.options.map((opt, i) => `
+                            <button class="navi-option" data-next="${opt.next}" data-index="${i}">
+                                ${opt.label}
+                            </button>
+                        `).join('')}
+                    </div>
+                `;
+
+                // 最初の質問なら置換、それ以外は追加
+                if (currentPath.length === 0) {
+                    timeline.innerHTML = '';
+                }
+                timeline.appendChild(stepDiv);
+
+                // スムーズスクロール
+                stepDiv.scrollIntoView({ behavior: 'smooth', block: 'center' });
+
+                // 選択肢クリックイベント
+                stepDiv.querySelectorAll('.navi-option').forEach(btn => {
+                    btn.addEventListener('click', function () {
+                        const next = this.dataset.next;
+                        const optIndex = this.dataset.index;
+
+                        // 選択状態をセット
+                        stepDiv.querySelectorAll('.navi-option').forEach(b => b.classList.remove('selected'));
+                        this.classList.add('selected');
+                        stepDiv.classList.add('answered');
+
+                        // パスに記録
+                        currentPath.push({ qId, optIndex, next });
+
+                        // 過去の選択を変更可能に
+                        stepDiv.classList.add('clickable');
+                        stepDiv.addEventListener('click', function stepClick() {
+                            resetFromStep(qId);
+                        });
+
+                        // 次の質問または結果表示
+                        if (next.startsWith('End_')) {
+                            renderResult(next);
+                        } else {
+                            renderQuestion(next);
+                        }
+                    });
+                });
+            }
+
+            // 過去の質問からやり直し
+            function resetFromStep(qId) {
+                const index = currentPath.findIndex(p => p.qId === qId);
+                if (index === -1) return;
+
+                // パスをリセット
+                currentPath = currentPath.slice(0, index);
+
+                // DOM更新
+                const steps = timeline.querySelectorAll('.navi-step');
+                let found = false;
+                steps.forEach(step => {
+                    if (step.dataset.qid === qId) found = true;
+                    if (found) {
+                        step.remove();
+                    }
+                });
+
+                // 結果カードも削除
+                const resultDiv = timeline.querySelector('.navi-result');
+                if (resultDiv) resultDiv.remove();
+                const restartDiv = timeline.querySelector('.navi-restart');
+                if (restartDiv) restartDiv.remove();
+
+                // 質問を再表示
+                renderQuestion(qId);
+            }
+
+            // 診断結果表示
+            function renderResult(resultId) {
+                const result = naviData.results[resultId];
+                if (!result) return;
+
+                const resultDiv = document.createElement('div');
+                resultDiv.className = 'navi-result';
+                resultDiv.innerHTML = `
+                    <div class="navi-result-header ${result.phaseLevel}">
+                        <h3>🔬 AI診断レポート</h3>
+                        <div class="phase-label">現在のフェーズ: <strong>${result.phase}</strong></div>
+                    </div>
+                    <div class="navi-result-body">
+                        <div class="navi-advice">${result.advice}</div>
+                        
+                        <div class="navi-videos">
+                            <h4>📺 今見るべき動画</h4>
+                            ${result.videos.map(v => `
+                                <a href="${v.url}" target="_blank" class="navi-video-card">
+                                    <div class="play-icon">▶</div>
+                                    <div class="video-title">${v.title}</div>
+                                </a>
+                            `).join('')}
+                        </div>
+
+                        <div class="navi-tools">
+                            ${result.tools.includes('judgments') ? `
+                                <a href="judgments.html" class="navi-tool-btn judgments">📚 判例DBを見る</a>
+                            ` : ''}
+                            ${result.tools.includes('community') ? `
+                                <a href="community.html" class="navi-tool-btn community">👥 コミュニティへ</a>
+                            ` : ''}
+                        </div>
+
+                        <a href="${naviData.marshmallowUrl}" target="_blank" class="navi-marshmallow">
+                            ✉️ 誰にも頼れない時はヒロに相談（マシュマロ）
+                        </a>
+
+                        <div class="navi-footer-note">
+                            ⚠️ 情報は常にアップデートされます。必ずYouTubeチャンネルで最新情報をチェックしてください
+                        </div>
+                    </div>
+                `;
+
+                timeline.appendChild(resultDiv);
+
+                // リスタートボタン
+                const restartBtn = document.createElement('div');
+                restartBtn.className = 'navi-restart';
+                restartBtn.textContent = '🔄 最初からやり直す';
+                restartBtn.addEventListener('click', function () {
+                    currentPath = [];
+                    timeline.innerHTML = '';
+                    renderQuestion('Q1');
+                });
+                timeline.appendChild(restartBtn);
+
+                // スクロール
+                resultDiv.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+        })();
     </script>
 </body>
 
