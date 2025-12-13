@@ -937,7 +937,7 @@
                 content: '';
                 position: absolute;
                 inset: 0;
-                background: linear-gradient(135deg, rgba(16, 50, 36, 0.9) 0%, rgba(20, 40, 30, 0.85) 100%);
+                background: linear-gradient(135deg, rgba(16, 50, 36, 0.7) 0%, rgba(20, 40, 30, 0.65) 100%);
             }
 
             .survival-navi-section .container {
@@ -2076,14 +2076,25 @@
 
         // ===== サバイバル・ナビ =====
         (function () {
+            console.log('サバイバル・ナビ初期化開始');
             let naviData = null;
             let currentPath = [];
             const timeline = document.getElementById('naviTimeline');
 
+            if (!timeline) {
+                console.error('naviTimeline要素が見つかりません');
+                return;
+            }
+            console.log('timeline要素取得成功:', timeline);
+
             // JSONデータ読み込み
             fetch('data/survival-navi.json')
-                .then(res => res.json())
+                .then(res => {
+                    console.log('fetch応答:', res.status);
+                    return res.json();
+                })
                 .then(data => {
+                    console.log('JSONデータ読み込み成功:', data.questions.Q1.text);
                     naviData = data;
                     renderQuestion('Q1');
                 })
