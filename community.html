@@ -928,6 +928,28 @@
             opacity: 0.8;
             font-size: 0.8rem;
         }
+
+        /* 配信投げ銭画像カード */
+        .donate-card {
+            display: block;
+            border-radius: 12px;
+            overflow: hidden;
+            border: 2px solid #d4af37;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+            transition: all 0.3s ease;
+        }
+
+        .donate-card:hover {
+            transform: translateY(-5px) scale(1.03);
+            box-shadow: 0 8px 25px rgba(212, 175, 55, 0.4);
+            border-color: #ffd700;
+        }
+
+        .donate-card img {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
     </style>
 </head>
 
@@ -1393,25 +1415,17 @@
                 🎁 各配信サイトで応援する
             </h3>
             <div class="support-modal-buttons donate-grid">
-                <a href="https://www.tiktok.com/@meiyaku_knight" target="_blank" class="support-modal-btn donate-btn"
-                    style="background: #000000;">
-                    <span class="support-modal-btn-icon">🎵</span>
-                    <span class="support-modal-btn-text">TikTok</span>
+                <a href="https://www.tiktok.com/@meiyaku_knight" target="_blank" class="donate-card">
+                    <img src="images/donate-tiktok.jpg" alt="TikTok">
                 </a>
-                <a href="https://twitcasting.tv/tabekirimaru" target="_blank" class="support-modal-btn donate-btn"
-                    style="background: #35a6cf;">
-                    <span class="support-modal-btn-icon">🐤</span>
-                    <span class="support-modal-btn-text">ツイキャス</span>
+                <a href="https://twitcasting.tv/tabekirimaru" target="_blank" class="donate-card">
+                    <img src="images/donate-twitcasting.jpg" alt="ツイキャス">
                 </a>
-                <a href="https://www.twitch.tv/meiyakuknights" target="_blank" class="support-modal-btn donate-btn"
-                    style="background: #9146ff;">
-                    <span class="support-modal-btn-icon">🟣</span>
-                    <span class="support-modal-btn-text">Twitch</span>
+                <a href="https://www.twitch.tv/meiyakuknights" target="_blank" class="donate-card">
+                    <img src="images/donate-twitch.jpg" alt="Twitch">
                 </a>
-                <a href="https://www.youtube.com/@meiyaku_knights" target="_blank" class="support-modal-btn donate-btn"
-                    style="background: #ff0000;">
-                    <span class="support-modal-btn-icon">🔴</span>
-                    <span class="support-modal-btn-text">YouTube</span>
+                <a href="https://www.youtube.com/@meiyaku_knights" target="_blank" class="donate-card">
+                    <img src="images/donate-youtube.jpg" alt="YouTube">
                 </a>
             </div>
         </div>
