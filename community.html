@@ -8,6 +8,7 @@
     <title>コミュニティ | 片翼の盟約騎士団</title>
     <link rel="stylesheet" href="style.css">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="https://www.google.com/recaptcha/api.js?render=6Lc8JSosAAAAANfpYbwb4-X11lIZnMoEY46kkLh1"></script>
     <style>
         /* コミュニティページ専用スタイル */
         :root {
@@ -1562,6 +1563,14 @@
             submitBtn.disabled = true;
 
             try {
+                // reCAPTCHA v3 トークン取得
+                let recaptchaToken = null;
+                try {
+                    recaptchaToken = await grecaptcha.execute('6Lc8JSosAAAAANfpYbwb4-X11lIZnMoEY46kkLh1', { action: 'submit_post' });
+                    console.log('reCAPTCHA token obtained');
+                } catch (recaptchaError) {
+                    console.warn('reCAPTCHA failed, continuing anyway:', recaptchaError);
+                }
                 // ブロックチェック
                 const { data: blockedData } = await supabase
                     .from('blocked_users')
@@ -1605,7 +1614,8 @@
                         content: content,
                         tags: selectedTags,
                         status: 'pending',
-                        user_fingerprint: userFingerprint
+                        user_fingerprint: userFingerprint,
+                        recaptcha_token: recaptchaToken
                     });
 
                 if (error) throw error;
