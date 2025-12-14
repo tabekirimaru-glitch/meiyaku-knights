@@ -132,7 +132,7 @@
                 background-color: #1a1a2e;
             }
 
-            /* 初めての方へガイドセクション - 背景透明、ヘッダーに白いモヤ */
+            /* 初めての方へガイドセクション - 背景透明、ヘッダーに後ろから光 */
             #guide {
                 background: transparent !important;
             }
@@ -144,11 +144,22 @@
             }
 
             #guide .section-header {
-                background: rgba(255, 255, 255, 0.85);
-                border-radius: 12px;
-                padding: 1rem 2rem;
+                background: radial-gradient(ellipse at center, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0) 70%);
+                padding: 2rem 3rem;
                 display: inline-block;
                 margin-bottom: 2rem;
+            }
+
+            #guide .section-header h2 {
+                color: #d4af37 !important;
+                text-shadow: 0 0 20px rgba(255, 255, 255, 0.8), 0 0 40px rgba(212, 175, 55, 0.5);
+                font-size: 2.5rem !important;
+            }
+
+            #guide .section-header p {
+                color: #1a1a2e !important;
+                font-weight: 700;
+                text-shadow: 0 0 15px rgba(255, 255, 255, 0.9);
             }
 
             /* サバイバルナビセクション - 背景透明、テキスト視認性向上 */
@@ -188,7 +199,7 @@
             /* 弁護士懲戒処分検索センター - 背景透明 */
             /* インラインスタイルで設定されているので section-block で上書き */
 
-            /* ユリちゃんセクション - 背景透明、テキスト部分に白いモヤ */
+            /* ユリちゃんセクション - 背景透明、中央揃え、後ろから光 */
             #media-feed {
                 background: transparent !important;
             }
@@ -196,12 +207,12 @@
             #media-feed .container {
                 max-width: 700px;
                 margin: 0 auto;
+                text-align: center;
             }
 
             #media-feed .section-header {
-                background: rgba(255, 255, 255, 0.85);
-                border-radius: 12px;
-                padding: 1rem 2rem;
+                background: radial-gradient(ellipse at center, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0) 70%);
+                padding: 2rem 3rem;
                 display: inline-block;
                 margin: 0 auto 1rem;
             }
@@ -211,7 +222,7 @@
                 object-fit: cover;
             }
 
-            /* コミュニティセクション - 背景透明、テキスト部分に白いモヤ */
+            /* コミュニティセクション - 背景透明、テキスト部分に後ろから光 */
             #community {
                 background: transparent !important;
             }
@@ -223,28 +234,31 @@
             }
 
             #community>.container>div:first-child {
-                background: rgba(255, 255, 255, 0.9);
-                border-radius: 12px;
-                padding: 1rem 2rem;
+                background: radial-gradient(ellipse at center, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0) 70%);
+                padding: 1.5rem 3rem;
                 display: inline-block;
                 margin-bottom: 1rem;
             }
 
-            /* ヒロアクティビティハブ - テキスト部分に白いモヤ */
+            /* ヒロアクティビティハブ - 後ろから光エフェクト */
             #hiro-hub {
                 background: transparent !important;
             }
 
             #hiro-hub .section-header {
-                background: rgba(255, 255, 255, 0.85);
-                border-radius: 12px;
-                padding: 1rem 2rem;
+                background: radial-gradient(ellipse at center, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0) 70%);
+                padding: 2rem 3rem;
                 display: inline-block;
                 text-align: center;
             }
 
             #hiro-hub .container {
                 text-align: center;
+            }
+
+            /* 困った時の相談先 - 白背景 */
+            #hotlines {
+                background: white !important;
             }
 
             /* 運営者ヒロについて - 白背景維持 */
