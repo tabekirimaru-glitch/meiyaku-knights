@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>Script Test</title>
+</head>
+
+<body>
+    <h1>Script Test Page</h1>
+    <button id="testBtn" onclick="testClick()">Test Button</button>
+    <div id="result"></div>
+
+    <script src="script.js?v=1734137000"></script>
+    <script>
+        console.log('TEST: Inline script started');
+
+        function testClick() {
+            console.log('TEST: Button clicked');
+            document.getElementById('result').textContent = 'Button clicked at ' + new Date().toLocaleTimeString();
+        }
+
+        window.testClick = testClick;
+        console.log('TEST: testClick defined:', typeof window.testClick);
+    </script>
+</body>
+
+</html>
