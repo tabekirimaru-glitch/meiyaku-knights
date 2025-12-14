@@ -968,6 +968,25 @@
             <h2>🔐 会員コミュニティ</h2>
             <p>体験談の投稿・閲覧にはログインが必要です</p>
 
+            <!-- ブラウザ互換性警告 -->
+            <div id="browserWarning"
+                style="display: none; background: #fef3c7; border: 2px solid #f59e0b; border-radius: 12px; padding: 1rem; margin-bottom: 1rem; text-align: left;">
+                <p
+                    style="color: #92400e; font-weight: 700; margin-bottom: 0.5rem; display: flex; align-items: center; gap: 0.5rem;">
+                    ⚠️ ブラウザの互換性に関する警告
+                </p>
+                <p style="color: #78350f; font-size: 0.9rem; margin-bottom: 0.75rem;">
+                    お使いのブラウザ（<span id="detectedBrowser"></span>）では、Google認証が正しく動作しない場合があります。
+                </p>
+                <p style="color: #78350f; font-size: 0.85rem; margin-bottom: 0.75rem;">
+                    Google認証をご利用の場合は、<strong>Chrome</strong>または<strong>Safari</strong>で開いてください。
+                </p>
+                <button onclick="copyUrlToClipboard()"
+                    style="width: 100%; padding: 0.75rem; background: #f59e0b; color: white; border: none; border-radius: 8px; font-weight: 600; cursor: pointer; font-size: 0.9rem;">
+                    📋 URLをコピーして外部ブラウザで開く
+                </button>
+            </div>
+
             <!-- メールアドレスログイン -->
             <div style="margin-bottom: 1rem;">
                 <input type="email" id="loginEmail" class="form-input" placeholder="メールアドレスを入力"
@@ -997,6 +1016,54 @@
             <a href="index.html" class="back-link">← トップページに戻る</a>
         </div>
     </div>
+
+    <script>
+        // ブラウザ互換性チェック
+        (function () {
+            const ua = navigator.userAgent;
+            let problematicBrowser = null;
+
+            // 問題のあるブラウザを検出
+            if (/Brave/i.test(ua) || (navigator.brave && navigator.brave.isBrave)) {
+                problematicBrowser = 'Brave';
+            } else if (/Line\//i.test(ua) || /LIFF/i.test(ua)) {
+                problematicBrowser = 'LINE';
+            } else if (/Instagram/i.test(ua)) {
+                problematicBrowser = 'Instagram';
+            } else if (/FBAN|FBAV/i.test(ua)) {
+                problematicBrowser = 'Facebook';
+            } else if (/Twitter/i.test(ua) || /X-Client/i.test(ua)) {
+                problematicBrowser = 'X (Twitter)';
+            } else if (/wv\)/i.test(ua) && !/Chrome/i.test(ua)) {
+                problematicBrowser = 'アプリ内ブラウザ';
+            }
+
+            if (problematicBrowser) {
+                const warningEl = document.getElementById('browserWarning');
+                const browserNameEl = document.getElementById('detectedBrowser');
+                if (warningEl && browserNameEl) {
+                    browserNameEl.textContent = problematicBrowser;
+                    warningEl.style.display = 'block';
+                }
+            }
+        })();
+
+        function copyUrlToClipboard() {
+            navigator.clipboard.writeText(window.location.href).then(function () {
+                alert('URLをコピーしました！\\nChrome または Safari に貼り付けてください。');
+            }).catch(function () {
+                // フォールバック
+                const textArea = document.createElement('textarea');
+                textArea.value = window.location.href;
+                document.body.appendChild(textArea);
+                textArea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textArea);
+                alert('URLをコピーしました！\\nChrome または Safari に貼り付けてください。');
+            });
+        }
+    </script>
+
 
     <!-- ヘッダー -->
     <header class="community-header">
@@ -1375,6 +1442,39 @@
                                 <span class="support-banner-title">配信中投げ銭</span>
                             </div>
                         </div>
+                    </div>
+                </div>
+
+                <!-- サブスク支援って何？ 説明セクション -->
+                <div
+                    style="margin-top: 2rem; background: white; border-radius: 16px; padding: 1.5rem; box-shadow: 0 4px 15px rgba(0,0,0,0.08);">
+                    <h3 style="text-align: center; margin-bottom: 1rem; color: var(--primary-dark); font-size: 1.2rem;">
+                        🤔 サブスク支援って何？
+                    </h3>
+                    <p style="text-align: center; margin-bottom: 1rem; color: var(--text-light); font-size: 0.9rem;">
+                        Amazonプライム会員なら追加料金なしでヒロを応援できます！<br>
+                        詳しくは以下の漫画と動画をご覧ください 👇
+                    </p>
+
+                    <!-- 漫画で解説 -->
+                    <div style="margin-bottom: 1.5rem;">
+                        <img src="images/twitch-subscrube-manga.jpg" alt="サブスク支援の解説漫画"
+                            style="width: 100%; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1);">
+                    </div>
+
+                    <!-- 動画で詳しく解説 -->
+                    <div
+                        style="background: #f0f9ff; border: 2px solid #3b82f6; border-radius: 12px; padding: 1rem; text-align: center;">
+                        <p style="margin-bottom: 0.75rem; font-weight: 600; color: #1e40af;">
+                            📺 動画でもっと詳しく解説されています
+                        </p>
+                        <a href="https://www.youtube.com/watch?v=tVwWNYnaynY" target="_blank"
+                            style="display: inline-flex; align-items: center; gap: 0.5rem; background: #ef4444; color: white; padding: 0.75rem 1.5rem; border-radius: 30px; text-decoration: none; font-weight: 600; transition: all 0.2s;">
+                            ▶️ YouTubeで見る
+                        </a>
+                        <p style="margin-top: 0.5rem; font-size: 0.8rem; color: var(--text-light);">
+                            ※外部サイト（YouTube）が開きます
+                        </p>
                     </div>
                 </div>
 

@@ -34,6 +34,11 @@ jobs:
         
       - name: Run child cases collection (RSS)
         run: python scripts/collect_rss_news.py
+
+      - name: Run YouTube data collection
+        env:
+          YOUTUBE_API_KEY: ${{ secrets.YOUTUBE_API_KEY }}
+        run: python scripts/collect_youtube.py
         
       - name: Commit and push changes
         run: |

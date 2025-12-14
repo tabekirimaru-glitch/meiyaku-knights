@@ -150,16 +150,40 @@
                 margin-bottom: 2rem;
             }
 
-            #guide .section-header h2 {
-                color: #d4af37 !important;
-                text-shadow: 0 0 20px rgba(255, 255, 255, 0.8), 0 0 40px rgba(212, 175, 55, 0.5);
-                font-size: 2.5rem !important;
+            /* 統一ヘッダースタイル: 黄色文字＋赤い縁取り */
+            .section-header h2,
+            #about-operator h2,
+            #hotlines h2,
+            .golden-title {
+                color: #ffd700 !important;
+                -webkit-text-stroke: 1.5px #b91c1c;
+                text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+                font-size: 1.8rem !important;
+                font-weight: 900 !important;
             }
 
-            #guide .section-header p {
+            .section-header p,
+            #about-operator .section-header p,
+            #hotlines .section-header p {
                 color: #1a1a2e !important;
                 font-weight: 700;
-                text-shadow: 0 0 15px rgba(255, 255, 255, 0.9);
+                text-shadow: 0 0 10px rgba(255, 255, 255, 0.9);
+            }
+
+            /* 困った時の相談先 - 白背景＋中央揃え */
+            #hotlines {
+                background: white !important;
+                text-align: center;
+            }
+
+            #hotlines .container {
+                text-align: center;
+            }
+
+            #hotlines .section-header {
+                background: radial-gradient(ellipse at center, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0) 70%);
+                padding: 2rem 3rem;
+                display: inline-block;
             }
 
             /* サバイバルナビセクション - 背景透明、テキスト視認性向上 */
@@ -256,10 +280,7 @@
                 text-align: center;
             }
 
-            /* 困った時の相談先 - 白背景 */
-            #hotlines {
-                background: white !important;
-            }
+            /* 困った時の相談先 - 白背景（上で詳細設定済み） */
 
             /* 運営者ヒロについて - 白背景維持 */
             #about-operator {
@@ -1912,7 +1933,7 @@
         style="background: linear-gradient(135deg, #1e3a8a 0%, #2d1b69 100%); padding: 4rem 0;">
         <div class="container">
             <div class="section-header" style="color: white; text-align: center; margin-bottom: 3rem;">
-                <h2 style="color: #d4af37; font-size: 2.2rem; margin-bottom: 0.5rem;">⚔️ 初めての方へ</h2>
+                <h2 class="golden-title" style="font-size: 2.2rem; margin-bottom: 0.5rem;">⚔️ 初めての方へ</h2>
                 <p style="color: rgba(255,255,255,0.9);">あなたの戦いを支える3つの道</p>
             </div>
 
@@ -2161,9 +2182,9 @@
         <div class="container">
             <!-- キャプションテキスト -->
             <div style="text-align: center; margin-bottom: 1rem;">
-                <p style="font-size: 1.1rem; font-weight: 700; color: #1e3a5f; margin-bottom: 0.5rem;">
+                <h2 class="golden-title" style="font-size: 1.5rem; margin-bottom: 0.5rem;">
                     コミュニティへの参加希望はこちら
-                </p>
+                </h2>
                 <p style="font-size: 0.85rem; color: #dc2626; font-weight: 600;">
                     ※reCAPTCHAを使用しています。悪質な書き込みは保存させていただきます
                 </p>
@@ -2225,7 +2246,7 @@
     <section class="section-block" id="about-operator" style="background: white; padding: 4rem 0;">
         <div class="container">
             <div class="section-header" style="text-align: center; margin-bottom: 2.5rem;">
-                <h2 style="color: var(--primary-dark); font-size: 2rem;">👤 運営者「ヒロ」について</h2>
+                <h2 class="golden-title" style="font-size: 2rem;">👤 運営者「ヒロ」について</h2>
                 <p style="color: var(--text-light);">このサイトを立ち上げた理由</p>
             </div>
 
