@@ -123,6 +123,48 @@
             }
         }
 
+        /* デスクトップ版：セクションの横幅を制限（横に伸びすぎ防止） */
+        @media (min-width: 769px) {
+
+            /* ページ全体の背景画像 */
+            body {
+                background: url('images/page-background.jpg') center top / cover no-repeat fixed;
+                background-color: #1a1a2e;
+            }
+
+            /* 初めての方へガイドセクション */
+            #guide .container {
+                max-width: 900px;
+                margin: 0 auto;
+            }
+
+            /* サバイバルナビセクション */
+            .survival-navi-section .container {
+                max-width: 800px;
+                margin: 0 auto;
+            }
+
+            /* ユリちゃんセクション */
+            #media-feed .container {
+                max-width: 800px;
+                margin: 0 auto;
+            }
+
+            /* ユリちゃん画像を少し縦長に */
+            #media-feed .banner-img-uniform {
+                max-height: 400px;
+                object-fit: cover;
+            }
+
+            /* コミュニティセクション */
+            #community .container {
+                max-width: 900px;
+                margin: 0 auto;
+            }
+
+            /* 子供関連ニュース・学校リスク予報はそのまま小さく */
+        }
+
         /* カード型デザイン */
         .content-card {
             background: white;
