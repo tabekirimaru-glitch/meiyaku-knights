@@ -123,7 +123,7 @@
             }
         }
 
-        /* デスクトップ版：セクションの横幅を制限（横に伸びすぎ防止） */
+        /* デスクトップ版：セクションの横幅を制限＆背景透明化 */
         @media (min-width: 769px) {
 
             /* ページ全体の背景画像 */
@@ -132,13 +132,17 @@
                 background-color: #1a1a2e;
             }
 
-            /* 初めての方へガイドセクション - 背景を見せる */
+            /* 初めての方へガイドセクション - 背景透明 */
+            #guide {
+                background: transparent !important;
+            }
+
             #guide .container {
                 max-width: 800px;
                 margin: 0 auto;
             }
 
-            /* サバイバルナビセクション */
+            /* サバイバルナビセクション - 背景透明、テキスト視認性向上 */
             .survival-navi-section {
                 background: transparent !important;
             }
@@ -146,38 +150,69 @@
             .survival-navi-section .container {
                 max-width: 700px;
                 margin: 0 auto;
-                background: rgba(255, 255, 255, 0.95);
+                background: rgba(0, 50, 30, 0.85);
                 border-radius: 16px;
                 padding: 2rem;
             }
 
+            .survival-navi-section h2,
+            .survival-navi-section p,
+            .survival-navi-section strong {
+                color: #ffd700 !important;
+                text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.5);
+            }
+
+            .survival-navi-section .compass-icon {
+                filter: drop-shadow(0 0 10px rgba(255, 215, 0, 0.5));
+            }
+
             /* 判決データベースバナー */
+            #judgments {
+                background: transparent !important;
+            }
+
             #judgments .container {
                 max-width: 700px;
                 margin: 0 auto;
             }
 
-            /* 弁護士懲戒処分検索センターバナー（インラインで設定済みだが統一） */
+            /* 弁護士懲戒処分検索センター - 背景透明 */
+            /* インラインスタイルで設定されているので section-block で上書き */
 
-            /* ユリちゃんセクション */
+            /* ユリちゃんセクション - 背景透明 */
+            #media-feed {
+                background: transparent !important;
+            }
+
             #media-feed .container {
                 max-width: 700px;
                 margin: 0 auto;
             }
 
-            /* ユリちゃん画像を少し縦長に */
             #media-feed .banner-img-uniform {
                 max-height: 400px;
                 object-fit: cover;
             }
 
-            /* コミュニティセクション */
+            /* コミュニティセクション - 背景透明 */
+            #community {
+                background: transparent !important;
+            }
+
             #community .container {
                 max-width: 800px;
                 margin: 0 auto;
             }
 
-            /* 子供関連ニュース・学校リスク予報はそのまま小さく */
+            /* 子供関連ニュース - 背景透明 */
+            #news {
+                background: transparent !important;
+            }
+
+            /* 学校リスク予報セクション - 背景透明 */
+            .section-block {
+                background: transparent !important;
+            }
         }
 
         /* カード型デザイン */
