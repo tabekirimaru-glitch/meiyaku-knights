@@ -19,7 +19,7 @@ st.set_page_config(
 )
 
 # --- セッションベースのレート制限 ---
-MAX_SEARCHES_PER_SESSION = 10
+MAX_SEARCHES_PER_SESSION = 3
 
 if "search_count" not in st.session_state:
     st.session_state.search_count = 0
@@ -341,9 +341,46 @@ Streamlit SecretsにGOOGLE_API_KEYとGOOGLE_CXを設定すると、実際のGoog
 学校見学や説明会に参加して確認することをお勧めします。
 """
 
+# --- 入力バリデーション関数 ---
+def validate_school_name(name: str) -> tuple[bool, str]:
+    """学校名の入力バリデーション"""
+    # 空白を除去
+    name = name.strip()
+    
+    # 長さチェック（3文字未満は無効）
+    if len(name) < 3:
+        return False, "⚠️ この検索はGeminiによって観測されています。正しい学校名を入力してください。"
+    
+    # ひらがな・カタカナ1-2文字のみの場合は無効（あ、う、など）
+    import re
+    if re.match(r'^[ぁ-んァ-ヶー]{1,2}$', name):
+        return False, "⚠️ この検索はGeminiによって観測されています。正しい学校名を入力してください。"
+    
+    # 意味不明な文字列パターン（ランダムな文字の羅列）
+    # 同じ文字の繰り返し
+    if len(set(name.replace(' ', ''))) == 1 and len(name) > 1:
+        return False, "⚠️ この検索はGeminiによって観測されています。正しい学校名を入力してください。"
+    
+    # 学校っぽいキーワードがあるかチェック（オプション：厳密にする場合）
+    school_keywords = ['小学校', '中学校', '高校', '高等学校', '学園', '学院', '大学', '専門学校', '幼稚園', '保育園', '塾', '予備校']
+    has_keyword = any(kw in name for kw in school_keywords)
+    
+    # キーワードがなくても市区町村名+αがあれば許可
+    location_pattern = r'(市|区|町|村|県|府|都|道)'
+    has_location = bool(re.search(location_pattern, name))
+    
+    if not has_keyword and not has_location and len(name) < 5:
+        return False, "⚠️ この検索はGeminiによって観測されています。正しい学校名を入力してください。"
+    
+    return True, ""
+
 # 検索実行
 if search_button and school_name:
-    if not check_rate_limit():
+    # 入力バリデーション
+    is_valid, error_message = validate_school_name(school_name)
+    if not is_valid:
+        st.error(error_message)
+    elif not check_rate_limit():
         st.error(f"⚠️ 検索回数の上限（{MAX_SEARCHES_PER_SESSION}回）に達しました。")
     else:
         search_key = generate_cache_key(school_name, prefecture)
