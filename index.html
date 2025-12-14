@@ -132,7 +132,7 @@
                 background-color: #1a1a2e;
             }
 
-            /* 初めての方へガイドセクション - 背景透明 */
+            /* 初めての方へガイドセクション - 背景透明、ヘッダーに白いモヤ */
             #guide {
                 background: transparent !important;
             }
@@ -140,6 +140,15 @@
             #guide .container {
                 max-width: 800px;
                 margin: 0 auto;
+                text-align: center;
+            }
+
+            #guide .section-header {
+                background: rgba(255, 255, 255, 0.85);
+                border-radius: 12px;
+                padding: 1rem 2rem;
+                display: inline-block;
+                margin-bottom: 2rem;
             }
 
             /* サバイバルナビセクション - 背景透明、テキスト視認性向上 */
@@ -179,7 +188,7 @@
             /* 弁護士懲戒処分検索センター - 背景透明 */
             /* インラインスタイルで設定されているので section-block で上書き */
 
-            /* ユリちゃんセクション - 背景透明 */
+            /* ユリちゃんセクション - 背景透明、テキスト部分に白いモヤ */
             #media-feed {
                 background: transparent !important;
             }
@@ -189,12 +198,20 @@
                 margin: 0 auto;
             }
 
+            #media-feed .section-header {
+                background: rgba(255, 255, 255, 0.85);
+                border-radius: 12px;
+                padding: 1rem 2rem;
+                display: inline-block;
+                margin: 0 auto 1rem;
+            }
+
             #media-feed .banner-img-uniform {
                 max-height: 400px;
                 object-fit: cover;
             }
 
-            /* コミュニティセクション - 背景透明 */
+            /* コミュニティセクション - 背景透明、テキスト部分に白いモヤ */
             #community {
                 background: transparent !important;
             }
@@ -202,6 +219,37 @@
             #community .container {
                 max-width: 800px;
                 margin: 0 auto;
+                text-align: center;
+            }
+
+            #community>.container>div:first-child {
+                background: rgba(255, 255, 255, 0.9);
+                border-radius: 12px;
+                padding: 1rem 2rem;
+                display: inline-block;
+                margin-bottom: 1rem;
+            }
+
+            /* ヒロアクティビティハブ - テキスト部分に白いモヤ */
+            #hiro-hub {
+                background: transparent !important;
+            }
+
+            #hiro-hub .section-header {
+                background: rgba(255, 255, 255, 0.85);
+                border-radius: 12px;
+                padding: 1rem 2rem;
+                display: inline-block;
+                text-align: center;
+            }
+
+            #hiro-hub .container {
+                text-align: center;
+            }
+
+            /* 運営者ヒロについて - 白背景維持 */
+            #about-operator {
+                background: white !important;
             }
 
             /* 子供関連ニュース - 背景透明 */
@@ -209,8 +257,8 @@
                 background: transparent !important;
             }
 
-            /* 学校リスク予報セクション - 背景透明 */
-            .section-block {
+            /* 学校リスク予報セクション - 背景透明（ただし運営者は除外） */
+            .section-block:not(#about-operator):not(#footer) {
                 background: transparent !important;
             }
         }
