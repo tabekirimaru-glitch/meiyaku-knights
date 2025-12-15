@@ -958,6 +958,65 @@
             height: auto;
             display: block;
         }
+
+        /* ===== ツール配布ロック機能 ===== */
+        .tools-lock-overlay {
+            text-align: center;
+            padding: 2rem;
+            background: linear-gradient(135deg, #f8fafc, #e0e7ff);
+            border-radius: 20px;
+            border: 3px dashed #6366f1;
+        }
+
+        .follow-btn {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 1rem 1.5rem;
+            background: white;
+            border-radius: 16px;
+            text-decoration: none;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            border: 3px solid #e5e7eb;
+            min-width: 140px;
+        }
+
+        .follow-btn:hover {
+            transform: translateY(-5px) scale(1.05);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+        }
+
+        .follow-btn-x {
+            border-color: #1a1a1a;
+        }
+
+        .follow-btn-x:hover {
+            border-color: #000;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.25);
+        }
+
+        .follow-btn-x span {
+            color: #1a1a1a;
+            font-weight: 700;
+            font-size: 0.95rem;
+        }
+
+        .follow-btn-twitch {
+            border-color: #9146ff;
+        }
+
+        .follow-btn-twitch:hover {
+            border-color: #772ce8;
+            box-shadow: 0 8px 25px rgba(145, 70, 255, 0.35);
+        }
+
+        .follow-btn-twitch span {
+            color: #9146ff;
+            font-weight: 700;
+            font-size: 0.95rem;
+        }
     </style>
 </head>
 
@@ -1087,6 +1146,7 @@
             <div class="nav-items">
                 <button class="nav-item active" data-section="experiences">📋 みんなの体験談</button>
                 <button class="nav-item" data-section="post">📝 体験談を投稿</button>
+                <button class="nav-item" data-section="tools">🔧 ツール配布</button>
                 <button class="nav-item" data-section="recommend">💡 おすすめ</button>
                 <button class="nav-item" data-section="support">💎 ヒロの活動支援</button>
             </div>
@@ -1390,6 +1450,73 @@
                     <!-- JSONから動的に読み込み -->
                     <div style="text-align: center; padding: 2rem; color: var(--text-light);">
                         読み込み中...
+                    </div>
+                </div>
+            </section>
+
+            <!-- ツール配布場所 -->
+            <section id="section-tools" class="page-section">
+                <h2 style="margin-bottom: 1rem;">🔧 ツール配布場所</h2>
+                <p style="margin-bottom: 1rem; font-size: 0.9rem; color: var(--text-light);">
+                    スプレッドシート用ツール（盟約コックピット等）をダウンロードできます
+                </p>
+
+                <!-- ロック状態時に表示するオーバーレイ -->
+                <div id="toolsLockOverlay" class="tools-lock-overlay">
+                    <!-- フォローお願いバナー画像 -->
+                    <img src="images/tools-follow-banner.jpg" alt="XとTwitchのフォロー、お願いっ…"
+                        style="width: 100%; max-width: 600px; border-radius: 16px; margin-bottom: 1.5rem; box-shadow: 0 8px 25px rgba(0,0,0,0.15);">
+
+                    <!-- フォローボタン群 -->
+                    <div
+                        style="display: flex; flex-wrap: wrap; gap: 1.5rem; justify-content: center; margin-bottom: 1.5rem;">
+                        <!-- Xフォローボタン -->
+                        <a href="https://x.com/tabekirimaru" target="_blank" onclick="unlockTools()"
+                            class="follow-btn follow-btn-x">
+                            <img src="images/icon-x-follow.png" alt="X"
+                                style="width: 60px; height: 60px; border-radius: 50%;">
+                            <span>𝕏をフォロー</span>
+                        </a>
+
+                        <!-- Twitchフォローボタン -->
+                        <a href="https://www.twitch.tv/meiyakuknights" target="_blank" onclick="unlockTools()"
+                            class="follow-btn follow-btn-twitch">
+                            <img src="images/icon-twitch-follow.jpg" alt="Twitch"
+                                style="width: 60px; height: 60px; border-radius: 50%;">
+                            <span>Twitchをフォロー</span>
+                        </a>
+                    </div>
+
+                    <!-- フォロー済みリンク -->
+                    <p style="text-align: center; margin-bottom: 1rem;">
+                        <button type="button" onclick="window.unlockTools()"
+                            style="background: none; border: none; color: #6366f1; text-decoration: underline; font-size: 0.9rem; cursor: pointer;">
+                            すでにフォロー済みの方はこちら（ロック解除）
+                        </button>
+                    </p>
+
+                    <!-- ぼかしプレビュー -->
+                    <div style="position: relative; margin-top: 1rem;">
+                        <img src="images/tools-unlock-banner.jpg" alt="ツール配布場所"
+                            style="width: 100%; max-width: 500px; border-radius: 12px; filter: blur(8px); opacity: 0.7;">
+                        <div
+                            style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: rgba(0,0,0,0.7); color: white; padding: 1rem 2rem; border-radius: 30px; font-weight: 700;">
+                            🔒 ロック中
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 解除後に表示されるツールグリッド -->
+                <div id="toolsUnlockedArea" style="display: none;">
+                    <!-- 解除バナー -->
+                    <div style="text-align: center; margin-bottom: 1.5rem;">
+                        <img src="images/tools-unlock-banner.jpg" alt="ユリのツール配布場所"
+                            style="width: 100%; max-width: 500px; border-radius: 16px; box-shadow: 0 4px 20px rgba(0,0,0,0.1);">
+                    </div>
+                    <div id="toolsGrid" style="display: grid; gap: 1.5rem;">
+                        <div style="text-align: center; padding: 2rem; color: var(--text-light);">
+                            読み込み中...
+                        </div>
                     </div>
                 </div>
             </section>
@@ -2544,8 +2671,148 @@
             grid.innerHTML = html;
         }
 
+        // ===== ツール配布ロック機能 =====
+        var TOOLS_UNLOCK_KEY = 'meiyaku_tools_unlocked';
+
+        function checkToolsLockState() {
+            const unlocked = localStorage.getItem(TOOLS_UNLOCK_KEY);
+            if (unlocked === 'true') {
+                // 解除済みならロックオーバーレイを非表示
+                showUnlockedTools();
+            }
+        }
+
+        function unlockTools() {
+            // localStorageにフラグを保存
+            localStorage.setItem(TOOLS_UNLOCK_KEY, 'true');
+            showUnlockedTools();
+        }
+        // HTMLのonclickからアクセスできるようにグローバル公開
+        window.unlockTools = unlockTools;
+
+        function showUnlockedTools() {
+            const lockOverlay = document.getElementById('toolsLockOverlay');
+            const unlockedArea = document.getElementById('toolsUnlockedArea');
+            if (lockOverlay) lockOverlay.style.display = 'none';
+            if (unlockedArea) unlockedArea.style.display = 'block';
+        }
+
         // ページ読み込み時に実行
         loadRecommendations();
+        checkToolsLockState(); // ロック状態をチェック
+        loadCommunityTools();
+
+        // ===== ツール配布読み込み（Supabaseから取得） =====
+        async function loadCommunityTools() {
+            const grid = document.getElementById('toolsGrid');
+            if (!grid) return;
+
+            try {
+                const { data: tools, error } = await supabase
+                    .from('tools')
+                    .select('*')
+                    .eq('is_active', true)
+                    .order('display_order', { ascending: true });
+
+                if (error) throw error;
+
+                if (!tools || tools.length === 0) {
+                    grid.innerHTML = `
+                        <div style="text-align: center; padding: 2rem; color: var(--text-light);">
+                            🔧 現在配布中のツールはありません
+                        </div>
+                    `;
+                    return;
+                }
+
+                grid.innerHTML = tools.map(tool => `
+                    <div class="content-card" style="padding: 0; overflow: hidden;">
+                        ${tool.banner_url ? `<img src="${tool.banner_url}" alt="${escapeHtmlLocal(tool.name)}" style="width: 100%; height: auto; display: block;">` : ''}
+                        <div style="padding: 1.25rem;">
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem;">
+                                <h3 style="margin: 0; font-size: 1.2rem; color: var(--primary-dark);">${escapeHtmlLocal(tool.name)}</h3>
+                                <span style="background: var(--secondary-color); color: white; padding: 0.25rem 0.75rem; border-radius: 999px; font-size: 0.85rem; font-weight: 600;">${escapeHtmlLocal(tool.version)}</span>
+                            </div>
+                            ${tool.update_info ? `
+                                <div style="background: var(--bg-light); border-left: 4px solid var(--secondary-color); padding: 0.75rem; border-radius: 0 8px 8px 0; margin-bottom: 1rem; font-size: 0.9rem; white-space: pre-line;">
+                                    <strong>📝 更新内容</strong><br>${escapeHtmlLocal(tool.update_info)}
+                                </div>
+                            ` : ''}
+                            ${tool.code_body ? `
+                                <div style="background: #1e293b; border-radius: 8px; padding: 0.75rem; margin-bottom: 1rem; max-height: 150px; overflow: auto;">
+                                    <code style="font-family: 'Consolas', monospace; font-size: 0.75rem; color: #e2e8f0; white-space: pre;">${escapeHtmlLocal(tool.code_body.substring(0, 400))}${tool.code_body.length > 400 ? '...' : ''}</code>
+                                </div>
+                            ` : ''}
+                            <div style="display: flex; gap: 0.75rem; flex-wrap: wrap;">
+                                ${tool.code_body ? `
+                                    <button class="btn btn-primary" onclick="copyToolCode('${tool.id}')" data-code="${encodeURIComponent(tool.code_body)}" id="copy-btn-${tool.id}" style="flex: 1; min-width: 140px;">
+                                        📋 コードをコピー
+                                    </button>
+                                ` : ''}
+                                ${tool.template_url ? `
+                                    <a href="${tool.template_url}" target="_blank" class="btn" style="flex: 1; min-width: 140px; background: linear-gradient(135deg, #1e40af, #3b82f6); color: white; text-decoration: none; text-align: center;">
+                                        📄 テンプレートを取得
+                                    </a>
+                                ` : ''}
+                            </div>
+                        </div>
+                    </div>
+                `).join('');
+            } catch (error) {
+                console.error('ツール読み込みエラー:', error);
+                grid.innerHTML = `
+                    <div style="text-align: center; padding: 2rem; color: #dc2626;">
+                        ❌ ツールを読み込めませんでした<br>
+                        <span style="font-size: 0.85rem;">${error.message}</span>
+                    </div>
+                `;
+            }
+        }
+
+        // ツールコードコピー
+        function copyToolCode(toolId) {
+            const btn = document.getElementById('copy-btn-' + toolId);
+            const code = decodeURIComponent(btn.dataset.code);
+
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+                navigator.clipboard.writeText(code).then(() => {
+                    showToolCopied(btn);
+                }).catch(() => {
+                    fallbackCopyToolCode(code, btn);
+                });
+            } else {
+                fallbackCopyToolCode(code, btn);
+            }
+        }
+
+        function fallbackCopyToolCode(code, btn) {
+            const textArea = document.createElement('textarea');
+            textArea.value = code;
+            textArea.style.position = 'fixed';
+            textArea.style.left = '-9999px';
+            document.body.appendChild(textArea);
+            textArea.select();
+            document.execCommand('copy');
+            document.body.removeChild(textArea);
+            showToolCopied(btn);
+        }
+
+        function showToolCopied(btn) {
+            const originalText = btn.innerHTML;
+            btn.innerHTML = '✅ コピーしました！';
+            btn.style.background = 'linear-gradient(135deg, #10b981, #059669)';
+            setTimeout(() => {
+                btn.innerHTML = originalText;
+                btn.style.background = '';
+            }, 2000);
+        }
+
+        function escapeHtmlLocal(text) {
+            if (!text) return '';
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
 
         // ===== 活動支援モーダル =====
         function openAmazonModal() {

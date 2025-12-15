@@ -521,6 +521,78 @@
                 <div class="empty-state">読み込み中...</div>
             </div>
         </div>
+
+        <!-- GASツール配布管理 -->
+        <div class="posts-section" style="margin-top: 2rem;">
+            <h2>🔧 GASツール配布管理</h2>
+            <p style="color: var(--text-light); margin-bottom: 1rem;">スプレッドシート用ツール（コックピット等）の配布・更新を管理できます。</p>
+
+            <!-- 追加フォーム -->
+            <div
+                style="background: #f0f9ff; padding: 1.5rem; border-radius: 8px; margin-bottom: 1.5rem; border: 1px solid #7dd3fc;">
+                <h3 style="font-size: 1rem; margin-bottom: 1rem;">➕ ツールを追加/更新</h3>
+                <form id="tool-form">
+                    <input type="hidden" id="tool-edit-id">
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem;">
+                        <div class="form-group">
+                            <label>ツール名</label>
+                            <input type="text" id="tool-name" class="form-input" placeholder="例: 盟約コックピット" required>
+                        </div>
+                        <div class="form-group">
+                            <label>バージョン</label>
+                            <input type="text" id="tool-version" class="form-input" placeholder="例: v5.3" required>
+                        </div>
+                        <div class="form-group">
+                            <label>表示順</label>
+                            <input type="number" id="tool-order" class="form-input" value="0" min="0"
+                                style="width: 100px;">
+                        </div>
+                    </div>
+
+                    <div class="form-group" style="margin-top: 1rem;">
+                        <label>📝 更新内容</label>
+                        <textarea id="tool-update-info" class="form-input" rows="3"
+                            placeholder="例: ・◯◯機能を追加&#10;・バグ修正"></textarea>
+                    </div>
+
+                    <div class="form-group" style="margin-top: 1rem;">
+                        <label>📋 GASソースコード</label>
+                        <textarea id="tool-code-body" class="form-input" rows="12"
+                            placeholder="function onOpen() { ... }"
+                            style="font-family: 'Consolas', 'Monaco', 'Courier New', monospace; font-size: 0.85rem; white-space: pre; overflow-x: auto;"></textarea>
+                        <small style="color: var(--text-light);">※コード全文を貼り付けてください</small>
+                    </div>
+
+                    <div
+                        style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-top: 1rem;">
+                        <div class="form-group">
+                            <label>📄 テンプレートURL</label>
+                            <input type="url" id="tool-template-url" class="form-input"
+                                placeholder="https://docs.google.com/spreadsheets/...">
+                        </div>
+                        <div class="form-group">
+                            <label>🖼️ バナー画像</label>
+                            <input type="file" id="tool-banner-file" class="form-input" accept="image/*"
+                                style="padding: 0.5rem;">
+                            <input type="hidden" id="tool-banner-url">
+                            <div id="tool-upload-status" style="font-size: 0.85rem; margin-top: 0.25rem;"></div>
+                        </div>
+                    </div>
+
+                    <div style="display: flex; gap: 1rem; margin-top: 1rem; align-items: center;">
+                        <button type="submit" class="btn btn-primary" id="tool-submit-btn">追加</button>
+                        <button type="button" class="btn" onclick="resetToolForm()"
+                            style="background: #e5e7eb;">キャンセル</button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- ツール一覧 -->
+            <h3 style="margin-bottom: 1rem;">📋 登録済みツール</h3>
+            <div id="tools-list">
+                <div class="empty-state">読み込み中...</div>
+            </div>
+        </div>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -1025,6 +1097,7 @@
             await loadRecommendationsV2();
             await loadMediaSets();
             await loadBlockedUsers();
+            await loadTools();
         };
 
         // ===== メディアセット管理 =====
@@ -1207,6 +1280,222 @@
                 alert('削除エラー: ' + error.message);
             }
         }
+
+
+        // ===== GASツール配布管理 =====
+
+
+        // ツール一覧読み込み
+        async function loadTools() {
+            const container = document.getElementById('tools-list');
+            if (!container) return;
+
+            try {
+                const { data: tools, error } = await supabase
+                    .from('tools')
+                    .select('*')
+                    .order('display_order', { ascending: true });
+
+                if (error) throw error;
+
+                if (!tools || tools.length === 0) {
+                    container.innerHTML = '<div class="empty-state">登録されたツールはありません</div>';
+                    return;
+                }
+
+                container.innerHTML = tools.map(tool => `
+                    <div class="post-item" data-id="${tool.id}">
+                        <div style="display: flex; gap: 1rem; align-items: flex-start; flex-wrap: wrap;">
+                            ${tool.banner_url ? `<img src="${tool.banner_url}" style="width: 120px; height: auto; border-radius: 8px;">` : ''}
+                            <div style="flex: 1; min-width: 200px;">
+                                <div class="post-header">
+                                    <div>
+                                        <strong style="font-size: 1.1rem;">${escapeHtml(tool.name)}</strong>
+                                        <span class="tag" style="margin-left: 0.5rem;">${escapeHtml(tool.version)}</span>
+                                        <span class="status-badge ${tool.is_active ? 'status-approved' : 'status-rejected'}" style="margin-left: 0.5rem;">
+                                            ${tool.is_active ? '公開中' : '非公開'}
+                                        </span>
+                                    </div>
+                                    <div class="post-meta">${new Date(tool.updated_at || tool.created_at).toLocaleString('ja-JP')}</div>
+                                </div>
+                                <div style="color: var(--text-light); font-size: 0.9rem; margin: 0.5rem 0; white-space: pre-line;">${escapeHtml(tool.update_info || '')}</div>
+                                <div style="font-size: 0.8rem; color: #9ca3af;">
+                                    コード: ${tool.code_body ? tool.code_body.length.toLocaleString() + '文字' : '未設定'}
+                                    ${tool.template_url ? ' | テンプレート: 設定済み' : ''}
+                                </div>
+                            </div>
+                            <div style="display: flex; flex-direction: column; gap: 0.5rem;">
+                                <button class="btn btn-primary btn-sm" onclick="editTool('${tool.id}')">✏️ 編集</button>
+                                <button class="btn ${tool.is_active ? 'btn-warning' : 'btn-success'} btn-sm" onclick="toggleTool('${tool.id}', ${!tool.is_active})">
+                                    ${tool.is_active ? '非公開' : '公開'}
+                                </button>
+                                <button class="btn btn-danger btn-sm" onclick="deleteTool('${tool.id}')">🗑️ 削除</button>
+                            </div>
+                        </div>
+                    </div>
+                `).join('');
+            } catch (error) {
+                console.error('ツール読み込みエラー:', error);
+                container.innerHTML = `<div class="empty-state" style="color: var(--danger);">エラー: ${error.message}</div>`;
+            }
+        }
+
+        // ツールフォーム送信
+        document.getElementById('tool-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const editId = document.getElementById('tool-edit-id').value;
+            const name = document.getElementById('tool-name').value.trim();
+            const version = document.getElementById('tool-version').value.trim();
+            const updateInfo = document.getElementById('tool-update-info').value.trim();
+            const codeBody = document.getElementById('tool-code-body').value;
+            const templateUrl = document.getElementById('tool-template-url').value.trim();
+            const bannerUrl = document.getElementById('tool-banner-url').value.trim();
+            const displayOrder = parseInt(document.getElementById('tool-order').value) || 0;
+
+            const toolData = {
+                name,
+                version,
+                update_info: updateInfo,
+                code_body: codeBody,
+                template_url: templateUrl || null,
+                banner_url: bannerUrl || null,
+                display_order: displayOrder
+            };
+
+            try {
+                if (editId) {
+                    // 更新
+                    const { error } = await supabase
+                        .from('tools')
+                        .update(toolData)
+                        .eq('id', editId);
+                    if (error) throw error;
+                    alert('ツールを更新しました');
+                } else {
+                    // 新規追加
+                    const { error } = await supabase
+                        .from('tools')
+                        .insert([toolData]);
+                    if (error) throw error;
+                    alert('ツールを追加しました');
+                }
+
+                resetToolForm();
+                await loadTools();
+            } catch (error) {
+                alert('保存エラー: ' + error.message);
+            }
+        });
+
+        // ツール編集
+        async function editTool(id) {
+            try {
+                const { data: tool, error } = await supabase
+                    .from('tools')
+                    .select('*')
+                    .eq('id', id)
+                    .single();
+
+                if (error) throw error;
+
+                document.getElementById('tool-edit-id').value = tool.id;
+                document.getElementById('tool-name').value = tool.name || '';
+                document.getElementById('tool-version').value = tool.version || '';
+                document.getElementById('tool-update-info').value = tool.update_info || '';
+                document.getElementById('tool-code-body').value = tool.code_body || '';
+                document.getElementById('tool-template-url').value = tool.template_url || '';
+                document.getElementById('tool-banner-url').value = tool.banner_url || '';
+                document.getElementById('tool-order').value = tool.display_order || 0;
+                document.getElementById('tool-submit-btn').textContent = '更新';
+
+                // フォームまでスクロール
+                document.getElementById('tool-form').scrollIntoView({ behavior: 'smooth' });
+            } catch (error) {
+                alert('読み込みエラー: ' + error.message);
+            }
+        }
+
+        // ツール表示切り替え
+        async function toggleTool(id, isActive) {
+            try {
+                const { error } = await supabase
+                    .from('tools')
+                    .update({ is_active: isActive })
+                    .eq('id', id);
+
+                if (error) throw error;
+                await loadTools();
+            } catch (error) {
+                alert('更新エラー: ' + error.message);
+            }
+        }
+
+        // ツール削除
+        async function deleteTool(id) {
+            if (!confirm('本当に削除しますか？')) return;
+
+            try {
+                const { error } = await supabase
+                    .from('tools')
+                    .delete()
+                    .eq('id', id);
+
+                if (error) throw error;
+                await loadTools();
+            } catch (error) {
+                alert('削除エラー: ' + error.message);
+            }
+        }
+
+        // フォームリセット
+        function resetToolForm() {
+            document.getElementById('tool-edit-id').value = '';
+            document.getElementById('tool-name').value = '';
+            document.getElementById('tool-version').value = '';
+            document.getElementById('tool-update-info').value = '';
+            document.getElementById('tool-code-body').value = '';
+            document.getElementById('tool-template-url').value = '';
+            document.getElementById('tool-banner-url').value = '';
+            document.getElementById('tool-order').value = '0';
+            document.getElementById('tool-banner-file').value = '';
+            document.getElementById('tool-upload-status').textContent = '';
+            document.getElementById('tool-submit-btn').textContent = '追加';
+        }
+
+        // バナー画像アップロード
+        document.getElementById('tool-banner-file').addEventListener('change', async (e) => {
+            const file = e.target.files[0];
+            if (!file) return;
+
+            const status = document.getElementById('tool-upload-status');
+            const hiddenInput = document.getElementById('tool-banner-url');
+
+            status.textContent = '⏳ アップロード中...';
+            status.style.color = 'var(--warning)';
+
+            try {
+                const ext = file.name.split('.').pop().toLowerCase();
+                const fileName = `tool_${Date.now()}.${ext}`;
+
+                const { data, error } = await supabase.storage
+                    .from('media-images')
+                    .upload(fileName, file, { cacheControl: '3600', upsert: false });
+
+                if (error) throw error;
+
+                const { data: urlData } = supabase.storage
+                    .from('media-images')
+                    .getPublicUrl(fileName);
+
+                hiddenInput.value = urlData.publicUrl;
+                status.textContent = '✅ アップロード完了！';
+                status.style.color = 'var(--success)';
+            } catch (error) {
+                status.textContent = '❌ エラー: ' + error.message;
+                status.style.color = 'var(--danger)';
+            }
+        });
     </script>
 </body>
 
