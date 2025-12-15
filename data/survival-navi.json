@@ -5,7 +5,7 @@
             "options": [
                 {
                     "label": "連れ去り直後で混乱中",
-                    "next": "Q2"
+                    "next": "Q2_contact"
                 },
                 {
                     "label": "調停の準備をしたい",
@@ -18,19 +18,100 @@
                 {
                     "label": "この問題について深く知りたい",
                     "next": "Q5"
+                },
+                {
+                    "label": "どれにも当てはまらない",
+                    "next": "End_Marshmallow"
                 }
             ]
         },
-        "Q2": {
-            "text": "一番の悩みは？",
+        "Q2_contact": {
+            "text": "相手と連絡は取れますか？",
             "options": [
                 {
-                    "label": "法的にどうなってるの？",
-                    "next": "End_A"
+                    "label": "連絡が取れる",
+                    "next": "Q2_lawyer"
                 },
                 {
-                    "label": "辛くてたまらない",
-                    "next": "End_B"
+                    "label": "連絡が取れない",
+                    "next": "Q2_location"
+                }
+            ]
+        },
+        "Q2_lawyer": {
+            "text": "相手は弁護士をつけていますか？",
+            "options": [
+                {
+                    "label": "弁護士はついていない",
+                    "next": "End_Reconciliation"
+                },
+                {
+                    "label": "弁護士をつけてきた",
+                    "next": "End_Fight_Preparation"
+                },
+                {
+                    "label": "分からない",
+                    "next": "End_Marshmallow"
+                }
+            ]
+        },
+        "Q2_location": {
+            "text": "相手の居場所は分かりますか？",
+            "options": [
+                {
+                    "label": "居場所は分かる",
+                    "next": "Q2_dv_support"
+                },
+                {
+                    "label": "居場所が分からない",
+                    "next": "Q2_residence"
+                }
+            ]
+        },
+        "Q2_residence": {
+            "text": "役場で住民票は確認できましたか？",
+            "options": [
+                {
+                    "label": "住民票が見れた",
+                    "next": "Q2_dv_support"
+                },
+                {
+                    "label": "住民票が見れない（閲覧制限）",
+                    "next": "End_Restricted"
+                },
+                {
+                    "label": "まだ確認していない",
+                    "next": "End_Check_Residence"
+                }
+            ]
+        },
+        "Q2_dv_support": {
+            "text": "DV相談や支援措置はありますか？",
+            "options": [
+                {
+                    "label": "DV相談・支援措置あり",
+                    "next": "Q2_dv_truth"
+                },
+                {
+                    "label": "DV相談・支援措置なし",
+                    "next": "End_Normal_Mediation"
+                },
+                {
+                    "label": "分からない",
+                    "next": "End_Marshmallow"
+                }
+            ]
+        },
+        "Q2_dv_truth": {
+            "text": "DVについて、事実はどうですか？",
+            "options": [
+                {
+                    "label": "身に覚えがない（虚偽DV）",
+                    "next": "End_False_DV"
+                },
+                {
+                    "label": "暴力をふるったことがある",
+                    "next": "End_Real_DV"
                 }
             ]
         },
@@ -79,6 +160,113 @@
         }
     },
     "results": {
+        "End_Reconciliation": {
+            "phase": "復縁可能性あり",
+            "phaseLevel": "hope",
+            "advice": "💚 **まだ復縁の見込みがあります**\n\n相手が弁護士をつけていないということは、まだ争う体制ではありません。相手は精神的に不安定な状態である可能性が高いです。\n\n**下手に刺激せず、丁寧に接してください。**\n\n感情的にならず、相手の話に耳を傾け、なぜこうなったのかを冷静に考えましょう。復縁できるかどうかは、今のあなたの対応にかかっています。",
+            "videos": [
+                {
+                    "title": "父親ができなくなること9選",
+                    "url": "https://youtu.be/W8EHjvjn-VY"
+                }
+            ],
+            "tools": [
+                "community"
+            ]
+        },
+        "End_Fight_Preparation": {
+            "phase": "戦闘準備段階",
+            "phaseLevel": "battle",
+            "advice": "⚔️ **相手は争う体制に入っています**\n\n弁護士をつけてきたということは、明らかに戦う姿勢です。感傷に浸っている時間はありません。\n\n**今すぐやるべきこと：**\n1. 証拠を集める（子どもとの写真、育児記録など）\n2. 面会交流調停を申し立てる\n3. 離婚調停に備える\n\n相手の悪口は逆効果です。『あなたが子供と笑顔で過ごした写真』と『家事育児の実績』が最強の武器になります。",
+            "videos": [
+                {
+                    "title": "面会交流調停すぐやって",
+                    "url": "https://youtu.be/SnH048RAkms"
+                },
+                {
+                    "title": "連れ去りの違法性 / 家裁の闘",
+                    "url": "https://youtu.be/Hd3mtGC6PO0"
+                }
+            ],
+            "tools": [
+                "judgments",
+                "community"
+            ]
+        },
+        "End_Check_Residence": {
+            "phase": "情報収集段階",
+            "phaseLevel": "preparation",
+            "advice": "📋 **まず役場で住民票を確認してください**\n\n居場所が分からない場合、最初にやるべきことは役場での住民票確認です。\n\n**住民票が見れるかどうかで、相手の状況が分かります：**\n- 見れる → 居場所が判明し、次のステップへ\n- 見れない → 閲覧制限がかかっている、または弁護士が介入している可能性\n\n確認後、もう一度このナビに戻ってきてください。",
+            "videos": [],
+            "tools": []
+        },
+        "End_Restricted": {
+            "phase": "戦闘準備段階",
+            "phaseLevel": "battle",
+            "advice": "🔒 **住民票の閲覧制限がかかっています**\n\n住民票が見れないということは、以下の可能性があります：\n- DV支援措置による閲覧制限\n- すでに相手側が弁護士をつけている\n\n**次のステップ：**\n1. 面会交流調停を申し立てる\n2. 離婚調停に備える\n3. 証拠と論理で武装する\n\n感情的にならず、冷静に調停に臨んでください。",
+            "videos": [
+                {
+                    "title": "面会交流調停すぐやって",
+                    "url": "https://youtu.be/SnH048RAkms"
+                }
+            ],
+            "tools": [
+                "judgments",
+                "community"
+            ]
+        },
+        "End_Normal_Mediation": {
+            "phase": "準備段階",
+            "phaseLevel": "preparation",
+            "advice": "📝 **調停の準備を始めましょう**\n\nDV相談や支援措置がないということは、比較的穏やかに話し合いができる可能性があります。\n\n**やるべきこと：**\n1. 面会交流調停を申し立てる\n2. 子どもとの関係を示す証拠を集める\n3. 調停委員に論理的に説明できるよう準備する\n\n感情的にならず、「子どもの利益」を第一に考えた主張を組み立てましょう。",
+            "videos": [
+                {
+                    "title": "面会交流調停すぐやって",
+                    "url": "https://youtu.be/SnH048RAkms"
+                },
+                {
+                    "title": "3点セット提出の説明【前半】",
+                    "url": "https://youtu.be/RfPHI4a6xqY"
+                }
+            ],
+            "tools": [
+                "judgments"
+            ]
+        },
+        "End_False_DV": {
+            "phase": "虚偽DV対策段階",
+            "phaseLevel": "battle",
+            "advice": "⚖️ **虚偽DVとの戦いになります**\n\n身に覚えがないDV主張をされている場合、これは調停・裁判での戦いになります。\n\n連れ去られた被害者として大変憔悴していることと思います。しかし、**決して感情的にならないでください。**\n\n**証拠と論理で武装しましょう：**\n1. 暴力がなかったことを示す証拠を集める\n2. 子どもとの良好な関係を示す写真・記録\n3. 相手の矛盾点を冷静に指摘できる準備\n\n面会交流調停・離婚調停に、万全の準備で臨んでください。",
+            "videos": [
+                {
+                    "title": "3点セット提出の説明【前半】",
+                    "url": "https://youtu.be/RfPHI4a6xqY"
+                },
+                {
+                    "title": "3点セット提出の説明【後半】",
+                    "url": "https://youtu.be/vMr062otWpk"
+                }
+            ],
+            "tools": [
+                "judgments",
+                "community"
+            ]
+        },
+        "End_Real_DV": {
+            "phase": "自己反省段階",
+            "phaseLevel": "reflection",
+            "advice": "🪞 **まず、自分を振り返ってください**\n\n殴る・蹴るなどの暴力があった場合、たとえあなたが「しつけのため」「言うことを聞かせるため」と思っていたとしても、それは対処のしようがありません。\n\n**あなたが愛だと思っている行為は、相手を傷つける行為です。**\n\n今すぐできること：\n1. 自分の行った事を反省する\n2. 相手側の言うことに耳を傾ける\n3. 専門家（カウンセラーなど）に相談する\n\nまずは自分自身と向き合い、変わる努力をしてください。",
+            "videos": [],
+            "tools": []
+        },
+        "End_Marshmallow": {
+            "phase": "個別相談",
+            "phaseLevel": "support",
+            "advice": "💌 **あなたの状況を聞かせてください**\n\nどの選択肢にも当てはまらない状況なのですね。一人ひとり状況は違います。\n\n下のボタンから、あなたの状況を詳しく教えてください。匿名で相談できます。",
+            "videos": [],
+            "tools": [],
+            "showMarshmallow": true
+        },
         "End_A": {
             "phase": "緊急防衛段階",
             "phaseLevel": "emergency",

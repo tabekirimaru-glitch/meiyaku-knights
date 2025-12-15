@@ -1298,6 +1298,14 @@
             background: linear-gradient(135deg, #059669, #047857);
         }
 
+        .navi-result-header.hope {
+            background: linear-gradient(135deg, #10b981, #059669);
+        }
+
+        .navi-result-header.reflection {
+            background: linear-gradient(135deg, #6b7280, #4b5563);
+        }
+
         .navi-result-header h3 {
             color: white;
             font-size: 1.1rem;
@@ -1685,6 +1693,14 @@
 
             .navi-result-header.support {
                 background: linear-gradient(135deg, #059669, #047857);
+            }
+
+            .navi-result-header.hope {
+                background: linear-gradient(135deg, #10b981, #059669);
+            }
+
+            .navi-result-header.reflection {
+                background: linear-gradient(135deg, #6b7280, #4b5563);
             }
 
             .navi-result-header h3 {
@@ -2770,23 +2786,46 @@
                 var result = survivalNaviData.results[resultId];
                 if (!result) return;
 
+                // 動画セクション（動画がある場合のみ表示）
                 var videosHtml = '';
-                for (var i = 0; i < result.videos.length; i++) {
-                    var v = result.videos[i];
-                    videosHtml += '<a href="' + v.url + '" target="_blank" class="navi-video-card"><div class="play-icon">▶</div><div class="video-title">' + v.title + '</div></a>';
+                if (result.videos && result.videos.length > 0) {
+                    var videoLinks = '';
+                    for (var i = 0; i < result.videos.length; i++) {
+                        var v = result.videos[i];
+                        videoLinks += '<a href="' + v.url + '" target="_blank" class="navi-video-card"><div class="play-icon">▶</div><div class="video-title">' + v.title + '</div></a>';
+                    }
+                    videosHtml = '<div class="navi-videos"><h4>📺 今見るべき動画</h4>' + videoLinks + '</div>';
                 }
 
+                // ツールリンク（ツールがある場合のみ表示）
                 var toolsHtml = '';
-                if (result.tools.indexOf('judgments') !== -1) {
-                    toolsHtml += '<a href="judgments.html" class="navi-tool-btn judgments">📚 判例DBを見る</a>';
+                if (result.tools && result.tools.length > 0) {
+                    if (result.tools.indexOf('judgments') !== -1) {
+                        toolsHtml += '<a href="judgments.html" class="navi-tool-btn judgments">📚 判例DBを見る</a>';
+                    }
+                    if (result.tools.indexOf('community') !== -1) {
+                        toolsHtml += '<a href="community.html" class="navi-tool-btn community">👥 コミュニティへ</a>';
+                    }
+                    toolsHtml = '<div class="navi-tools">' + toolsHtml + '</div>';
                 }
-                if (result.tools.indexOf('community') !== -1) {
-                    toolsHtml += '<a href="community.html" class="navi-tool-btn community">👥 コミュニティへ</a>';
+
+                // マシュマロ案内（showMarshmallowがtrueの場合は強調表示）
+                var marshmallowHtml = '';
+                if (result.showMarshmallow) {
+                    marshmallowHtml = '<a href="' + survivalNaviData.marshmallowUrl + '" target="_blank" class="navi-marshmallow" style="font-size: 1.1rem; padding: 1.25rem;">✉️ あなたの状況を詳しく教えてください（マシュマロで匿名相談）</a>';
+                } else {
+                    marshmallowHtml = '<a href="' + survivalNaviData.marshmallowUrl + '" target="_blank" class="navi-marshmallow">✉️ 誰にも頼れない時はヒロに相談（マシュマロ）</a>';
+                }
+
+                // フッターノート（動画やツールがある場合のみ表示）
+                var footerHtml = '';
+                if ((result.videos && result.videos.length > 0) || (result.tools && result.tools.length > 0)) {
+                    footerHtml = '<div class="navi-footer-note">⚠️ 情報は常にアップデートされます。必ずYouTubeチャンネルで最新情報をチェックしてください</div>';
                 }
 
                 var resultDiv = document.createElement('div');
                 resultDiv.className = 'navi-result';
-                resultDiv.innerHTML = '<div class="navi-result-header ' + result.phaseLevel + '"><h3>🔬 AI診断レポート</h3><div class="phase-label">現在のフェーズ: <strong>' + result.phase + '</strong></div></div><div class="navi-result-body"><div class="navi-advice">' + result.advice + '</div><div class="navi-videos"><h4>📺 今見るべき動画</h4>' + videosHtml + '</div><div class="navi-tools">' + toolsHtml + '</div><a href="' + survivalNaviData.marshmallowUrl + '" target="_blank" class="navi-marshmallow">✉️ 誰にも頼れない時はヒロに相談（マシュマロ）</a><div class="navi-footer-note">⚠️ 情報は常にアップデートされます。必ずYouTubeチャンネルで最新情報をチェックしてください</div></div>';
+                resultDiv.innerHTML = '<div class="navi-result-header ' + result.phaseLevel + '"><h3>🔬 AI診断レポート</h3><div class="phase-label">現在のフェーズ: <strong>' + result.phase + '</strong></div></div><div class="navi-result-body"><div class="navi-advice">' + result.advice + '</div>' + videosHtml + toolsHtml + marshmallowHtml + footerHtml + '</div>';
 
                 timeline.appendChild(resultDiv);
 
